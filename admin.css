@@ -43,6 +43,9 @@
     background: #34495e;
 }
 
+/*dashboard css*/
+
+
 .main-content {
     flex-grow: 1;
     padding: 20px;
@@ -80,3 +83,5 @@ header h1 {
     margin: 5px 0;
     border-radius: 5px;
 }
+
+
