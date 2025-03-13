@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Admin</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h2>CTRL-X Admin</h2>
+            <ul>
+                <li><a href="http://127.0.0.1:3000/dashboard.html">Dashboard</a></li>
+                <li><a href="http://127.0.0.1:3000/admin.html">Admin</a></li>
+                <li><a href="http://127.0.0.1:3000/category.html">Category</a></li>
+                <li><a href="http://127.0.0.1:3000/product.html">Product</a></li>
+                <li><a href="http://127.0.0.1:3000/customer.html">Customer List</a></li>
+                <li><a href="http://127.0.0.1:3000/productlist.html">Product List</a></li>
+                <li><a href="http://127.0.0.1:3000/orderlist.html">Order List</a></li>
+                <li><a href="http://127.0.0.1:3000/order.html">Order Status</a></li>
+                <li><a href="http://127.0.0.1:3000/report.html">Generate Report</a></li>
+            </ul>
+        </nav>
+
+        <h1>Add Admin</h1>
+        <form>
+            <label for="adminName">Admin Name:</label>
+            <input type="text" id="adminName" name="adminName" required>
+            
+            <label for="adminEmail">Admin Email:</label>
+            <input type="email" id="adminEmail" name="adminEmail" required>
+            
+            <label for="adminPassword">Password:</label>
+            <input type="password" id="adminPassword" name="adminPassword" required>
+            
+            <button type="submit">Add Admin</button>
+        </form>
+        <a href="dashboard.html" class="back-link">Back to Dashboard</a>
+    </div>
+</body>
+</html>
