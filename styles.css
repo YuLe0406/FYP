@@ -8,12 +8,12 @@ body {
 
 /* Navigation Bar */
 header {
-  background: #000;
-  color: #fff;
-  padding: 15px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: black;
+  color: white;
 }
 
 .logo {
@@ -21,45 +21,98 @@ header {
   font-weight: bold;
 }
 
-/* Search Bar */
-.search-bar {
-  flex: 1;
+/* Search bar styling */
+.search-container {
   display: flex;
-  justify-content: center;
-  margin: 0 20px;
+  align-items: center;
+  position: relative;
+  width: 50%;
 }
 
-.search-bar input {
-  width: 250px;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
+.search-container input {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 14px;
 }
 
-.search-bar button {
-  background: #ff4d4d;
-  color: white;
+.search-container button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
   border: none;
-  padding: 8px 12px;
+  color: #666;
   cursor: pointer;
-  border-radius: 5px;
+  font-size: 16px;
 }
 
-.search-bar button:hover {
-  background: #e60000;
-}
-
-/* Navigation Icons */
-.nav-icons {
+/* Icons container */
+/* Icons container */
+.icons {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
-.nav-icons .icon {
-  color: #fff;
+/* Each icon */
+.icon {
+  color: white;
   text-decoration: none;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px;
+  transition: transform 0.3s ease; /* Smooth movement */
 }
+
+/* Hidden text by default */
+.icon .icon-text {
+  opacity: 0;
+  transform: translateX(-10px); /* Start position (hidden) */
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: absolute;
+  left: 40px; /* Make sure text is fully visible */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect - Reveal text and move left */
+.icon:hover .icon-text {
+  opacity: 1;
+  transform: translateX(0px); /* Slide text into view */
+}
+
+/* Hovering on the 1st icon */
+.icon:first-child:hover {
+  transform: translateX(-120px);
+}
+.icon:first-child:hover ~ .icon {
+  transform: translateX(-120px);
+}
+
+/* Hovering on the 2nd icon */
+.icon:nth-child(2):hover {
+  transform: translateX(-120px);
+}
+.icon:nth-child(2):hover ~ .icon {
+  transform: translateX(-120px);
+}
+
+/* Hovering on the 3rd icon */
+.icon:nth-child(3):hover {
+  transform: translateX(-120px);
+}
+.icon:nth-child(3):hover ~ .icon {
+  transform: translateX(-120px);
+}
+
 
 /* Discount Label */
 .discount-label {
