@@ -1,0 +1,142 @@
+/* Report Filters Section Styles */
+.report-filters {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.report-filters h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filter-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-form label {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.filter-form input,
+.filter-form select {
+    padding: 10px;
+    border: 1px solid #ecf0f1;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f4f7f6;
+    transition: border-color 0.3s ease;
+}
+
+.filter-form input:focus,
+.filter-form select:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.submit-btn {
+    background: #1abc9c;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #16a085;
+}
+
+/* Report Results Section Styles */
+.report-results {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.report-results h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.report-results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-results th,
+.report-results td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.report-results th {
+    background: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+}
+
+.report-results tr:hover {
+    background: #f4f7f6;
+}
+
+.report-results td {
+    color: #333;
+}
+
+.report-results .status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.report-results .status.processing {
+    background: #ffc107;
+    color: #333;
+}
+
+.report-results .status.shipped {
+    background: #17a2b8;
+    color: #fff;
+}
+
+.report-results .status.delivered {
+    background: #28a745;
+    color: #fff;
+}
+
+.report-results td ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.report-results td ul li {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.report-results td ul li strong {
+    color: #2c3e50;
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="report.css">
 </head>
 <body>
     <div class="container">
@@ -21,3 +22,103 @@
                 <li><a href="report.html"><b>Generate Report</b></a></li>
             </ul>
         </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Generate Report</h1>
+
+            <!-- Report Filters -->
+            <section class="report-filters">
+                <h2>Filters</h2>
+                <form class="filter-form">
+                    <div class="form-group">
+                        <label for="reportType">Report Type:</label>
+                        <select id="reportType" name="reportType" required>
+                            <option value="sales">Sales Report</option>
+                            <option value="orders">Orders Report</option>
+                            <option value="products">Products Report</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" name="category">
+                            <option value="">All Categories</option>
+                            <option value="1">Men's Clothing</option>
+                            <option value="2">Women's Clothing</option>
+                            <option value="3">Unisex</option>
+                            <!-- Add more options dynamically from the CATEGORIES table -->
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Generate Report</button>
+                </form>
+            </section>
+
+            <!-- Report Results -->
+            <section class="report-results">
+                <h2>Report Results</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Order Date</th>
+                            <th>Total Amount</th>
+                            <th>Products</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Example Row (Replace with dynamic data from your database) -->
+                        <tr>
+                            <td>768648</td>
+                            <td>Steve</td>
+                            <td>Oct 21, 2023</td>
+                            <td>$122.00</td>
+                            <td>
+                                <ul>
+                                    <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 2, <strong>Price:</strong> $25.00</li>
+                                    <li><strong>Product:</strong> Women's Summer Dress, <strong>Quantity:</strong> 1, <strong>Price:</strong> $19.60</li>
+                                </ul>
+                            </td>
+                            <td><span class="status processing">Processing</span></td>
+                        </tr>
+                        <tr>
+                            <td>768649</td>
+                            <td>Amber</td>
+                            <td>Oct 21, 2023</td>
+                            <td>$62.00</td>
+                            <td>
+                                <ul>
+                                    <li><strong>Product:</strong> Unisex Hoodie, <strong>Quantity:</strong> 1, <strong>Price:</strong> $15.00</li>
+                                </ul>
+                            </td>
+                            <td><span class="status shipped">Shipped</span></td>
+                        </tr>
+                        <tr>
+                            <td>768650</td>
+                            <td>Michael</td>
+                            <td>Oct 18, 2023</td>
+                            <td>$34.00</td>
+                            <td>
+                                <ul>
+                                    <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 1, <strong>Price:</strong> $25.00</li>
+                                </ul>
+                            </td>
+                            <td><span class="status delivered">Delivered</span></td>
+                        </tr>
+                        <!-- Add more rows dynamically -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -82,3 +82,52 @@ CREATE TABLE ADDRESS (
     A_ZipCode VARCHAR(255) NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
+
+
+
+ --TESTING FOR ORDER
+
+SELECT 
+    O.O_ID AS OrderID,
+    U.U_FName AS CustomerName,
+    O.O_Date AS OrderDate,
+    O.O_TotalAmount AS TotalAmount,
+    P.P_Name AS ProductName,
+    OI.OI_Quantity AS Quantity,
+    OI.OI_Price AS Price
+FROM 
+    ORDERS O
+JOIN 
+    USER U ON O.U_ID = U.U_ID
+JOIN 
+    ORDER_ITEMS OI ON O.O_ID = OI.O_ID
+JOIN 
+    PRODUCT P ON OI.P_ID = P.P_ID
+ORDER BY 
+    O.O_Date DESC;
+
+
+--TESTING FOR REPORT
+
+SELECT 
+    O.O_ID AS OrderID,
+    U.U_FName AS CustomerName,
+    O.O_Date AS OrderDate,
+    O.O_TotalAmount AS TotalAmount,
+    P.P_Name AS ProductName,
+    OI.OI_Quantity AS Quantity,
+    OI.OI_Price AS Price,
+    O.O_Status AS Status
+FROM 
+    ORDERS O
+JOIN 
+    USER U ON O.U_ID = U.U_ID
+JOIN 
+    ORDER_ITEMS OI ON O.O_ID = OI.O_ID
+JOIN 
+    PRODUCT P ON OI.P_ID = P.P_ID
+WHERE 
+    O.O_Date BETWEEN '2023-10-01' AND '2023-10-31' -- Example date range
+    AND P.C_ID = 1 -- Example category filter
+ORDER BY 
+    O.O_Date DESC;
