@@ -1,0 +1,322 @@
+/* Add Product Form Styles */
+.add-product {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-product h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ecf0f1;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f4f7f6;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.submit-btn {
+    background: #1abc9c;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #16a085;
+}
+
+/* Existing Products Table Styles */
+.existing-products {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.existing-products h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.existing-products table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.existing-products th,
+.existing-products td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.existing-products th {
+    background: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+}
+
+.existing-products tr:hover {
+    background: #f4f7f6;
+}
+
+.existing-products td {
+    color: #333;
+}
+
+.existing-products img {
+    max-width: 50px;
+    border-radius: 4px;
+}
+
+.existing-products .edit-btn,
+.existing-products .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    margin-right: 5px;
+}
+
+.existing-products .edit-btn {
+    background: #f39c12;
+    color: #fff;
+}
+
+.existing-products .edit-btn:hover {
+    background: #e67e22;
+}
+
+.existing-products .delete-btn {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.existing-products .delete-btn:hover {
+    background: #c0392b;
+}
+
+/* Product Variants Section Styles */
+.variant-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.variant {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.variant input {
+    padding: 8px;
+    border: 1px solid #ecf0f1;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f4f7f6;
+    transition: border-color 0.3s ease;
+}
+
+.variant input:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.remove-variant-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.remove-variant-btn:hover {
+    background: #c0392b;
+}
+
+.add-variant-btn {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.add-variant-btn:hover {
+    background: #2980b9;
+}
+
+/* Existing Products Table Styles */
+.existing-products td ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.existing-products td ul li {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 90%;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.close-modal {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-modal:hover {
+    color: #000;
+}
+
+/* Variant Fields Styles */
+.variant-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.variant {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.variant input {
+    padding: 8px;
+    border: 1px solid #ecf0f1;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f4f7f6;
+    transition: border-color 0.3s ease;
+}
+
+.variant input:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.remove-variant-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.remove-variant-btn:hover {
+    background: #c0392b;
+}
+
+.add-variant-btn {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.add-variant-btn:hover {
+    background: #2980b9;
+}
+
+.submit-btn {
+    background: #1abc9c;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background: #16a085;
+}
