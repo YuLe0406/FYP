@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Online Clothing Store</title>
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
         <nav class="sidebar">
             <h2>CTRL-X Admin</h2>
             <ul>
-                <li><a href="http://127.0.0.1:3000/dashboard.html">Dashboard</a></li>
+                <li><a id="dashboard-link" href="http://127.0.0.1:3000/dashboard.html">Dashboard</a></li>
                 <li><a href="http://127.0.0.1:3000/admin.html">Admin</a></li>
                 <li><a href="http://127.0.0.1:3000/category.html">Category</a></li>
                 <li><a href="http://127.0.0.1:3000/product.html">Product</a></li>
@@ -23,27 +23,155 @@
                 <li><a href="http://127.0.0.1:3000/report.html">Generate Report</a></li>
             </ul>
         </nav>
-        
+
         <!-- Main Content -->
-        <div class="main-content">
-            <header>
-                <h1>Dashboard</h1>
-            </header>
-            <section class="widgets">
-                <div class="widget">Total Orders: 50</div>
-                <div class="widget">Total Customers: 120</div>
-                <div class="widget">Revenue: $5000</div>
-            </section>
-            
-            <section class="todo-list">
-                <h2>To-Do List</h2>
+        <main class="main-content">
+            <h1>Dashboard Overview</h1>
+
+            <!-- Cards Section -->
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Products</h3>
+                    <p>1,250</p>
+                </div>
+                <div class="card">
+                    <h3>Total Orders</h3>
+                    <p>5,430</p>
+                </div>
+                <div class="card">
+                    <h3>Total Revenue (Weekly)</h3>
+                    <p>$25,000</p>
+                </div>
+                <div class="card">
+                    <h3>Total Revenue (Monthly)</h3>
+                    <p>$120,000</p>
+                </div>
+            </div>
+
+            <!-- Weekly Overview Section -->
+            <div class="weekly-overview">
+                <h2>Weekly Overview</h2>
+                <p>Period: Oct 14, 2023 - Oct 21, 2023</p>
+                <div class="stats">
+                    <div class="stat">
+                        <h4>New Products Added</h4>
+                        <p>52</p>
+                    </div>
+                    <div class="stat">
+                        <h4>Orders Placed</h4>
+                        <p>203</p>
+                    </div>
+                    <div class="stat">
+                        <h4>Website Visits</h4>
+                        <p>274,678</p>
+                    </div>
+                    <div class="stat">
+                        <h4>Conversion Rate</h4>
+                        <p>35%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Section -->
+            <div class="recent-orders">
+                <h2>Recent Orders</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order No.</th>
+                            <th>Customer Name</th>
+                            <th>Amount</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>768648</td>
+                            <td>Steve</td>
+                            <td>$122</td>
+                            <td>Oct 21, 2023</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr>
+                            <td>768649</td>
+                            <td>Amber</td>
+                            <td>$62</td>
+                            <td>Oct 21, 2023</td>
+                            <td>Pending</td>
+                        </tr>
+                        <tr>
+                            <td>768650</td>
+                            <td>Michael</td>
+                            <td>$34</td>
+                            <td>Oct 18, 2023</td>
+                            <td>Completed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Top Selling Products Section -->
+            <div class="top-selling-products">
+                <h2>Top Selling Products</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Men's Casual Shirt</td>
+                            <td>Men's Clothing</td>
+                            <td>1,250</td>
+                            <td>$25,000</td>
+                        </tr>
+                        <tr>
+                            <td>Women's Summer Dress</td>
+                            <td>Women's Clothing</td>
+                            <td>980</td>
+                            <td>$19,600</td>
+                        </tr>
+                        <tr>
+                            <td>Unisex Hoodie</td>
+                            <td>Unisex</td>
+                            <td>750</td>
+                            <td>$15,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tasks Section -->
+            <div class="tasks">
+                <h2>My Tasks</h2>
                 <ul>
-                    <li>Review new orders</li>
-                    <li>Update product prices</li>
-                    <li>Check customer feedback</li>
+                    <li>Add New Product Listings</li>
+                    <li>Update Inventory</li>
+                    <li>Process Pending Orders</li>
+                    <li>Review Customer Feedback</li>
+                    <li>Plan Marketing Campaign</li>
                 </ul>
-            </section>
-        </div>
+            </div>
+        </main>
     </div>
+
+    <!-- JavaScript for Active Link -->
+    <script>
+        // Get the current page URL
+        const currentPage = window.location.href;
+
+        // Get the dashboard link
+        const dashboardLink = document.getElementById('dashboard-link');
+
+        // Check if the current page is the dashboard
+        if (currentPage.includes('dashboard.html')) {
+            dashboardLink.classList.add('active');
+        }
+    </script>
 </body>
 </html>
