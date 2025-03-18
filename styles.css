@@ -21,21 +21,19 @@ header {
   font-weight: bold;
 }
 
-/* Search bar styling */
 .search-container {
   display: flex;
-  align-items: center;
+  flex-grow: 1; /* Takes up available space */
+  justify-content: center;
   position: relative;
-  width: 50%;
 }
 
 .search-container input {
-  width: 100%;
-  padding: 10px 40px 10px 15px;
+  width: 50%; /* Adjust the width */
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 20px;
   outline: none;
-  font-size: 14px;
 }
 
 .search-container button {
@@ -43,75 +41,31 @@ header {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: transparent;
+  background: black;
   border: none;
-  color: #666;
+  color: white;
+  padding: 5px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 16px;
 }
 
-/* Icons container */
-/* Icons container */
 .icons {
   display: flex;
   gap: 15px;
   align-items: center;
 }
 
-/* Each icon */
 .icon {
   color: white;
   text-decoration: none;
   display: flex;
   align-items: center;
-  position: relative;
-  padding: 5px;
-  transition: transform 0.3s ease; /* Smooth movement */
 }
 
-/* Hidden text by default */
-.icon .icon-text {
-  opacity: 0;
-  transform: translateX(-10px); /* Start position (hidden) */
-  white-space: nowrap;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  position: absolute;
-  left: 40px; /* Make sure text is fully visible */
-  transition: opacity 0.3s ease, transform 0.3s ease;
+.icon i {
+  margin-right: 5px;
 }
 
-/* Hover effect - Reveal text and move left */
-.icon:hover .icon-text {
-  opacity: 1;
-  transform: translateX(0px); /* Slide text into view */
-}
-
-/* Hovering on the 1st icon */
-.icon:first-child:hover {
-  transform: translateX(-120px);
-}
-.icon:first-child:hover ~ .icon {
-  transform: translateX(-120px);
-}
-
-/* Hovering on the 2nd icon */
-.icon:nth-child(2):hover {
-  transform: translateX(-120px);
-}
-.icon:nth-child(2):hover ~ .icon {
-  transform: translateX(-120px);
-}
-
-/* Hovering on the 3rd icon */
-.icon:nth-child(3):hover {
-  transform: translateX(-120px);
-}
-.icon:nth-child(3):hover ~ .icon {
-  transform: translateX(-120px);
-}
 
 
 /* Discount Label */
