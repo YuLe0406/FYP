@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="category.css">
 </head>
 <body>
     <div class="container">
@@ -17,9 +18,69 @@
                 <li><a href="category.html"><b>Category</b></a></li>
                 <li><a href="product.html">Product</a></li>
                 <li><a href="customer.html">Customer List</a></li>
-                <li><a href="productlist.html">Product List</a></li>
                 <li><a href="orderlist.html">Order List</a></li>
                 <li><a href="order.html">Order Status</a></li>
                 <li><a href="report.html">Generate Report</a></li>
             </ul>
         </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Category Management</h1>
+
+            <!-- Add Category Form -->
+            <section class="add-category">
+                <h2>Add New Category</h2>
+                <form class="category-form">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name:</label>
+                        <input type="text" id="categoryName" name="categoryName" placeholder="Enter category name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryStyle">Category Style:</label>
+                        <input type="text" id="categoryStyle" name="categoryStyle" placeholder="Enter category style" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Category</button>
+                </form>
+            </section>
+
+            <!-- Existing Categories Table -->
+            <section class="existing-categories">
+                <h2>Existing Categories</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category ID</th>
+                            <th>Category Name</th>
+                            <th>Category Style</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Example Row (Replace with dynamic data from your database) -->
+                        <tr>
+                            <td>1</td>
+                            <td>Men's Clothing</td>
+                            <td>Casual</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Women's Clothing</td>
+                            <td>Formal</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Add more rows dynamically -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,5 +1,5 @@
-CREATE DATABASE your_database;
-USE your_database;
+CREATE DATABASE ctrl+x;
+USE ctrl+x;
 
 -- USER Table
 CREATE TABLE USER (
