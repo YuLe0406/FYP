@@ -154,8 +154,8 @@ body {
     font-weight: bold;
 }
 
-/* Recent Purchases Section */
-.recent-purchases {
+/* Recent Orders Section */
+.recent-orders {
     background: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -163,31 +163,110 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.recent-purchases h2 {
+.recent-orders h2 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #2c3e50;
 }
 
-.recent-purchases table {
+.recent-orders table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.recent-purchases th,
-.recent-purchases td {
+.recent-orders th,
+.recent-orders td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ecf0f1;
 }
 
-.recent-purchases th {
+.recent-orders th {
     background: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+}
+
+.recent-orders tr:hover {
+    background: #f4f7f6;
+}
+
+.recent-orders td {
+    color: #333;
+}
+
+.recent-orders .status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.recent-orders .status.completed {
+    background: #28a745;
     color: #fff;
 }
 
-.recent-purchases tr:hover {
+.recent-orders .status.pending {
+    background: #ffc107;
+    color: #333;
+}
+
+/* Top Selling Products Section */
+.top-selling-products {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.top-selling-products h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.top-selling-products table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.top-selling-products th,
+.top-selling-products td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.top-selling-products th {
+    background: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+}
+
+.top-selling-products tr:hover {
     background: #f4f7f6;
+}
+
+.top-selling-products td {
+    color: #333;
+}
+
+.top-selling-products .product-name {
+    font-weight: bold;
+}
+
+.top-selling-products .category {
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.top-selling-products .units-sold,
+.top-selling-products .revenue {
+    font-weight: bold;
+    color: #2c3e50;
 }
 
 /* Tasks Section */

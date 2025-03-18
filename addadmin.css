@@ -61,16 +61,19 @@
 }
 
 .back-link {
-    display: inline-block;
-    margin-top: 15px;
-    color: #1abc9c;
-    text-decoration: none;
+    display: block; /* Change to block to center it */
+    margin: 15px auto; /* Center horizontally */
+    text-align: center; /* Center text */
+    color: #007BFF; /* Blue color */
+    text-decoration: underline; /* Add underline */
     font-weight: bold;
+    font-size: 16px;
     transition: color 0.3s ease;
 }
 
 .back-link:hover {
-    color: #16a085;
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline; /* Ensure underline remains on hover */
 }
 
 /* Recent Admins Section Styles */
