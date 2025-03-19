@@ -112,3 +112,44 @@ body, html {
   overflow-x: hidden;
 }
 
+.banner-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 21px;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+
+/* Left and Right button positions */
+.left-btn { left: 10px; }
+.right-btn { right: 10px; }
+
+/* Dots indicator styles */
+.dots-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: gray;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: white; /* Highlight the active dot */
+}
