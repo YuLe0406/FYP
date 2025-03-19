@@ -1,59 +1,27 @@
-// Banner Auto-Scroll and Manual Controls
-const banner = document.querySelector('.banner');
-const images = document.querySelectorAll('.banner img');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+document.addEventListener("DOMContentLoaded", function () {
+    const banner = document.querySelector(".banner");
+    const images = document.querySelectorAll(".banner img");
+    let index = 0;
+    const totalImages = images.length;
 
-let index = 0;
-const totalImages = images.length;
+    // Clone first image for infinite scroll effect
+    const firstClone = images[0].cloneNode(true);
+    banner.appendChild(firstClone);
 
-// Function to update the banner position
-function updateBanner() {
-    banner.style.transform = `translateX(-${index * 100}%)`;
-}
+    function slideBanner() {
+        index++;
+        banner.style.transition = "transform 1s linear";
+        banner.style.transform = `translateX(-${index * 100}vw)`;
 
-// Auto-scroll every 3 seconds
-let autoScroll = setInterval(() => {
-    index = (index + 1) % totalImages;
-    updateBanner();
-}, 3000);
-
-// Manual navigation
-prevBtn.addEventListener('click', () => {
-    index = (index - 1 + totalImages) % totalImages;
-    updateBanner();
-    resetAutoScroll();
-});
-
-nextBtn.addEventListener('click', () => {
-    index = (index + 1) % totalImages;
-    updateBanner();
-    resetAutoScroll();
-});
-
-// Reset auto-scroll when manually navigating
-function resetAutoScroll() {
-    clearInterval(autoScroll);
-    autoScroll = setInterval(() => {
-        index = (index + 1) % totalImages;
-        updateBanner();
-    }, 3000);
-}
-
-// Scroll using mouse wheel
-document.querySelector('.banner-container').addEventListener('wheel', (event) => {
-    if (event.deltaY > 0) {
-        index = (index + 1) % totalImages;
-    } else {
-        index = (index - 1 + totalImages) % totalImages;
+        // Reset without transition when looping back
+        if (index === totalImages) {
+            setTimeout(() => {
+                banner.style.transition = "none";
+                banner.style.transform = "translateX(0)";
+                index = 0;
+            }, 1000);
+        }
     }
-    updateBanner();
-    resetAutoScroll();
-});
 
-// Search Functionality (Example: Logs the search query)
-document.querySelector('.search-bar button').addEventListener('click', () => {
-    let query = document.querySelector('.search-bar input').value;
-    console.log("Searching for:", query);
-    // Future: Implement category search logic here
+    setInterval(slideBanner, 4000); // Slide every 4 seconds
 });

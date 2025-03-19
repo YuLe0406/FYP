@@ -67,7 +67,6 @@ header {
 }
 
 
-
 /* Discount Label */
 .discount-label {
   background: #ff4d4d;
@@ -92,40 +91,24 @@ header {
 
 /* Banner Section */
 .banner-container {
+  width: 100vw;  /* Only 1 image width is visible */
+  overflow: hidden; /* Hide the extra images */
   position: relative;
-  width: 100%;
-  overflow: hidden;
 }
 
 .banner {
   display: flex;
-  transition: transform 0.5s ease-in-out;
+  transition: transform 1s linear; /* Smooth effect */
+  width: calc(100vw * 6); /* Adjust based on total images */
 }
 
 .banner img {
-  width: 100%;
-  height: auto;
+  width: 100vw; /* Makes sure each image takes full viewport width */
+  height: 650px; /* Keeps aspect ratio */
+  object-fit: contain; /* Shows the whole image */
 }
 
-/* Banner Controls */
-.banner-controls {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  transform: translateY(-50%);
+body, html {
+  overflow-x: hidden;
 }
 
-.banner-controls button {
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  font-size: 24px;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.banner-controls button:hover {
-  background: rgba(0, 0, 0, 0.8);
-}
