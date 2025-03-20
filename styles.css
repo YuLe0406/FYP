@@ -91,25 +91,30 @@ header {
 
 /* Banner Section */
 .banner-container {
-  width: 100vw;  /* Only 1 image width is visible */
-  overflow: hidden; /* Hide the extra images */
+  width: 100vw;
+  height: auto; /* Allow height to adjust dynamically */
+  max-height: 80vh; /* Adjust to prevent image from being too big */
+  overflow: hidden;
   position: relative;
 }
 
 .banner {
   display: flex;
-  transition: transform 1s linear; /* Smooth effect */
+  transition: transform 10s ease-in-out;/* Smooth effect */
   width: calc(100vw * 6); /* Adjust based on total images */
 }
 
 .banner img {
-  width: 100vw; /* Makes sure each image takes full viewport width */
-  height: 650px; /* Keeps aspect ratio */
-  object-fit: contain; /* Shows the whole image */
+  width: 100vw;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 80vh; /* Prevent oversized images */
+  object-fit: contain; /* Ensure full image is visible */
 }
 
 body, html {
   overflow-x: hidden;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
 .banner-btn {
