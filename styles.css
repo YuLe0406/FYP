@@ -23,13 +23,15 @@ header {
 
 .search-container {
   display: flex;
-  flex-grow: 1; /* Takes up available space */
+  flex-grow: 1;
   justify-content: center;
+  min-width: 300px;
+  max-width: 500px;
   position: relative;
 }
 
 .search-container input {
-  width: 50%; /* Adjust the width */
+  width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -38,12 +40,12 @@ header {
 
 .search-container button {
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  background: black;
+  background: white;
   border: none;
-  color: white;
+  color: black;
   padding: 5px;
   border-radius: 50%;
   cursor: pointer;
@@ -53,6 +55,7 @@ header {
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .icon {
@@ -65,7 +68,6 @@ header {
 .icon i {
   margin-right: 5px;
 }
-
 
 
 /* Discount Label */
@@ -92,40 +94,192 @@ header {
 
 /* Banner Section */
 .banner-container {
-  position: relative;
-  width: 100%;
+  width: 100vw;
+  height: auto; /* Allow height to adjust dynamically */
+  max-height: 80vh; /* Adjust to prevent image from being too big */
   overflow: hidden;
+  position: relative;
+  background-color: white;
 }
 
 .banner {
   display: flex;
-  transition: transform 0.5s ease-in-out;
+  transition: transform 10s ease-in-out;/* Smooth effect */
+  width: calc(100vw * 6); /* Adjust based on total images */
 }
 
 .banner img {
-  width: 100%;
-  height: auto;
+  width: 100vw;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 80vh; /* Prevent oversized images */
+  object-fit: contain; /* Ensure full image is visible */
 }
 
-/* Banner Controls */
-.banner-controls {
+body, html {
+  overflow-x: hidden;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+}
+
+.banner-btn {
   position: absolute;
   top: 50%;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
   transform: translateY(-50%);
+  background: white;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 21px;
+  z-index: 10;
+  border-radius: 50%;
 }
 
-.banner-controls button {
-  background: rgba(0, 0, 0, 0.5);
+
+/* Left and Right button positions */
+.left-btn { left: 10px; }
+.right-btn { right: 10px; }
+
+/* Dots indicator styles */
+.dots-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: gray;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: white; /* Highlight the active dot */
+}
+
+/*information section*/
+.info-section {
+  background-color: white;
+  padding: 50px 20px;
+  text-align: left;
+}
+
+.info-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.info-box {
+  padding: 0;
+}
+
+.info-box h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.info-box p, .info-box ul {
+  font-size: 14px;
+  color: black;
+  line-height: 1.6;
+}
+
+.info-box ul {
+  padding-left: 20px;
+}
+
+.info-box ul li {
+  margin-bottom: 8px;
+}
+
+
+/*footer section*/
+.footer {
+  background-color: #222;
+  color: white;
+  padding: 40px 20px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-column {
+  width: 20%;
+  min-width: 200px;
+  margin-bottom: 20px;
+}
+
+.footer-column h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 5px;
+}
+
+.footer-column ul li a {
+  color: white;
+  text-decoration: none;
+  opacity: 0.8;
+  font-size: 13px;
+}
+
+.footer-column ul li a:hover {
+  opacity: 1;
+}
+
+.footer-column p {
+  color: white;
+  text-decoration: none;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+.newsletter form {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsletter input {
+  padding: 8px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.newsletter button {
+  padding: 8px;
+  background: red;
   color: white;
   border: none;
-  font-size: 24px;
-  padding: 10px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
-.banner-controls button:hover {
-  background: rgba(0, 0, 0, 0.8);
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+  margin-top: 20px;
 }
