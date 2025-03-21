@@ -23,13 +23,15 @@ header {
 
 .search-container {
   display: flex;
-  flex-grow: 1; /* Takes up available space */
+  flex-grow: 1;
   justify-content: center;
+  min-width: 300px;
+  max-width: 500px;
   position: relative;
 }
 
 .search-container input {
-  width: 50%; /* Adjust the width */
+  width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -38,12 +40,12 @@ header {
 
 .search-container button {
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  background: black;
+  background: white;
   border: none;
-  color: white;
+  color: black;
   padding: 5px;
   border-radius: 50%;
   cursor: pointer;
@@ -53,6 +55,7 @@ header {
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .icon {
@@ -159,10 +162,11 @@ body, html {
   background: white; /* Highlight the active dot */
 }
 
+/*information section*/
 .info-section {
-  background-color: #f8f8f8;
+  background-color: white; /* Remove the gray background */
   padding: 50px 20px;
-  text-align: center;
+  text-align: left; /* Align text to the left */
 }
 
 .info-container {
@@ -174,22 +178,23 @@ body, html {
 }
 
 .info-box {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background: none; /* Remove the white background */
+  padding: 0; /* Remove padding */
+  border-radius: 0; /* Remove rounded corners */
+  box-shadow: none; /* Remove the shadow */
 }
 
 .info-box h2 {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
 .info-box p {
-  font-size: 16px;
-  color: #555;
+  font-size: 15px;
+  color: black; /* Make text darker for better readability */
 }
+
 
 .footer {
   background-color: #222;
@@ -212,7 +217,7 @@ body, html {
 }
 
 .footer-column h3 {
-  font-size: 18px;
+  font-size: 15px;
   margin-bottom: 10px;
 }
 
@@ -229,10 +234,18 @@ body, html {
   color: white;
   text-decoration: none;
   opacity: 0.8;
+  font-size: 13px;
 }
 
 .footer-column ul li a:hover {
   opacity: 1;
+}
+
+.footer-column p {
+  color: white;
+  text-decoration: none;
+  opacity: 0.8;
+  font-size: 14px;
 }
 
 .newsletter form {
