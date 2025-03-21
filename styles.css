@@ -99,6 +99,7 @@ header {
   max-height: 80vh; /* Adjust to prevent image from being too big */
   overflow: hidden;
   position: relative;
+  background-color: white;
 }
 
 .banner {
@@ -164,9 +165,9 @@ body, html {
 
 /*information section*/
 .info-section {
-  background-color: white; /* Remove the gray background */
+  background-color: white;
   padding: 50px 20px;
-  text-align: left; /* Align text to the left */
+  text-align: left;
 }
 
 .info-container {
@@ -174,28 +175,35 @@ body, html {
   margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 40px;
 }
 
 .info-box {
-  background: none; /* Remove the white background */
-  padding: 0; /* Remove padding */
-  border-radius: 0; /* Remove rounded corners */
-  box-shadow: none; /* Remove the shadow */
+  padding: 0;
 }
 
 .info-box h2 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.info-box p {
-  font-size: 15px;
-  color: black; /* Make text darker for better readability */
+.info-box p, .info-box ul {
+  font-size: 14px;
+  color: black;
+  line-height: 1.6;
+}
+
+.info-box ul {
+  padding-left: 20px;
+}
+
+.info-box ul li {
+  margin-bottom: 8px;
 }
 
 
+/*footer section*/
 .footer {
   background-color: #222;
   color: white;
