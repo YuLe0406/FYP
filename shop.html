@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | CTRL+X</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">CTRL+X</div>
+        <div class="filters">
+            <select id="categoryFilter">
+                <option value="all">All</option>
+                <option value="oversized-t">Oversized T-Shirts</option>
+                <option value="hoodie">Hoodies</option>
+            </select>
+            <select id="sortPrice">
+                <option value="default">Sort By</option>
+                <option value="low-to-high">Price: Low to High</option>
+                <option value="high-to-low">Price: High to Low</option>
+                <option value="new-arrivals">New Arrivals</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <div id="product-list" class="product-grid">
+            <!-- Products will be dynamically loaded here -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

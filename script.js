@@ -106,3 +106,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
     restartAutoSlide();
 });
+
+
+const products = [
+    { id: 1, name: "Oversized T-Shirt Black", price: 59.90, image: "black-tshirt.jpg", category: "oversized-t" },
+    { id: 2, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
+    { id: 3, name: "Hoodie Gray", price: 89.90, image: "gray-hoodie.jpg", category: "hoodie" },
+    { id: 4, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" }
+];
+
+// Load products dynamically
+function loadProducts(filter = "all", sort = "default") {
+    let productList = document.getElementById("product-list");
+    productList.innerHTML = "";
+
+    let filteredProducts = products.filter(p => filter === "all" || p.category === filter);
+
+    if (sort === "low-to-high") filteredProducts.sort((a, b) => a.price - b.price);
+    if (sort === "high-to-low") filteredProducts.sort((a, b) => b.price - a.price);
+
+    filteredProducts.forEach(product => {
+        let productCard = document.createElement("div");
+        productCard.className = "product-card";
+        productCard.innerHTML = `
+            <img src="images/${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>RM ${product.price.toFixed(2)}</p>
+            <button onclick="viewProduct(${product.id})">View Details</button>
+        `;
+        productList.appendChild(productCard);
+    });
+}
+
+// Navigate to product details page
+function viewProduct(id) {
+    window.location.href = `product-details.html?id=${id}`;
+}
+
+// Filtering & Sorting
+document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));
+document.getElementById("sortPrice").addEventListener("change", (e) => loadProducts("all", e.target.value));
+
+window.onload = () => loadProducts();
