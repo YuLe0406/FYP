@@ -29,6 +29,14 @@ header {
   font-weight: bold;
 }
 
+.logo a {
+  text-decoration: none;  /* Removes underline */
+  color: white; /* Adjust color to match your theme */
+  font-weight: bold;
+  font-size: 24px; /* Adjust size */
+}
+
+
 .search-container {
   display: flex;
   flex-grow: 1;
@@ -218,15 +226,15 @@ body, html {
 .footer {
   background-color: #222;
   color: white;
-  padding: 40px 20px;
+  padding:40px 20px 10px 20px
 }
 
 .footer-container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content:right;
 }
 
 .footer-column {
@@ -363,6 +371,21 @@ body, html {
   max-width: 400px;
 }
 
+.product-info img{
+  max-width: 80%;
+  height: auto;
+  padding-right: 10px;
+}
+
+.product-details select{
+  padding: 5px;
+  width: 130px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border: none;
+  outline: none;
+}
 
 .size-selector button {
   margin: 5px;
@@ -373,6 +396,7 @@ body, html {
 
 .quantity-selector {
   margin-top: 10px;
+
 }
 
 .add-to-cart, .add-to-wishlist {
@@ -410,15 +434,6 @@ body, html {
   margin: 5px 0;
 }
 
-.color-box {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.black { background: black; }
 
 details {
   margin-top: 10px;
@@ -473,10 +488,12 @@ details {
   transition: 0.3s;
 }
 
+.product-info .wishlist-container i:hover {
+  color: #A00000; /* Red heart on hover */
+}
+
 .product-info .wishlist-container a:hover {
   color: #A00000; /* Red text on hover */
 }
 
-.product-info .wishlist-container i:hover {
-  color: #A00000; /* Red heart on hover */
-}
+
