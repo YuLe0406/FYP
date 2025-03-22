@@ -6,6 +6,9 @@
     <title>Product Details | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
+    <!-- Add this to the <head> of your HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 </head>
 <body onload="loadProductDetails()">
 
@@ -64,7 +67,11 @@
 
                 <!-- Buttons -->
                 <button onclick="addToCart()">Add to Bag</button>
-                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <div class="wishlist-container">
+                    <i class="far fa-heart"></i>
+                    <a href="#" onclick="addToWishlist()">Add to Wishlist</a>
+                </div>
+                
 
                 <!-- Expandable Product Info -->
                 <details>

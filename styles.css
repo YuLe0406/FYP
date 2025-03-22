@@ -17,8 +17,8 @@ header {
   color: white;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
+  justify-content: space-evenly;
+  padding: 10px 0px 10px 0px;
   z-index: 1000;  /* Keeps it above other elements */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds a slight shadow */
 }
@@ -32,10 +32,11 @@ header {
 .search-container {
   display: flex;
   flex-grow: 1;
-  justify-content: center;
+  justify-content:center;
   min-width: 300px;
   max-width: 500px;
   position: relative;
+  
 }
 
 .search-container input {
@@ -61,9 +62,10 @@ header {
 
 .icons {
   display: flex;
-  gap: 15px;
+  gap: 18px;
   align-items: center;
   flex-shrink: 0;
+
 }
 
 .icon {
@@ -337,19 +339,30 @@ body, html {
 }
 
 /* Product Details */
+/* Center Align Product Details */
 .product-details {
   display: flex;
-  gap: 20px;
-  padding: 20px;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Align vertically */
+  text-align: left;
+  gap: 40px; /* Add space between image and text */
+  max-width: 900px;
+  margin: 40px auto; /* Center it */
 }
 
-.product-details img {
+/* Fix the Product Image */
+.product-image img {
+  max-width: 400px;
+  height: auto;
+  display: block;
+}
+
+/* Product Info Styling */
+.product-info {
+  flex: 1;
   max-width: 400px;
 }
 
-.product-info {
-  max-width: 500px;
-}
 
 .size-selector button {
   margin: 5px;
@@ -416,4 +429,54 @@ details {
   font-size: 18px;
   margin-right: 10px;
   color: black;
+}
+
+/* Add to Bag Button */
+.product-info button {
+  width: 100%; /* Full width */
+  background-color: #A00000; /* Deep red color */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.product-info button:hover {
+  background-color: #800000; /* Darker red on hover */
+}
+
+/* Add to Wishlist Button */
+.product-info .wishlist-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.product-info .wishlist-container i {
+  font-size: 18px;
+  color: gray; /* Default heart icon color */
+  margin-right: 5px;
+  transition: 0.3s;
+}
+
+.product-info .wishlist-container a {
+  text-decoration: none;
+  color: black;
+  font-size: 13px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.product-info .wishlist-container a:hover {
+  color: #A00000; /* Red text on hover */
+}
+
+.product-info .wishlist-container i:hover {
+  color: #A00000; /* Red heart on hover */
 }
