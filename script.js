@@ -122,10 +122,10 @@ const products = [
     { id: 11, name: "Hoodie Green", price: 89.90, image: "4Front.jpeg", category: "hoodie" },
     { id: 12, name: "Hoodie Green", price: 89.90, image: "5Front.jpeg", category: "hoodie" },
     { id: 13, name: "Hoodie Green", price: 89.90, image: "6Front.jpeg", category: "hoodie" },
-    { id: 14, name: "Hoodie Green", price: 89.90, image: "7Front.jpeg", category: "hoodie" },    
+    { id: 14, name: "Hoodie Green", price: 89.90, image: "7Front.jpeg", category: "hoodie" }
 ];
 
-// Load products dynamically
+// Load products dynamically into shop.html
 function loadProducts(filter = "all", sort = "default") {
     let productList = document.getElementById("product-list");
     productList.innerHTML = "";
@@ -153,8 +153,48 @@ function viewProduct(id) {
     window.location.href = `product-details.html?id=${id}`;
 }
 
+function loadProductDetails() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
+    if (!productId) {
+        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
+        return;
+    }
+
+    const product = products.find(p => p.id == productId);
+
+    if (product) {
+        document.getElementById("productImage").src = "images/" + product.image;
+        document.getElementById("productName").textContent = product.name;
+        document.getElementById("productPrice").textContent = "RM " + product.price.toFixed(2);
+    } else {
+        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
+    }
+}
+
 // Filtering & Sorting
 document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));
 document.getElementById("sortPrice").addEventListener("change", (e) => loadProducts("all", e.target.value));
 
-window.onload = () => loadProducts();
+window.onload = () => {
+    if (document.getElementById("product-list")) {
+        loadProducts();
+    }
+};
+
+// Add to cart function
+function addToCart() {
+    let name = document.getElementById("productName").textContent;
+    let price = document.getElementById("productPrice").textContent;
+    let size = document.getElementById("size").value;
+    let quantity = document.getElementById("quantity").value;
+
+    alert(`Added to Cart:\n${name}\nSize: ${size}\nQuantity: ${quantity}\n${price}`);
+}
+
+// Add to wishlist function
+function addToWishlist() {
+    let name = document.getElementById("productName").textContent;
+    alert(`Added to Wishlist:\n${name}`);
+}

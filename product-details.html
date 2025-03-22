@@ -5,39 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
-<body>
+<body onload="loadProductDetails()">
 
+   <!-- Navigation Bar -->
+   <header>
+    <div class="logo">CTRL+X</div>
+    <div class="search-container">
+        <input type="text" placeholder="Search for products, trends, and brands">
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="icons">
+        <a href="#" class="icon"><i class="fas fa-user"></i> Login / Register</a>
+        <a href="#" class="icon"><i class="fas fa-heart"></i></a>
+        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
+    </div>
+</header>
+
+    <!-- Discount Label -->
+    <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
+
+    <!-- Product Details Section -->
     <main>
         <div class="product-details">
-            <img id="product-image" src="" alt="Product Image">
+            <div class="product-image">
+                <img id="productImage" src="" alt="Product Image">
+            </div>
             <div class="product-info">
-                <h1 id="product-name"></h1>
-                <p id="product-price"></p>
-                <div class="size-selector">
-                    <button>S</button>
-                    <button>M</button>
-                    <button>L</button>
-                    <button>XL</button>
+                <h1 id="productName"></h1>
+                <p id="productPrice"></p>
+                <p class="stock-status">✅ In Stock</p>
+
+                <!-- Color Selection -->
+                <label>Color: <span id="productColor">Black</span></label>
+                <div class="color-options">
+                    <span class="color-box black"></span>
                 </div>
-                <div class="quantity-selector">
-                    <label>Quantity:</label>
-                    <input type="number" id="quantity" value="1" min="1">
+
+                <!-- Size Selection -->
+                <label for="size">Size: <a href="images/sizechart.png">Size Chart</a></label>
+                <select id="size">
+                    <option>S</option>
+                    <option>M</option>
+                    <option>L</option>
+                    <option>XL</option>
+                </select>
+
+                <!-- Model Information -->
+                <p>👕 Model Height: 186 cm</p>
+                <p>👕 Model Wearing: M</p>
+
+                <!-- Quantity Selector -->
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" value="1" min="1">
+
+                <!-- Buttons -->
+                <button onclick="addToCart()">Add to Bag</button>
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+
+                <!-- Expandable Product Info -->
+                <details>
+                    <summary>Product Info</summary>
+                    <p><strong>Care Label</strong></p>
+                    <ul>
+                        <li>Do Not Tumble Dry</li>
+                        <li>Do Not Bleach</li>
+                        <li>Do Not Soak</li>
+                        <li>Wash Separately</li>
+                        <li>Cool Iron</li>
+                        <li>Machine Wash, Cold</li>
+                    </ul>
+                    <p><strong>Material</strong></p>
+                    <ul>
+                        <li>80% Polyamide</li>
+                        <li>20% Spandex</li>
+                    </ul>
+                </details>
+
+                <!-- Product Code -->
+                <p>Product Code: P20466080</p>
+
+                <!-- Social Share -->
+                <div class="social-share">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <button class="add-to-cart">Add to Cart</button>
-                <button class="add-to-wishlist">Add to Wishlist</button>
             </div>
         </div>
     </main>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        const product = products.find(p => p.id == productId);
-
-        document.getElementById("product-image").src = "images/" + product.image;
-        document.getElementById("product-name").innerText = product.name;
-        document.getElementById("product-price").innerText = "RM " + product.price.toFixed(2);
-    </script>
 </body>
 </html>

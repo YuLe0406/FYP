@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
+    <!-- Navigation Bar -->
     <header>
         <div class="logo">CTRL+X</div>
+        <div class="search-container">
+            <input type="text" placeholder="Search for products, trends, and brands">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="icons">
+            <a href="#" class="icon"><i class="fas fa-user"></i> Login / Register</a>
+            <a href="#" class="icon"><i class="fas fa-heart"></i></a>
+            <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
+        </div>
+    </header>
+
+    <!-- Discount Label -->
+    <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
+
+    <!-- Product Listing Section -->
+    <main>
+        <h1>Shop Our Collection</h1>
         <div class="filters">
             <select id="categoryFilter">
                 <option value="all">All</option>
@@ -20,12 +42,8 @@
                 <option value="default">Sort By</option>
                 <option value="low-to-high">Price: Low to High</option>
                 <option value="high-to-low">Price: High to Low</option>
-                <option value="new-arrivals">New Arrivals</option>
             </select>
         </div>
-    </header>
-
-    <main>
         <div id="product-list" class="product-grid">
             <!-- Products will be dynamically loaded here -->
         </div>
