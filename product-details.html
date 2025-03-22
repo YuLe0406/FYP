@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | CTRL+X</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main>
+        <div class="product-details">
+            <img id="product-image" src="" alt="Product Image">
+            <div class="product-info">
+                <h1 id="product-name"></h1>
+                <p id="product-price"></p>
+                <div class="size-selector">
+                    <button>S</button>
+                    <button>M</button>
+                    <button>L</button>
+                    <button>XL</button>
+                </div>
+                <div class="quantity-selector">
+                    <label>Quantity:</label>
+                    <input type="number" id="quantity" value="1" min="1">
+                </div>
+                <button class="add-to-cart">Add to Cart</button>
+                <button class="add-to-wishlist">Add to Wishlist</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const product = products.find(p => p.id == productId);
+
+        document.getElementById("product-image").src = "images/" + product.image;
+        document.getElementById("product-name").innerText = product.name;
+        document.getElementById("product-price").innerText = "RM " + product.price.toFixed(2);
+    </script>
+</body>
+</html>

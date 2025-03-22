@@ -112,7 +112,11 @@ const products = [
     { id: 1, name: "Oversized T-Shirt Black", price: 59.90, image: "black-tshirt.jpg", category: "oversized-t" },
     { id: 2, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
     { id: 3, name: "Hoodie Gray", price: 89.90, image: "gray-hoodie.jpg", category: "hoodie" },
-    { id: 4, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" }
+    { id: 4, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
+    { id: 5, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
+    { id: 6, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
+    { id: 7, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
+    { id: 8, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" }
 ];
 
 // Load products dynamically
