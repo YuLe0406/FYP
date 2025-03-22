@@ -109,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 const products = [
-    { id: 1, name: "Oversized T-Shirt Black", price: 59.90, image: "black-tshirt.jpg", category: "oversized-t" },
-    { id: 2, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
-    { id: 3, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
-    { id: 4, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
-    { id: 5, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
-    { id: 6, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
-    { id: 7, name: "Oversized T-Shirt White", price: 59.90, image: "white-tshirt.jpg", category: "oversized-t" },
+    { id: 1, name: "Oversized T-Shirt Black", price: 59.90, image: "1front.png", category: "oversized-t" },
+    { id: 2, name: "Oversized T-Shirt White", price: 59.90, image: "2front.png", category: "oversized-t" },
+    { id: 3, name: "Oversized T-Shirt White", price: 59.90, image: "3front.png", category: "oversized-t" },
+    { id: 4, name: "Oversized T-Shirt White", price: 59.90, image: "4front.png", category: "oversized-t" },
+    { id: 5, name: "Oversized T-Shirt White", price: 59.90, image: "5front.png", category: "oversized-t" },
+    { id: 6, name: "Oversized T-Shirt White", price: 59.90, image: "6front.png", category: "oversized-t" },
+    { id: 7, name: "Oversized T-Shirt White", price: 59.90, image: "7front.png", category: "oversized-t" },
     { id: 8, name: "Hoodie Gray", price: 89.90, image: "gray-hoodie.jpg", category: "hoodie" },
     { id: 9, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
     { id: 10, name: "Hoodie Green", price: 89.90, image: "green-hoodie.jpg", category: "hoodie" },
