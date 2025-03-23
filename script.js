@@ -106,3 +106,135 @@ document.addEventListener("DOMContentLoaded", function () {
 
     restartAutoSlide();
 });
+
+
+const products = [
+    { id: 1, name: "White Oversized T", price: 69.90, image: "1front.png", category: "oversized-t" },
+    { id: 2, name: "Black Oversized T", price: 89.90, image: "2front.png", category: "oversized-t" },
+    { id: 3, name: "Red Oversized T", price: 79.90, image: "3front.png", category: "oversized-t" },
+    { id: 4, name: "Clay Oversized T", price: 79.90, image: "4front.png", category: "oversized-t" },
+    { id: 5, name: "Butter Oversized T", price: 79.90, image: "5front.png", category: "oversized-t" },
+    { id: 6, name: "Grey Oversized T", price: 69.90, image: "6front.png", category: "oversized-t" },
+    { id: 7, name: "Orchid Oversized T", price: 79.90, image: "7front.png", category: "oversized-t" },
+    { id: 8, name: "White Hoodie", price: 169.90, image: "1Front.jpeg", category: "hoodie" },
+    { id: 9, name: "Grey Hoodie", price: 169.90, image: "2Front.jpeg", category: "hoodie" },
+    { id: 10, name: "Charcoal Hoodie", price: 169.90, image: "3Front.jpeg", category: "hoodie" },
+    { id: 11, name: "Black Hoodie", price: 169.90, image: "4Front.jpeg", category: "hoodie" },
+    { id: 12, name: "Red Hoodie", price: 169.90, image: "5Front.jpeg", category: "hoodie" },
+    { id: 13, name: "Green Hoodie", price: 169.90, image: "6Front.jpeg", category: "hoodie" },
+    { id: 14, name: "Navy Hoodie", price: 169.90, image: "7Front.jpeg", category: "hoodie" }
+];
+
+// Load products dynamically into shop.html
+function loadProducts(filter = "all", sort = "default") {
+    let productList = document.getElementById("product-list");
+    productList.innerHTML = "";
+
+    let filteredProducts = products.filter(p => filter === "all" || p.category === filter);
+
+    if (sort === "low-to-high") filteredProducts.sort((a, b) => a.price - b.price);
+    if (sort === "high-to-low") filteredProducts.sort((a, b) => b.price - a.price);
+
+    filteredProducts.forEach(product => {
+        let productCard = document.createElement("div");
+        productCard.className = "product-card";
+        productCard.innerHTML = `
+            <img src="images/${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>RM ${product.price.toFixed(2)}</p>
+            <button onclick="viewProduct(${product.id})">View Details</button>
+        `;
+        productList.appendChild(productCard);
+    });
+}
+
+// Navigate to product details page
+function viewProduct(id) {
+    window.location.href = `product-details.html?id=${id}`;
+}
+
+function loadProductDetails() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
+    if (!productId) {
+        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
+        return;
+    }
+
+    const product = products.find(p => p.id == productId);
+
+    if (product) {
+        document.getElementById("productImage").src = "images/" + product.image;
+        document.getElementById("productName").textContent = product.name;
+        document.getElementById("productPrice").textContent = "RM " + product.price.toFixed(2);
+    } else {
+        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
+    }
+}
+
+// Filtering & Sorting
+document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));
+document.getElementById("sortPrice").addEventListener("change", (e) => loadProducts("all", e.target.value));
+
+window.onload = () => {
+    if (document.getElementById("product-list")) {
+        loadProducts();
+    }
+};
+
+// Add to cart function
+function addToCart() {
+    let urlParams = new URLSearchParams(window.location.search);
+    let productId = urlParams.get("id");
+
+    let product = products.find(p => p.id == productId);
+    if (!product) {
+        alert("Product not found!");
+        return;
+    }
+
+    let sizeDropdown = document.getElementById("size-select");
+
+    // Ensure the dropdown exists in the page
+    if (!sizeDropdown) {
+        alert("Size selection dropdown not found!");
+        return;
+    }
+
+    let selectedSize = sizeDropdown.value;
+    
+    if (!selectedSize) {
+        alert("Please select a size!");
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Check if the exact same product with the same size exists
+    let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({ 
+            id: product.id, 
+            name: product.name, 
+            price: product.price, 
+            image: product.image,
+            size: selectedSize, 
+            quantity: 1 
+        });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to Cart!");
+}
+
+
+
+// Add to wishlist function
+function addToWishlist() {
+    let name = document.getElementById("productName").textContent;
+    alert(`Added to Wishlist:\n${name}`);
+}
