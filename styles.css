@@ -379,7 +379,17 @@ body, html {
 
 .product-details select{
   padding: 5px;
-  width: 130px;
+  width: 105px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border: none;
+  outline: none;
+}
+
+.product-details input{
+  padding: 5px;
+  width: 40px;
   border-radius: 5px;
   background-color: white;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -412,6 +422,7 @@ body, html {
   gap: 10px;
   margin: 10px;
 }
+
 
 .filters select{
   padding: 5px;
@@ -496,4 +507,6 @@ details {
   color: #A00000; /* Red text on hover */
 }
 
-
+.product-grid p{
+  font-size: 18px;
+}
