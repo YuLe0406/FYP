@@ -185,13 +185,25 @@ window.onload = () => {
 
 // Add to cart function
 function addToCart() {
-    let name = document.getElementById("productName").textContent;
-    let price = document.getElementById("productPrice").textContent;
-    let size = document.getElementById("size").value;
-    let quantity = document.getElementById("quantity").value;
+    let urlParams = new URLSearchParams(window.location.search);
+    let productId = urlParams.get("id");
 
-    alert(`Added to Cart:\n${name}\nSize: ${size}\nQuantity: ${quantity}\n${price}`);
+    let product = products.find(p => p.id == productId);
+    if (!product) return;
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let existingItem = cart.find(item => item.id == product.id);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to Cart!");
 }
+
 
 // Add to wishlist function
 function addToWishlist() {
