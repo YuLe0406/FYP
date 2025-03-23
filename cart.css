@@ -61,7 +61,7 @@ input{
 }
 
 .cart-item button:hover{
-    background-color: rgb(0, 255, 115);
+    background-color: yellow;
     color: black;
 }
 

@@ -24,7 +24,7 @@
     <div class="icons">
         <a href="login.html" class="icon"><i class="fas fa-user"></i> Login / Register</a>
         <a href="#" class="icon"><i class="fas fa-heart"></i></a>
-        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
+        <a href="cart.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
     </div>
 </header>
 
@@ -48,11 +48,13 @@
                 <label for="size">
                 <p>Size:</p>
                 <img src="images/sizechart.png" alt="Size Chart"></label>
-                <select id="size">
-                    <option>S</option>
-                    <option>M</option>
-                    <option>L</option>
-                    <option>XL</option>
+                <label for="size-select">Size:</label>
+                <select id="size-select">
+                    <option value="">Select Size</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
                 </select>
 
                 <!-- Model Information -->
@@ -64,7 +66,7 @@
                 <input type="number" id="quantity" value="1" min="1" max="15">
 
                 <!-- Buttons -->
-                <button onclick="addToCart()">Add to Bag</button>
+                <button onclick="addToCart()">Add to Cart</button>
                 <div class="wishlist-container">
                     <i class="far fa-heart"></i>
                     <a href="#" onclick="addToWishlist()">Add to Wishlist</a>

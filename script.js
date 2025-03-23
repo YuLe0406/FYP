@@ -189,20 +189,48 @@ function addToCart() {
     let productId = urlParams.get("id");
 
     let product = products.find(p => p.id == productId);
-    if (!product) return;
+    if (!product) {
+        alert("Product not found!");
+        return;
+    }
+
+    let sizeDropdown = document.getElementById("size-select");
+
+    // Ensure the dropdown exists in the page
+    if (!sizeDropdown) {
+        alert("Size selection dropdown not found!");
+        return;
+    }
+
+    let selectedSize = sizeDropdown.value;
+    
+    if (!selectedSize) {
+        alert("Please select a size!");
+        return;
+    }
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let existingItem = cart.find(item => item.id == product.id);
+
+    // Check if the exact same product with the same size exists
+    let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
 
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ 
+            id: product.id, 
+            name: product.name, 
+            price: product.price, 
+            image: product.image,
+            size: selectedSize, 
+            quantity: 1 
+        });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
     alert("Added to Cart!");
 }
+
 
 
 // Add to wishlist function
