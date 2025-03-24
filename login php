@@ -5,7 +5,6 @@ include 'config.php';
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-// 使用预处理防止 SQL 注入
 $stmt = $conn->prepare("SELECT * FROM USER WHERE U_Username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -15,7 +14,7 @@ if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     if (password_verify($password, $user['U_Password'])) {
         $_SESSION['user_id'] = $user['U_ID'];
-        header("Location: index.html"); // 登录成功后跳转到主页
+        header("Location: index.html"); 
     } else {
         echo "Invalid password!";
     }
