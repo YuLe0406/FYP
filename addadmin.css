@@ -71,11 +71,6 @@
     transition: color 0.3s ease;
 }
 
-.back-link:hover {
-    color: #0056b3; /* Darker blue on hover */
-    text-decoration: underline; /* Ensure underline remains on hover */
-}
-
 /* Recent Admins Section Styles */
 .recent-admins {
     background: #fff;

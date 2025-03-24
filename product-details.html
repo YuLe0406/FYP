@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PD | CTRL+X</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <!-- Add this to the <head> of your HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+</head>
+<body onload="loadProductDetails()">
+
+   <!-- Navigation Bar -->
+   <header>
+    <div class="logo">
+        <a href="index.html">CTRL+X</a>
+    </div> 
+    <div class="search-container">
+        <input type="text" placeholder="Search for products, trends, and brands">
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="icons">
+        <a href="login.html" class="icon"><i class="fas fa-user"></i> Login / Register</a>
+        <a href="#" class="icon"><i class="fas fa-heart"></i></a>
+        <a href="cart.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+    </div>
+</header>
+
+    <!-- Discount Label -->
+    <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
+
+    <!-- Product Details Section -->
+    <main>
+        <div class="product-details">
+            <div class="product-image">
+                <img id="productImage" src="" alt="Product Image">
+            </div>
+            <div class="product-info">
+                <h1 id="productName"></h1>
+                <p id="productPrice"></p>
+                <p class="stock-status">✅ In Stock</p>
+
+                <!-- Size Selection -->
+                <label for="size">
+                <p>Size:</p>
+                <img src="images/sizechart.png" alt="Size Chart"></label>
+                <label for="size-select">Size:</label>
+                <select id="size-select">
+                    <option value="">Select Size</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select>
+
+                <!-- Model Information -->
+                <p>👕 Model Height: 186 cm</p>
+                <p>👕 Model Wearing: M</p>
+
+                <!-- Quantity Selector -->
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" value="1" min="1" max="15">
+
+                <!-- Buttons -->
+                <button onclick="addToCart()">Add to Cart</button>
+                <div class="wishlist-container">
+                    <i class="far fa-heart"></i>
+                    <a href="#" onclick="addToWishlist()">Add to Wishlist</a>
+                </div>
+                
+
+                <!-- Expandable Product Info -->
+                <details>
+                    <summary>Product Info</summary>
+                    <p><strong>Care Label</strong></p>
+                    <ul>
+                        <li>Do Not Tumble Dry</li>
+                        <li>Do Not Bleach</li>
+                        <li>Do Not Soak</li>
+                        <li>Wash Separately</li>
+                        <li>Cool Iron</li>
+                        <li>Machine Wash, Cold</li>
+                    </ul>
+                    <p><strong>Material</strong></p>
+                    <ul>
+                        <li>80% Polyamide</li>
+                        <li>20% Spandex</li>
+                    </ul>
+                </details>
+
+                <!-- Product Code -->
+                <p>Product Code: P20466080</p>
+
+                <!-- Social Share -->
+                <div class="social-share">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Delivery</h3>
+                <ul>
+                    <li><a href="#">Delivery & Shipping</a></li>
+                    <li><a href="#">Returns & Exchange</a></li>
+                    <li><a href="#">Track Your Order</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-column">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-column">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-column">
+                <h3>Customer Service</h3>
+                <p>📞 +6010 828 0026</p>
+                <p>📧 support@ctrlx.com</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Operation Time</h3>
+                <p>Mon - Fri: 9:30am - 6:00pm</p>
+            </div>
+    
+            <div class="footer-column newsletter">
+                <h3>Sign up for our Newsletter</h3>
+                <form>
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    
+        <div class="footer-bottom">
+            <p>© 2025 CTRL+X. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
