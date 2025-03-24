@@ -1,7 +1,7 @@
 # CTRL+X - Online Clothing Store  
 
 ## 📌 Project Overview  
-**YULEJIA** is an online clothing store designed to provide users with a seamless and efficient shopping experience. This platform allows customers to browse various fashion categories, view product details, and complete secure transactions. The system also includes an admin dashboard for managing products, orders, and users efficiently.  
+**CTRL+X** is an online clothing store designed to provide users with a seamless and efficient shopping experience. This platform allows customers to browse various fashion categories, view product details, and complete secure transactions. The system also includes an admin dashboard for managing products, orders, and users efficiently.  
 
 ## 🚀 Features  
 
