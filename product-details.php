@@ -60,7 +60,7 @@ $conn->close();
 <main>
     <div class="product-details">
         <div class="product-image">
-            <img id="productImage" src="images/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">            
+        <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
         </div>
         <div class="product-info">
             <h1><?php echo $product['P_Name']; ?></h1>
