@@ -1,96 +1,103 @@
+<?php
+include 'db.php'; // Include database connection
+
+// Get product ID from URL
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    echo "<h2>Product Not Found</h2>";
+    exit;
+}
+
+$product_id = intval($_GET['id']); // Convert to integer to prevent SQL injection
+
+// Fetch product details from the database
+$sql = "SELECT * FROM PRODUCT WHERE P_ID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $product_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+    echo "<h2>Product Not Found</h2>";
+    exit;
+}
+
+$product = $result->fetch_assoc();
+
+// Fetch product variants (color, size, quantity)
+$sql_variants = "SELECT * FROM PRODUCT_VARIANTS WHERE P_ID = ?";
+$stmt = $conn->prepare($sql_variants);
+$stmt->bind_param("i", $product_id);
+$stmt->execute();
+$variants_result = $stmt->get_result();
+
+$variants = [];
+while ($variant = $variants_result->fetch_assoc()) {
+    $variants[] = $variant;
+}
+
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | CTRL+X</title>
+    <title><?php echo $product['P_Name']; ?> | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-<?php include 'header.php'; ?>
+<?php include 'header.php'; ?> <!-- Include header -->
 
-<!-- Discount Label -->
 <div class="discount-label">
     <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
 </div>
 
-<!-- Product Details Section -->
 <main>
     <div class="product-details">
         <div class="product-image">
-            <img id="productImage" src="" alt="Product Image">
+            <img id="productImage" src="images/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">
         </div>
         <div class="product-info">
-            <h1 id="productName"></h1>
-            <p id="productPrice"></p>
+            <h1><?php echo $product['P_Name']; ?></h1>
+            <p>RM <?php echo number_format($product['P_Price'], 2); ?></p>
             <p class="stock-status">✅ In Stock</p>
 
             <!-- Size Selection -->
-            <label for="size">
-            <p>Size:</p>
-            <img src="images/sizechart.png" alt="Size Chart"></label>
             <label for="size-select">Size:</label>
             <select id="size-select">
                 <option value="">Select Size</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
+                <?php foreach ($variants as $variant) { ?>
+                    <option value="<?php echo $variant['P_Size']; ?>"><?php echo $variant['P_Size']; ?></option>
+                <?php } ?>
             </select>
-
-            <!-- Model Information -->
-            <p>👕 Model Height: 186 cm</p>
-            <p>👕 Model Wearing: M</p>
 
             <!-- Quantity Selector -->
             <label for="quantity">Quantity:</label>
             <input type="number" id="quantity" value="1" min="1" max="15">
 
             <!-- Buttons -->
-            <button onclick="addToCart()">Add to Cart</button>
+            <button onclick="addToCart(<?php echo $product['P_ID']; ?>)">Add to Cart</button>
             <div class="wishlist-container">
                 <i class="far fa-heart"></i>
                 <a href="#" onclick="addToWishlist()">Add to Wishlist</a>
             </div>
 
-            <!-- Expandable Product Info -->
             <details>
                 <summary>Product Info</summary>
-                <p><strong>Care Label</strong></p>
-                <ul>
-                    <li>Do Not Tumble Dry</li>
-                    <li>Do Not Bleach</li>
-                    <li>Do Not Soak</li>
-                    <li>Wash Separately</li>
-                    <li>Cool Iron</li>
-                    <li>Machine Wash, Cold</li>
-                </ul>
-                <p><strong>Material</strong></p>
-                <ul>
-                    <li>80% Polyamide</li>
-                    <li>20% Spandex</li>
-                </ul>
+                <p><strong>Material:</strong> 80% Polyamide, 20% Spandex</p>
+                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, cool iron.</p>
             </details>
 
-            <!-- Product Code -->
-            <p>Product Code: P20466080</p>
-
-            <!-- Social Share -->
-            <div class="social-share">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
-            </div>
+            <p>Product Code: <?php echo $product['P_ID']; ?></p>
         </div>
     </div>
 </main>
 
-<script src="script.js"></script>
-
-<?php include 'footer.php'; ?>
+<?php include 'footer.php'; ?> <!-- Include footer -->
 
 </body>
 </html>
