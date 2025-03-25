@@ -108,7 +108,22 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-
+const products = [
+    { id: 1, name: "White Oversized T", price: 69.90, image: "1front.png", category: "oversized-t" },
+    { id: 2, name: "Black Oversized T", price: 89.90, image: "2front.png", category: "oversized-t" },
+    { id: 3, name: "Red Oversized T", price: 79.90, image: "3front.png", category: "oversized-t" },
+    { id: 4, name: "Clay Oversized T", price: 79.90, image: "4front.png", category: "oversized-t" },
+    { id: 5, name: "Butter Oversized T", price: 79.90, image: "5front.png", category: "oversized-t" },
+    { id: 6, name: "Grey Oversized T", price: 69.90, image: "6front.png", category: "oversized-t" },
+    { id: 7, name: "Orchid Oversized T", price: 79.90, image: "7front.png", category: "oversized-t" },
+    { id: 8, name: "White Hoodie", price: 169.90, image: "1Front.jpeg", category: "hoodie" },
+    { id: 9, name: "Grey Hoodie", price: 169.90, image: "2Front.jpeg", category: "hoodie" },
+    { id: 10, name: "Charcoal Hoodie", price: 169.90, image: "3Front.jpeg", category: "hoodie" },
+    { id: 11, name: "Black Hoodie", price: 169.90, image: "4Front.jpeg", category: "hoodie" },
+    { id: 12, name: "Red Hoodie", price: 169.90, image: "5Front.jpeg", category: "hoodie" },
+    { id: 13, name: "Green Hoodie", price: 169.90, image: "6Front.jpeg", category: "hoodie" },
+    { id: 14, name: "Navy Hoodie", price: 169.90, image: "7Front.jpeg", category: "hoodie" }
+];
 
 // Load products dynamically into shop.html
 function loadProducts(filter = "all", sort = "default") {
