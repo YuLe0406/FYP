@@ -47,6 +47,7 @@ $conn->close();
     <title><?php echo $product['P_Name']; ?> | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
