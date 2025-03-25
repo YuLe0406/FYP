@@ -88,7 +88,7 @@ $total_price = 0;
     </section>
 </main>
 
-<?php include 'footer.php'; // Include footer ?>
+<?php include 'footer.php'; ?>  <!-- Include footer -->
 
 </body>
 </html>
