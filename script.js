@@ -150,7 +150,7 @@ function loadProducts(filter = "all", sort = "default") {
 
 // Navigate to product details page
 function viewProduct(id) {
-    window.location.href = `product-details.html?id=${id}`;
+    window.location.href = `product-details.php?id=${id}`;
 }
 
 function loadProductDetails() {
