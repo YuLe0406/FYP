@@ -9,6 +9,18 @@ $cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 $total_price = 0;
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $product['P_Name']; ?> | CTRL+X</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
 <main>
     <h1>Your Cart</h1>
     <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
