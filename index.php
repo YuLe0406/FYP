@@ -37,6 +37,31 @@
 
     <div class="dots-container"></div> <!-- Dots will be generated dynamically -->
 
+    <section class="info-section">
+        <div class="info-container">
+            <div class="info-box">
+                <h2>About CTRL+X – Fashion Redefined</h2>
+                <p>CTRL+X is not just an online clothing store; it's a movement to break away from the ordinary and embrace the future of fashion. Our collection features cutting-edge styles, high-quality materials, and bold designs to help you express your individuality.</p>
+            </div>
+    
+            <div class="info-box">
+                <h2>Why Choose CTRL+X?</h2>
+                <ul>
+                    <li><strong>Trendy & Futuristic Styles:</strong> We bring you the latest trends with a modern edge.</li>
+                    <li><strong>High-Quality Materials:</strong> Every piece is designed for comfort and durability.</li>
+                    <li><strong>Affordable Pricing:</strong> Premium fashion at budget-friendly prices.</li>
+                    <li><strong>Fast & Secure Shipping:</strong> Get your orders delivered quickly and securely.</li>
+                    <li><strong>Exclusive Collections:</strong> Limited edition designs that make you stand out.</li>
+                </ul>
+            </div>
+    
+            <div class="info-box">
+                <h2>Join the CTRL+X Movement</h2>
+                <p>Be part of a community that values bold fashion and unique expression. Follow us on social media, subscribe to our newsletter, and stay updated on exclusive deals and new arrivals!</p>
+            </div>
+        </div>
+    </section>
+
     <?php include 'footer.php'; ?> <!-- Include Footer -->
 
 </body>
