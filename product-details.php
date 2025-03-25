@@ -66,8 +66,10 @@ $conn->close();
             <p>RM <?php echo number_format($product['P_Price'], 2); ?></p>
             <p class="stock-status">✅ In Stock</p>
 
-            <!-- Size Selection -->
-            <label for="size-select">Size:</label>
+             <!-- Size Selection -->
+             <label for="size">
+            <p>Size:</p>
+            <img src="images/sizechart.png" alt="Size Chart"></label>
             <select id="size-select">
                 <option value="">Select Size</option>
                 <?php foreach ($variants as $variant) { ?>
