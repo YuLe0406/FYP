@@ -1,3 +1,14 @@
+/* General Layout */
+.container {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
+}
+
 /* Add Category Form Styles */
 .add-category {
     background: #fff;
