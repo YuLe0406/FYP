@@ -1,3 +1,25 @@
+<?php
+include 'db.php';
+
+// Handle AJAX request for customer search
+if (isset($_GET['q'])) {
+    $search = $_GET['q'];
+    $stmt = $conn->prepare("SELECT customer_username FROM Customer WHERE customer_username LIKE ?");
+    $searchTerm = "%" . $search . "%";
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $customers = [];
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = $row;
+    }
+
+    echo json_encode($customers);
+    exit(); // Stop further output
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,17 +39,19 @@
                 <li><a href="admin.html">Admin</a></li>
                 <li><a href="category.html">Category</a></li>
                 <li><a href="product.html">Product</a></li>
-                <li><a href="customer.html">Customer List</a></li>             
+                <li><a href="customer.html">Customer List</a></li>
                 <li><a href="orderlist.html">Order List</a></li>
-                <li><a href="report.html"><b>Generate Report</b></a></li>
+                <li><a href="report.php"><b>Generate Report</b></a></li>
+                <li><a href="banner.php">Banner</a></li>
             </ul>
-
+        
             <div class="sidebar-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                  </svg>
+                <a href="admin_profile.php">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                    </svg>
+                </a>
             </div>
-            
         </nav>
 
         <!-- Main Content -->
@@ -44,8 +68,17 @@
                             <option value="sales">Sales Report</option>
                             <option value="orders">Orders Report</option>
                             <option value="products">Products Report</option>
+                            <option value="customer">Customer Report</option>
                         </select>
                     </div>
+
+                    <!-- Customer Search Field (Hidden by Default) -->
+                    <div class="form-group" id="customerSelectGroup" style="display: none;">
+                        <label for="customerSearch">Search Customer:</label>
+                        <input type="text" id="customerSearch" name="customerSearch" placeholder="Type to search...">
+                        <div id="customerResults"></div>
+                    </div>
+
                     <div class="form-group">
                         <label for="startDate">Start Date:</label>
                         <input type="date" id="startDate" name="startDate" required>
@@ -61,7 +94,6 @@
                             <option value="1">Men's Clothing</option>
                             <option value="2">Women's Clothing</option>
                             <option value="3">Unisex</option>
-                            <!-- Add more options dynamically from the CATEGORIES table -->
                         </select>
                     </div>
                     <button type="submit" class="submit-btn">Generate Report</button>
@@ -83,7 +115,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Example Row (Replace with dynamic data from your database) -->
                         <tr>
                             <td>768648</td>
                             <td>Steve</td>
@@ -92,40 +123,57 @@
                             <td>
                                 <ul>
                                     <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 2, <strong>Price:</strong> $25.00</li>
-                                    <li><strong>Product:</strong> Women's Summer Dress, <strong>Quantity:</strong> 1, <strong>Price:</strong> $19.60</li>
                                 </ul>
                             </td>
                             <td><span class="status processing">Processing</span></td>
                         </tr>
-                        <tr>
-                            <td>768649</td>
-                            <td>Amber</td>
-                            <td>Oct 21, 2023</td>
-                            <td>$62.00</td>
-                            <td>
-                                <ul>
-                                    <li><strong>Product:</strong> Unisex Hoodie, <strong>Quantity:</strong> 1, <strong>Price:</strong> $15.00</li>
-                                </ul>
-                            </td>
-                            <td><span class="status shipped">Shipped</span></td>
-                        </tr>
-                        <tr>
-                            <td>768650</td>
-                            <td>Michael</td>
-                            <td>Oct 18, 2023</td>
-                            <td>$34.00</td>
-                            <td>
-                                <ul>
-                                    <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 1, <strong>Price:</strong> $25.00</li>
-                                </ul>
-                            </td>
-                            <td><span class="status delivered">Delivered</span></td>
-                        </tr>
-                        <!-- Add more rows dynamically -->
                     </tbody>
                 </table>
             </section>
         </main>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const reportType = document.getElementById("reportType");
+        const customerSelectGroup = document.getElementById("customerSelectGroup");
+        const customerSearch = document.getElementById("customerSearch");
+        const customerResults = document.getElementById("customerResults");
+
+        // Show/Hide Customer Search Field Based on Selection
+        reportType.addEventListener("change", function () {
+            if (this.value === "customer") {
+                customerSelectGroup.style.display = "block";
+            } else {
+                customerSelectGroup.style.display = "none";
+            }
+        });
+
+        // AJAX Search for Customers
+        customerSearch.addEventListener("input", function () {
+            let query = this.value;
+            if (query.length > 1) { // Search when 2+ characters are typed
+                fetch("report.php?q=" + query)
+                    .then(response => response.json())
+                    .then(data => {
+                        customerResults.innerHTML = ""; // Clear previous results
+                        data.forEach(customer => {
+                            let div = document.createElement("div");
+                            div.textContent = customer.customer_username;
+                            div.classList.add("customer-item");
+                            div.addEventListener("click", function () {
+                                customerSearch.value = customer.customer_username;
+                                customerResults.innerHTML = "";
+                            });
+                            customerResults.appendChild(div);
+                        });
+                    });
+            } else {
+                customerResults.innerHTML = "";
+            }
+        });
+    });
+    </script>
+
 </body>
 </html>
