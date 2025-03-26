@@ -137,6 +137,7 @@ header {
     outline: none;
   }
   
+/*PROBLEM HERE search button*/  
   .search-container button {
     position: absolute;
     right: 5px;
