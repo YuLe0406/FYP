@@ -17,6 +17,7 @@ CREATE TABLE ADMIN (
     A_Name VARCHAR(255) NOT NULL,
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
+    A_CN VARCHAR(11) NOT NULL,
     A_Level TINYINT(1) NOT NULL CHECK (A_Level IN (0,1)) -- 1 for Superadmin, 0 for Admin
 );
 

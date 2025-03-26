@@ -42,6 +42,7 @@
     font-weight: bold;
 }
 
+/* Input Fields */
 .form-group input,
 .form-group select {
     padding: 10px;
@@ -58,6 +59,22 @@
     outline: none;
 }
 
+/* Contact Number Field */
+#adminContact {
+    padding: 10px;
+    border: 1px solid #ecf0f1;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f4f7f6;
+    transition: border-color 0.3s ease;
+}
+
+#adminContact:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+/* Submit Button */
 .submit-btn {
     background: #1abc9c;
     color: #fff;
@@ -119,11 +136,7 @@
     color: #7f8c8d;
 }
 
-.admin-actions {
-    display: flex;
-    gap: 10px;
-}
-
+/* Delete Button */
 .delete-btn {
     background: #e74c3c;
     color: #fff;
@@ -139,7 +152,7 @@
     background: #c0392b;
 }
 
-/* Customer Block Button */
+/* Block Button */
 .block-btn {
     background: #f39c12;
     color: white;

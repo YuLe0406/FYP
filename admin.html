@@ -35,6 +35,10 @@
                         <input type="email" id="adminEmail" name="adminEmail" required>
                     </div>
                     <div class="form-group">
+                        <label for="adminContact">Contact Number:</label>
+                        <input type="tel" id="adminContact" name="adminContact" pattern="[0-9]{10,12}" required>
+                    </div>
+                    <div class="form-group">
                         <label for="role">Role:</label>
                         <select id="role" name="role">
                             <option value="admin">Admin</option>
@@ -59,11 +63,13 @@
                     <li class="admin-item">
                         <span class="admin-name">John Doe</span>
                         <span class="admin-email">john.doe@example.com</span>
+                        <span class="admin-contact">+60123456789</span>
                         <button class="delete-btn">Delete</button>
                     </li>
                     <li class="admin-item">
                         <span class="admin-name">Debbie</span>
                         <span class="admin-email">debbie@example.com</span>
+                        <span class="admin-contact">+60987654321</span>
                         <button class="delete-btn">Delete</button>
                     </li>
                 </ul>
