@@ -284,21 +284,6 @@ header {
 
 
 /*checkout.css*/
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f8f8;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background: black;
-    color: white;
-}
 
 .logo a {
     font-size: 24px;
@@ -354,10 +339,12 @@ input, textarea, select {
     width: 100%;
 }
 
+/*shipping address*/
 textarea {
     height: 80px;
 }
 
+/*place order button*/
 button {
     background: black;
     color: white;
@@ -373,10 +360,3 @@ button:hover {
     background: #333;
 }
 
-footer {
-    text-align: center;
-    padding: 10px;
-    background: black;
-    color: white;
-    margin-top: 20px;
-}
