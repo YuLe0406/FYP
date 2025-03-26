@@ -1,0 +1,127 @@
+/* Section Titles */
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #34495e;
+    margin-bottom: 15px;
+    border-left: 5px solid #1abc9c;
+    padding-left: 10px;
+}
+
+/* Cards Section */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.card p {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* Weekly Overview */
+.weekly-overview {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.weekly-overview .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+}
+
+.weekly-overview .stat {
+    background: #2ecc71;
+    color: #fff;
+    padding: 18px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.weekly-overview .stat:hover {
+    background: #27ae60;
+    transform: scale(1.05);
+}
+
+/* Tables (Recent Orders & Top Selling Products) */
+.table-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-container h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.table-container th {
+    background: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+}
+
+.table-container tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.table-container tr:hover {
+    background: #dff9fb;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .weekly-overview .stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
