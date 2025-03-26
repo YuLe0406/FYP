@@ -1,0 +1,382 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.back-to-shop {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    justify-content: right;
+    width: 100%;  /* Adjust width to prevent overflow */
+    margin-left: 20px;
+}
+
+h1 {
+color: black;
+margin: 15px;
+font-size: 30px;
+}
+
+input{
+    padding: 5px;
+    width: 105px;
+    background-color: white;
+    outline: none;
+    border-color: #d83939;
+}
+
+#cart-container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+#cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.cart-item img {
+    width: 80px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.cart-item button {
+    background:red;
+    color: white;
+    border-radius: 15px;
+    border-color: transparent;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.cart-item button:hover{
+    background-color: yellow;
+    color: black;
+}
+
+#cart-summary {
+    margin-top: 20px;
+    padding: 20px;
+    border-top: 2px solid black;
+    justify-items: right;
+}
+
+#checkout-btn {
+    background: #1db954;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#checkout-btn:hover{
+    background-color:rgb(0, 255, 115);
+    color: black;
+    font-weight: bold;
+}
+
+/* Navigation Bar */
+header {
+    position: fixed;  /* Fix the header at the top */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;  /* Adjust width to prevent overflow */
+    background: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 10px 0px 10px 0px;
+    z-index: 1000;  /* Keeps it above other elements */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds a slight shadow */
+  }
+  
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .logo a {
+    text-decoration: none;  /* Removes underline */
+    color: white; /* Adjust color to match your theme */
+    font-weight: bold;
+    font-size: 24px; /* Adjust size */
+  }
+  
+  
+  .search-container {
+    display: flex;
+    flex-grow: 1;
+    justify-content:center;
+    min-width: 300px;
+    max-width: 500px;
+    position: relative;
+    
+  }
+  
+  .search-container input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+  }
+  
+  .search-container button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: none;
+    color: black;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .icons {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-shrink: 0;
+  
+  }
+  
+  .icon {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon i {
+    margin-right: 5px;
+  }
+  
+  
+  /* Discount Label */
+  .discount-label {
+    background: #ff4d4d;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+  }
+  
+  .discount-label p {
+    display: inline-block;
+    animation: scrollText 10s linear infinite;
+  }
+  
+  @keyframes scrollText {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+  }
+
+  body, html {
+    overflow-x: hidden;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    padding-top: 25px;
+  }
+
+  
+/*footer section*/
+.footer {
+    background-color: #222;
+    color: white;
+    padding:40px 20px 10px 20px
+  }
+  
+  .footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:right;
+  }
+  
+  .footer-column {
+    width: 20%;
+    min-width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-column h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: 5px;
+  }
+  
+  .footer-column ul li a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    font-size: 13px;
+  }
+  
+  .footer-column ul li a:hover {
+    opacity: 1;
+  }
+  
+  .footer-column p {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    font-size: 14px;
+  }
+  
+  .newsletter form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .newsletter input {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 4px;
+    width: auto;
+  }
+  
+  .newsletter button {
+    padding: 8px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    margin-top: 20px;
+  }
+
+
+/*checkout.css*/
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: black;
+    color: white;
+}
+
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.icons a {
+    color: white;
+    text-decoration: none;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#checkout-container {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1000px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#billing-details, #order-summary {
+    width: 45%;
+}
+
+h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+input, textarea, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+textarea {
+    height: 80px;
+}
+
+button {
+    background: black;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #333;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: black;
+    color: white;
+    margin-top: 20px;
+}
