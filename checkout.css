@@ -136,7 +136,7 @@ header {
     border-radius: 20px;
     outline: none;
   }
-  
+
 /*PROBLEM HERE search button*/  
   .search-container button {
     position: absolute;
@@ -360,4 +360,3 @@ button {
 button:hover {
     background: #333;
 }
-
