@@ -1,3 +1,14 @@
+/* General Layout */
+.container {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
+}
+
 /* Customer List Table Styles */
 .customer-list {
     background: #fff;
@@ -39,7 +50,6 @@
 }
 
 .customer-list .view-btn,
-.customer-list .edit-btn,
 .customer-list .delete-btn {
     padding: 6px 12px;
     border: none;
@@ -57,15 +67,6 @@
 
 .customer-list .view-btn:hover {
     background: #2980b9;
-}
-
-.customer-list .edit-btn {
-    background: #f39c12;
-    color: #fff;
-}
-
-.customer-list .edit-btn:hover {
-    background: #e67e22;
 }
 
 .customer-list .delete-btn {

@@ -1,51 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart | CTRL+X</title>
-    <link rel="stylesheet" href="cart.css">
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <header>
-        <div class="logo">
-            <a href="index.html">CTRL+X</a>
-        </div>        
-        <div class="search-container">
-            <input type="text" placeholder="Search for products, trends, and brands">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </div>
-        <div class="icons">
-            <a href="login.html" class="icon"><i class="fas fa-user"></i> Login / Register</a>
-            <a href="#" class="icon"><i class="fas fa-heart"></i></a>
-            <a href="cart.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
-        </div>
-    </header>
-
-    <!-- Discount Label -->
-    <div class="discount-label">
-        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-    </div>
-
-
-        <h1>Your Cart</h1>
-        <a href="shop.html" class="back-to-shop">← Continue Shopping</a>
-
-
-    <section id="cart-container">
-        <div id="cart-items"></div>
-        <div id="cart-summary">
-            <h2>Cart Summary</h2>
-            <p>Total: <span id="cart-total">RM 0.00</span></p>
-            <button id="checkout-btn">Proceed to Checkout</button>
-        </div>
-    </section>
-
-    <script src="cart.js"></script>
-</body>
-
+<?php
+echo '
 <footer class="footer">
     <div class="footer-container">
         <div class="footer-column">
@@ -99,4 +53,5 @@
         <p>© 2025 CTRL+X. All Rights Reserved.</p>
     </div>
 </footer>
-</html>
+';
+?>

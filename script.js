@@ -150,28 +150,9 @@ function loadProducts(filter = "all", sort = "default") {
 
 // Navigate to product details page
 function viewProduct(id) {
-    window.location.href = `product-details.html?id=${id}`;
+    window.location.href = `product-details.php?id=${id}`;
 }
 
-function loadProductDetails() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get("id");
-
-    if (!productId) {
-        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
-        return;
-    }
-
-    const product = products.find(p => p.id == productId);
-
-    if (product) {
-        document.getElementById("productImage").src = "images/" + product.image;
-        document.getElementById("productName").textContent = product.name;
-        document.getElementById("productPrice").textContent = "RM " + product.price.toFixed(2);
-    } else {
-        document.getElementById("product-details").innerHTML = "<h2>Product Not Found</h2>";
-    }
-}
 
 // Filtering & Sorting
 document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));

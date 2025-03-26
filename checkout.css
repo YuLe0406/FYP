@@ -136,7 +136,8 @@ header {
     border-radius: 20px;
     outline: none;
   }
-  
+
+/*PROBLEM HERE search button*/  
   .search-container button {
     position: absolute;
     right: 5px;
@@ -281,3 +282,80 @@ header {
     border-top: 1px solid #444;
     margin-top: 20px;
   }
+
+
+/*checkout.css*/
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.icons a {
+    color: white;
+    text-decoration: none;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#checkout-container {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1000px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#billing-details, #order-summary {
+    width: 45%;
+}
+
+h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+input, textarea, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/*shipping address*/
+textarea {
+    height: 80px;
+}
+
+/*place order button*/
+button {
+    background: black;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #333;
+}

@@ -1,4 +1,15 @@
-/* Add Admin Form Styles */
+/* General Layout */
+.container {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
+}
+
+/* Add Admin Form */
 .add-admin {
     background: #fff;
     padding: 20px;
@@ -31,7 +42,8 @@
     font-weight: bold;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     padding: 10px;
     border: 1px solid #ecf0f1;
     border-radius: 4px;
@@ -40,7 +52,8 @@
     transition: border-color 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
     border-color: #1abc9c;
     outline: none;
 }
@@ -60,18 +73,7 @@
     background: #16a085;
 }
 
-.back-link {
-    display: block; /* Change to block to center it */
-    margin: 15px auto; /* Center horizontally */
-    text-align: center; /* Center text */
-    color: #007BFF; /* Blue color */
-    text-decoration: underline; /* Add underline */
-    font-weight: bold;
-    font-size: 16px;
-    transition: color 0.3s ease;
-}
-
-/* Recent Admins Section Styles */
+/* Recent Admins Section */
 .recent-admins {
     background: #fff;
     padding: 20px;
@@ -122,7 +124,9 @@
     gap: 10px;
 }
 
-.edit-btn, .delete-btn {
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
     padding: 8px 12px;
     border: none;
     border-radius: 4px;
@@ -131,20 +135,22 @@
     transition: background 0.3s ease;
 }
 
-.edit-btn {
-    background: #3498db;
-    color: #fff;
-}
-
-.edit-btn:hover {
-    background: #2980b9;
-}
-
-.delete-btn {
-    background: #e74c3c;
-    color: #fff;
-}
-
 .delete-btn:hover {
     background: #c0392b;
+}
+
+/* Customer Block Button */
+.block-btn {
+    background: #f39c12;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.block-btn:hover {
+    background: #e67e22;
 }
