@@ -151,3 +151,23 @@
 .report-results td ul li strong {
     color: #2c3e50;
 }
+
+/* Customer Search Results */
+#customerResults {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    width: 200px;
+    z-index: 1000;
+}
+
+.customer-item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.customer-item:hover {
+    background: #f1f1f1;
+}

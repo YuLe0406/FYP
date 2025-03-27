@@ -137,7 +137,6 @@ header {
     outline: none;
   }
 
-/*PROBLEM HERE search button*/  
   .search-container button {
     position: absolute;
     right: 5px;
@@ -344,18 +343,25 @@ textarea {
     height: 80px;
 }
 
-/*place order button*/
-button {
-    background: black;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-}
+/*place order button*/ 
 
-button:hover {
-    background: #333;
-}
+#place-order-btn {background-image: linear-gradient(to right, #000000 0%, #e74c3c  51%, #000000  100%)}
+#place-order-btn {
+   margin: 10px;
+   padding: 15px 45px;
+   text-align: center;
+   text-transform: uppercase;
+   transition: 0.5s;
+   background-size: 200% auto;
+   color: white;            
+   box-shadow: 0 0 20px #eee;
+   border-radius: 10px;
+   display: block;
+   border: transparent;
+ }
+
+ #place-order-btn:hover {
+   background-position: right center; /* change the direction of the change here */
+   color: #fff;
+   text-decoration: none;
+ }
