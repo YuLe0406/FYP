@@ -1,27 +1,30 @@
 <?php
 session_start();
-include 'config.php';
+require 'includes/config.php';
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['U_Email'];
+    $password = $_POST['U_Password'];
 
-$stmt = $conn->prepare("SELECT * FROM USER WHERE U_Username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
+    try {
+        
+        $stmt = $conn->prepare("SELECT * FROM USER WHERE U_Email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-    if (password_verify($password, $user['U_Password'])) {
-        $_SESSION['user_id'] = $user['U_ID'];
-        header("Location: index.html"); 
-    } else {
-        echo "Invalid password!";
+        if ($user && password_verify($password, $user['U_Password'])) {
+           
+            $_SESSION['user_id'] = $user['U_ID'];
+            $_SESSION['user_email'] = $user['U_Email'];
+            $_SESSION['user_name'] = $user['U_FName'] . ' ' . $user['U_LName'];
+            
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            echo "Invalid email or password!";
+        }
+    } catch (PDOException $e) {
+        die("Login failed: " . $e->getMessage());
     }
-} else {
-    echo "User not found!";
 }
-
-$stmt->close();
-$conn->close();
 ?>

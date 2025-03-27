@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | CTRL+X</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="payment.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/payment.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
     <header>
         <div class="logo">CTRL+X</div>
         <div class="icons">
@@ -17,76 +16,61 @@
         </div>
     </header>
 
-
     <div class="container" style="min-height: 80vh; padding: 50px 25px;">
-        <form class="payment-form" style="max-width: 500px; margin: 0 auto;">
+        <form class="payment-form" action="register.php" method="POST" style="max-width: 500px; margin: 0 auto;">
             <div class="row">
                 <div class="col">
-
-                    <div class="form-header" style="text-align: center; margin-bottom: 35px;">
-                        <h3 class="title" style="color: rgb(237, 55, 23); 
-                                  font-size: 26px;
-                                  letter-spacing: 1.5px;
-                                  text-transform: uppercase;
-                                  margin-bottom: 10px;">
-                            CREATE ACCOUNT
-                        </h3>
-                        <p style="color: #666; font-size: 14px;">
-                            Join the CTRL+X community
-                        </p>
+                    <div class="form-header">
+                        <h3 class="title">CREATE ACCOUNT</h3>
+                        <p>Join the CTRL+X community</p>
                     </div>
 
                     <div class="input-group">
+                        <!-- 必填字段 -->
                         <div class="inputBox">
-                            <label style="color: #444;">
-                                <i class="fas fa-user" style="color: rgb(237, 55, 23);"></i> 
-                                Username
-                            </label>
-                            <input type="text" name="username" 
-                                   placeholder="Enter username"
-                                   style="border-color: #ddd;">
+                            <label><i class="fas fa-user"></i> First Name</label>
+                            <input type="text" name="U_FName" required>
                         </div>
-
                         <div class="inputBox">
-                            <label style="color: #444;">
-                                <i class="fas fa-lock" style="color: rgb(237, 55, 23);"></i> 
-                                Password
-                            </label>
-                            <input type="password" name="password" 
-                                   placeholder="••••••••"
-                                   style="border-color: #ddd;">
+                            <label><i class="fas fa-user"></i> Last Name</label>
+                            <input type="text" name="U_LName" required>
                         </div>
-
                         <div class="inputBox">
-                            <label style="color: #444;">
-                                <i class="fas fa-lock" style="color: rgb(237, 55, 23);"></i> 
-                                Confirm Password
-                            </label>
-                            <input type="password" name="confirm_password" 
-                                   placeholder="••••••••"
-                                   style="border-color: #ddd;">
+                            <label><i class="fas fa-calendar"></i> Date of Birth</label>
+                            <input type="date" name="U_DOB" required>
+                        </div>
+                        <div class="inputBox">
+                            <label><i class="fas fa-venus-mars"></i> Gender</label>
+                            <select name="U_Gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="inputBox">
+                            <label><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" name="U_Email" required>
+                        </div>
+                        <div class="inputBox">
+                            <label><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" name="U_Password" required>
+                        </div>
+                        <div class="inputBox">
+                            <label><i class="fas fa-lock"></i> Confirm Password</label>
+                            <input type="password" name="confirm_password" required>
+                        </div>
+                        <div class="inputBox">
+                            <label><i class="fas fa-phone"></i> Phone Number</label>
+                            <input type="tel" name="U_PNumber" pattern="[0-9]{11}" required>
                         </div>
                     </div>
 
-                    <button type="submit" class="submit_btn" 
-                            style="background: rgb(1, 143, 34);
-                                   margin-top: 30px;
-                                   transition: all 0.3s;">
-                        <i class="fas fa-user-plus"></i> 
-                        Register Now
+                    <button type="submit" class="submit_btn">
+                        <i class="fas fa-user-plus"></i> Register Now
                     </button>
 
-
-                    <div class="form-footer" style="margin-top: 25px; text-align: center;">
-                        <p style="color: #666; font-size: 14px;">
-                            Already have an account? 
-                            <a href="login.html" 
-                               style="color: #3d17fb;
-                                      font-weight: 500;
-                                      text-decoration: underline;">
-                                Sign In Here
-                            </a>
-                        </p>
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="login.html">Sign In Here</a></p>
                     </div>
                 </div>
             </div>
