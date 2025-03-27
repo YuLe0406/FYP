@@ -4,42 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | CTRL+X</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="payment.css">
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/payment.css">
 </head>
 <body>
-    
     <header>
         <div class="logo">CTRL+X</div>
         <div class="icons">
-            <a href="index.php" class="icon"><i class="fas fa-home"></i> Home</a>
+            <a href="index.html" class="icon"><i class="fas fa-home"></i> Home</a>
         </div>
     </header>
 
     <div class="container" style="min-height: 80vh;">
-        <form class="payment-form">
+        <form class="payment-form" action="login.php" method="POST">
             <div class="row">
                 <div class="col">
-                    <h3 class="title" style="text-align: center; margin-bottom: 25px;">
-                        Login to CTRL+X
-                    </h3>
+                    <h3 class="title">Login to CTRL+X</h3>
                     
                     <div class="inputBox">
-                        <label>Username</label>
-                        <input type="text" name="username" placeholder="Enter username" required>
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" name="U_Email" required>
                     </div>
 
                     <div class="inputBox">
-                        <label>Password</label>
-                        <input type="password" name="password" placeholder="••••••••" required>
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" name="U_Password" required>
                     </div>
 
-                    <input type="submit" value="Login" class="submit_btn">
+                    <button type="submit" class="submit_btn">Login</button>
                     
-                    <p style="text-align: center; margin-top: 15px;">
-                        New user? <a href="register.html" style="color: #3d17fb;">Create an account</a>
-                    </p>
+                    <div class="form-footer">
+                        <p>New user? <a href="register.html">Create an account</a></p>
+                    </div>
                 </div>
             </div>
         </form>

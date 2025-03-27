@@ -51,7 +51,3 @@ function removeFromCart(index) {
     localStorage.setItem("cart", JSON.stringify(cartItems));
     loadCart();
 }
-
-document.getElementById("checkout-btn").addEventListener("click", function () {
-    alert("Proceeding to checkout (Functionality coming soon)!");
-});
