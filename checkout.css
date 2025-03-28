@@ -365,3 +365,41 @@ textarea {
    color: #fff;
    text-decoration: none;
  }
+
+
+/* Payment Details - Hidden by Default */
+#card-details {
+  display: none;
+  margin-top: 10px;
+}
+
+#card-details input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Malaysia Phone Number Formatting */
+input[type="tel"] {
+  width: 100%;
+}
+
+/* Address Fields */
+.address-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.address-container input {
+  margin-bottom: 10px;
+}
+
+/* Order Summary - Cart Items */
+.cart-item img {
+  width: 60px;
+  height: auto;
+  margin-right: 10px;
+  border-radius: 5px;
+}

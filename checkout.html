@@ -37,18 +37,26 @@
             <!-- Left Section: Billing Details -->
             <div id="billing-details">
                 <h2>Billing Information</h2>
+
                 <form id="checkout-form">
                     <label for="fullname">Full Name</label>
                     <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
-
+                
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
+                
                     <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    <input type="tel" id="phone" name="phone" placeholder="012-345 6789" required>
 
-                    <label for="address">Shipping Address</label>
-                    <textarea id="address" name="address" placeholder="Enter your shipping address" required></textarea>
+                    <label for="address1">Address Line 1</label>
+                    <input type="text" id="address1" name="address1" placeholder="Enter address line 1" required>
+
+                    <label for="address2">Address Line 2</label>
+                    <input type="text" id="address2" name="address2" placeholder="Enter address line 2 (Optional)">
+
+                    <label>
+                        <input type="checkbox" id="save-address"> Save Address for Future Use
+                    </label>
 
                     <label for="payment-method">Payment Method</label>
                     <select id="payment-method" name="payment-method" required>
@@ -57,7 +65,24 @@
                         <option value="bank_transfer">Bank Transfer</option>
                         <option value="cod">Cash on Delivery</option>
                     </select>
-                </form>
+
+                    <!-- Credit Card Details Section -->
+                    <div id="card-details">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" name="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+
+                        <label for="card-name">Cardholder Name</label>
+                        <input type="text" id="card-name" name="card-name" placeholder="Enter name on card">
+
+                        <label for="expiry-date">Expiry Date</label>
+                        <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" maxlength="5">
+
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="XXX" maxlength="3">
+                    </div>
+
+                
+
             </div>
 
             <!-- Right Section: Order Summary -->
