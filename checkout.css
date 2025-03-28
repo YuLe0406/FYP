@@ -361,13 +361,6 @@ textarea {
    border: transparent;
  }
 
-#save-address{
-  width: fit-content;
-}
-
-#save-address label{
-  text-shadow: #d83939;
-}
 
  #place-order-btn:hover {
    background-position: right center; /* change the direction of the change here */
