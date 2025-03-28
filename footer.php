@@ -43,7 +43,7 @@ echo '
         <div class="footer-column newsletter">
             <h3>Sign up for our Newsletter</h3>
             <form>
-                <input type="email" placeholder="Enter your email" required>
+                <input type="email" placeholder="Enter your email">
                 <button type="submit">Subscribe</button>
             </form>
         </div>
