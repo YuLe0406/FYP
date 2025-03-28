@@ -263,7 +263,7 @@ header {
     margin-bottom: 10px;
     border: none;
     border-radius: 4px;
-    width: auto;
+    width: 93%;
   }
   
   .newsletter button {
@@ -273,6 +273,7 @@ header {
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    width:100%;
   }
   
   .footer-bottom {
@@ -360,6 +361,8 @@ textarea {
    border: transparent;
  }
 
+
+ 
  #place-order-btn:hover {
    background-position: right center; /* change the direction of the change here */
    color: #fff;
