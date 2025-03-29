@@ -213,9 +213,21 @@ function addToCart() {
 }
 
 
+document.getElementById("add-to-wishlist-btn").addEventListener("click", function () {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-// Add to wishlist function
-function addToWishlist() {
-    let name = document.getElementById("productName").textContent;
-    alert(`Added to Wishlist:\n${name}`);
-}
+    const product = {
+        name: document.getElementById("product-name").innerText,
+        price: document.getElementById("product-price").innerText.replace("RM ", ""),
+        image: document.getElementById("product-image").src
+    };
+
+    // Check if the product is already in the wishlist
+    if (!wishlist.some(item => item.name === product.name)) {
+        wishlist.push(product);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        alert("Added to Wishlist!");
+    } else {
+        alert("This item is already in your wishlist.");
+    }
+});
