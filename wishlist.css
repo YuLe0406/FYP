@@ -207,6 +207,7 @@ header {
     padding:40px 20px 10px 20px;
     bottom: 0;
     position: fixed;
+    width: 100%;
   }
   
   .footer-container {
