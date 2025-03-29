@@ -102,9 +102,19 @@
                 </div>
                 <hr>
                 <p>Total: <span id="cart-total">RM 0.00</span></p>
-                <button type="submit" id="place-order-btn">Place Order</button>
+                <button type="button" id="place-order-btn">Place Order</button>
             </div>
         </section>
+                    <!-- Loading Message (Hidden Initially) -->
+            <div id="loading-message" style="display: none; text-align: center; font-size: 18px; font-weight: bold; color: #333; margin-top: 20px;">
+                Processing payment...
+            </div>
+
+            <!-- Success Message (Hidden Initially) -->
+            <div id="success-message" style="display: none; text-align: center; font-size: 20px; font-weight: bold; color: green; margin-top: 20px;">
+                Order Successful! 🎉
+            </div>
+
     </main>
 
     <!-- Include Footer -->
