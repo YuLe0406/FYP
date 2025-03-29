@@ -4,14 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const phoneInput = document.getElementById("phone");
     const checkoutForm = document.getElementById("checkout-form");
     const placeOrderBtn = document.getElementById("place-order-btn");
+    const loadingMessage = document.getElementById("loading-message");
+    const successMessage = document.getElementById("success-message");
 
     // Show/Hide Card Details Based on Payment Method
     paymentMethod.addEventListener("change", function () {
-        if (this.value === "credit_card") {
-            cardDetails.style.display = "block";
-        } else {
-            cardDetails.style.display = "none";
-        }
+        cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
     });
 
     // Malaysia Phone Number Validation (Format: 012-345 6789)
@@ -26,8 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = formattedPhone;
     });
 
-    // Form Validation Before Submission
+    // Form Validation & Payment Processing Simulation
     placeOrderBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
         if (paymentMethod.value === "credit_card") {
             const cardNumber = document.getElementById("card-number").value.trim();
             const cardName = document.getElementById("card-name").value.trim();
@@ -35,8 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const cvv = document.getElementById("cvv").value.trim();
 
             if (cardNumber === "" || cardName === "" || expiryDate === "" || cvv === "") {
-                alert("Please enter all credit card details.");
-                event.preventDefault();
+                alert("Please enter all details.");
                 return;
             }
         }
@@ -45,11 +44,31 @@ document.addEventListener("DOMContentLoaded", function () {
         const address1 = document.getElementById("address1").value.trim();
         if (address1 === "") {
             alert("Please enter Address Line 1.");
-            event.preventDefault();
             return;
         }
 
-        alert("Order placed successfully!");
+        // Disable button to prevent multiple clicks
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.innerText = "Processing...";
+
+        // Show "Processing Payment..." message
+        loadingMessage.style.display = "block";
+
+        // Simulate a payment processing delay (3 seconds)
+        setTimeout(() => {
+            loadingMessage.style.display = "none"; // Hide "Processing..." message
+            successMessage.style.display = "block"; // Show "Order Successful!"
+            placeOrderBtn.after(successMessage); // Ensure it appears below the button
+
+
+            // Clear the cart since order is placed
+            localStorage.removeItem("cart");
+
+            // Redirect to homepage or order summary page after 3 seconds
+            setTimeout(() => {
+                window.location.href = "http://localhost/FYP/index.php"; // Change this if you have an order summary page
+            }, 2000);
+        }, 2000);
     });
 
     // Load Cart Items into Order Summary
@@ -66,11 +85,11 @@ document.addEventListener("DOMContentLoaded", function () {
             itemElement.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
                 <p>${item.name}</p>
-                <p>RM ${item.price}</p>
+                <p>RM ${parseFloat(item.price).toFixed(2)}</p>
             `;
 
             cartItemsContainer.appendChild(itemElement);
-            total += parseFloat(item.price);
+            total += parseFloat(item.price) || 0; // Ensure numeric value
         });
 
         document.getElementById("cart-total").innerText = `RM ${total.toFixed(2)}`;
