@@ -21,21 +21,7 @@ $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 $total_price = 0;
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart | CTRL+X</title>
-    <link rel="stylesheet" href="cart.css">
-    <script defer src="cart.js"></script>
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
-</head>
-<body>
-
-    <div class="discount-label">
-        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-    </div>
+<?php include 'header.php'; ?>
 
 <main>
     <h1>Your Cart</h1>
