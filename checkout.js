@@ -67,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Redirect to homepage or order summary page after 3 seconds
             setTimeout(() => {
                 window.location.href = "http://localhost/FYP/index.php"; // Change this if you have an order summary page
-            }, 2000);
-        }, 2000);
+            }, 3000);
+        }, 3000);
     });
 
     // Load Cart Items into Order Summary
