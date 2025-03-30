@@ -53,10 +53,6 @@ $conn->close();
 
 <?php include 'header.php'; ?> <!-- Include header -->
 
-<div class="discount-label">
-    <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-</div>
-
 <main>
     <div class="product-details">
         <div class="product-image">
