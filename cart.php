@@ -4,7 +4,7 @@ include 'db.php'; // Database connection
 include 'header.php'; // Include header
 
 // Fetch cart items from database
-$sql = "SELECT cart.id, cart.P_ID, cart.size, cart.quantity, cart.price, PRODUCT.P_Name, PRODUCT.P_Picture 
+$sql = "SELECT cart.cart_id, cart.P_ID, cart.size, cart.quantity, cart.price, PRODUCT.P_Name, PRODUCT.P_Picture 
         FROM cart 
         INNER JOIN PRODUCT ON cart.P_ID = PRODUCT.P_ID";
 
@@ -64,7 +64,7 @@ $total_price = 0;
                                 <td><?php echo $item['quantity']; ?></td>
                                 <td>RM <?php echo number_format($item['price'], 2); ?></td>
                                 <td>RM <?php echo number_format($item_price, 2); ?></td>
-                                <td><a href="remove_from_cart.php?id=<?php echo $item['id']; ?>" class="remove-btn">❌</a></td>
+                                <td><a href="remove_from_cart.php?id=<?php echo $item['cart_id']; ?>" class="remove-btn">❌</a></td>
                             </tr>
                         <?php } ?>
                     </tbody>
