@@ -15,5 +15,9 @@ echo '
     </div>
 </header>
 
+ <!-- Discount Label -->
+ <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
 ';
 ?>
