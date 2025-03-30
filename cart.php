@@ -59,7 +59,7 @@ $total_price = 0;
                             ?>
                                 <tr>
                                     <td>
-                                        <img src="images/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>" width="50">
+                                        <img src="http://localhost/FYP/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>" width="50">
                                         <?php echo $product['P_Name']; ?>
                                     </td>
                                     <td><?php echo $size; ?></td>
