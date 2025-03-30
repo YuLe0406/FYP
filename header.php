@@ -14,5 +14,6 @@ echo '
         <a href="cart.php" class="icon"><i class="fas fa-shopping-cart"></i></a>
     </div>
 </header>
+
 ';
 ?>
