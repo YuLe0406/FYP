@@ -1,30 +1,36 @@
 <?php
 session_start();
-include 'db.php';
+include 'db.php'; // Database connection
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $data = json_decode(file_get_contents("php://input"), true);
-    $user_id = $_SESSION['user_id'];
-    $items = $data['items'];
+    $product_id = intval($_POST['id']);
+    $size = $_POST['size'];
+    $quantity = intval($_POST['quantity']);
+    $user_id = 1; // Change this to actual logged-in user ID
 
-    foreach ($items as $wishlist_id) {
-        // Get wishlist item details
-        $query = "SELECT * FROM wishlist WHERE id = $wishlist_id AND user_id = $user_id";
-        $result = mysqli_query($conn, $query);
-        $item = mysqli_fetch_assoc($result);
+    // Check if the product already exists in the cart
+    $check_sql = "SELECT * FROM CART WHERE user_id = ? AND product_id = ? AND size = ?";
+    $stmt = $conn->prepare($check_sql);
+    $stmt->bind_param("iis", $user_id, $product_id, $size);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($item) {
-            // Add to cart
-            $insert_query = "INSERT INTO cart (user_id, product_id, product_name, price, image) 
-                             VALUES ($user_id, {$item['product_id']}, '{$item['product_name']}', {$item['price']}, '{$item['image']}')";
-            mysqli_query($conn, $insert_query);
-
-            // Remove from wishlist
-            $delete_query = "DELETE FROM wishlist WHERE id = $wishlist_id AND user_id = $user_id";
-            mysqli_query($conn, $delete_query);
-        }
+    if ($result->num_rows > 0) {
+        // Update quantity if the product already exists
+        $update_sql = "UPDATE CART SET quantity = quantity + ? WHERE user_id = ? AND product_id = ? AND size = ?";
+        $stmt = $conn->prepare($update_sql);
+        $stmt->bind_param("iiis", $quantity, $user_id, $product_id, $size);
+        $stmt->execute();
+    } else {
+        // Insert new item if it doesn't exist
+        $insert_sql = "INSERT INTO CART (user_id, product_id, size, quantity) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($insert_sql);
+        $stmt->bind_param("iisi", $user_id, $product_id, $size, $quantity);
+        $stmt->execute();
     }
 
-    echo json_encode(["success" => true]);
+    echo "Added to Cart!";
+    $stmt->close();
+    $conn->close();
 }
 ?>

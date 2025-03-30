@@ -168,48 +168,44 @@ window.onload = () => {
 function addToCart() {
     let urlParams = new URLSearchParams(window.location.search);
     let productId = urlParams.get("id");
-
-    let product = products.find(p => p.id == productId);
-    if (!product) {
-        alert("Product not found!");
-        return;
-    }
-
     let sizeDropdown = document.getElementById("size-select");
 
-    // Ensure the dropdown exists in the page
     if (!sizeDropdown) {
         alert("Size selection dropdown not found!");
         return;
     }
 
     let selectedSize = sizeDropdown.value;
-    
     if (!selectedSize) {
         alert("Please select a size!");
         return;
     }
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let quantity = document.getElementById("quantity").value || 1;
 
-    // Check if the exact same product with the same size exists
-    let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
+    // Send cart data to PHP via AJAX
+    fetch("add_to_cart.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `id=${productId}&size=${selectedSize}&quantity=${quantity}`
+    })
+    .then(response => response.text())
+    .then(data => alert(data))
+    .catch(error => console.error("Error:", error));
+}
 
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ 
-            id: product.id, 
-            name: product.name, 
-            price: product.price, 
-            image: product.image,
-            size: selectedSize, 
-            quantity: 1 
-        });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Added to Cart!");
+function removeFromCart(cartId) {
+    fetch("remove_from_cart.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `cart_id=${cartId}`
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert(data);
+        location.reload();
+    })
+    .catch(error => console.error("Error:", error));
 }
 
 

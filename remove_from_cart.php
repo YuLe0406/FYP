@@ -1,15 +1,13 @@
 <?php
 session_start();
-if (isset($_POST['id']) && isset($_POST['size'])) {
-    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) {
-        return !($item['id'] == $_POST['id'] && $item['size'] == $_POST['size']);
-    });
+include 'db.php';
 
-    $total_price = 0;
-    foreach ($_SESSION['cart'] as $item) {
-        $total_price += $item['quantity'] * 69.90; // Assume price (or fetch from DB)
-    }
-
-    echo json_encode(["success" => true, "cart_total" => number_format($total_price, 2)]);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $cart_id = intval($_POST['cart_id']);
+    $sql = "DELETE FROM CART WHERE cart_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $cart_id);
+    $stmt->execute();
+    echo "Removed from Cart!";
 }
 ?>
