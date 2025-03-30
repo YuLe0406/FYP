@@ -1,9 +1,8 @@
 <?php
 session_start();
-include 'db.php'; // Database connection
-include 'header.php'; // Include header
+include 'db.php';
 
-// Fetch cart items from database
+// Get cart items from the database
 $sql = "SELECT 
             cart.cart_id, 
             cart.quantity, 
@@ -17,6 +16,26 @@ $sql = "SELECT
 
 $result = $conn->query($sql);
 $total_price = 0;
+
+// Handle adding to cart
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $product_id = $_POST['product_id'];
+    $pv_id = $_POST['pv_id'];
+    $quantity = $_POST['quantity'];
+    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "NULL";
+
+    $insert_sql = "INSERT INTO cart (user_id, product_id, pv_id, quantity) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($insert_sql);
+    $stmt->bind_param("iiii", $user_id, $product_id, $pv_id, $quantity);
+
+    if ($stmt->execute()) {
+        echo "Product added to cart!";
+    } else {
+        echo "Failed to add product.";
+    }
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -26,8 +45,6 @@ $total_price = 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart | CTRL+X</title>
     <link rel="stylesheet" href="cart.css">
-    <script defer src="cart.js"></script>
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -57,31 +74,20 @@ $total_price = 0;
                             $total_price += $item_price;
                         ?>
                             <tr>
-                                <td>
-                                    <img src="images/<?php echo $item['P_Picture']; ?>" alt="<?php echo $item['P_Name']; ?>" width="50">
-                                    <?php echo $item['P_Name']; ?>
-                                </td>
+                                <td><img src="images/<?php echo $item['P_Picture']; ?>" width="50"><?php echo $item['P_Name']; ?></td>
                                 <td><?php echo $item['P_Size']; ?></td>
                                 <td><?php echo $item['quantity']; ?></td>
                                 <td>RM <?php echo number_format($item['P_Price'], 2); ?></td>
                                 <td>RM <?php echo number_format($item_price, 2); ?></td>
-                                <td><a href="remove_from_cart.php?id=<?php echo $item['cart_id']; ?>" class="remove-btn">❌</a></td>
+                                <td><a href="remove_from_cart.php?id=<?php echo $item['cart_id']; ?>">❌</a></td>
                             </tr>
                         <?php } ?>
                     </tbody>
                 </table>
             <?php } ?>
         </div>
-
-        <div id="cart-summary">
-            <h2>Cart Summary</h2>
-            <p>Total: <span id="cart-total">RM <?php echo number_format($total_price, 2); ?></span></p>
-            <a href="checkout.html"><button id="checkout-btn">Proceed to Checkout</button></a>
-        </div>
     </section>
 </main>
-
-<?php include 'footer.php'; ?>  <!-- Include footer -->
 
 </body>
 </html>
