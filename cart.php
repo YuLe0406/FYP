@@ -3,12 +3,19 @@ session_start();
 include 'db.php'; // Database connection
 include 'header.php'; // Include header
 
-// Fetch cart items from database
-$sql = "SELECT cart.cart_id, cart.P_ID, cart.size, cart.quantity, cart.price, PRODUCT.P_Name, PRODUCT.P_Picture 
-        FROM cart 
-        INNER JOIN PRODUCT ON cart.P_ID = PRODUCT.P_ID";
+$user_id = 1; // Replace with session user ID when login system is ready
 
-$result = $conn->query($sql);
+// Fetch cart items from database
+$sql = "SELECT cart.cart_id, cart.product_id, cart.size, cart.quantity, 
+        PRODUCT.P_Name, PRODUCT.P_Price, PRODUCT.P_Picture 
+        FROM cart 
+        INNER JOIN PRODUCT ON cart.product_id = PRODUCT.P_ID 
+        WHERE cart.user_id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 
 $total_price = 0;
@@ -52,7 +59,7 @@ $total_price = 0;
                     </thead>
                     <tbody>
                         <?php foreach ($cart_items as $item) { 
-                            $item_price = $item['price'] * $item['quantity'];
+                            $item_price = $item['P_Price'] * $item['quantity'];
                             $total_price += $item_price;
                         ?>
                             <tr>
@@ -62,9 +69,9 @@ $total_price = 0;
                                 </td>
                                 <td><?php echo $item['size']; ?></td>
                                 <td><?php echo $item['quantity']; ?></td>
-                                <td>RM <?php echo number_format($item['price'], 2); ?></td>
+                                <td>RM <?php echo number_format($item['P_Price'], 2); ?></td>
                                 <td>RM <?php echo number_format($item_price, 2); ?></td>
-                                <td><a href="remove_from_cart.php?id=<?php echo $item['cart_id']; ?>" class="remove-btn">❌</a></td>
+                                <td><a href="remove_from_cart.php?cart_id=<?php echo $item['cart_id']; ?>" class="remove-btn">❌</a></td>
                             </tr>
                         <?php } ?>
                     </tbody>
