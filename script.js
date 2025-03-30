@@ -165,6 +165,7 @@ window.onload = () => {
 };
 
 // Add to cart function
+// Add to cart function
 function addToCart() {
     let urlParams = new URLSearchParams(window.location.search);
     let productId = urlParams.get("id");
@@ -184,7 +185,7 @@ function addToCart() {
     }
 
     let selectedSize = sizeDropdown.value;
-    
+
     if (!selectedSize) {
         alert("Please select a size!");
         return;
