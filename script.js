@@ -165,48 +165,51 @@ window.onload = () => {
 };
 
 // Add to cart function
-function addToCart(productId) {
-    let size = document.getElementById("size-select").value;
-    let quantity = document.getElementById("quantity").value;
+function addToCart() {
+    let urlParams = new URLSearchParams(window.location.search);
+    let productId = urlParams.get("id");
 
-    if (!size) {
+    let product = products.find(p => p.id == productId);
+    if (!product) {
+        alert("Product not found!");
+        return;
+    }
+
+    let sizeDropdown = document.getElementById("size-select");
+
+    // Ensure the dropdown exists in the page
+    if (!sizeDropdown) {
+        alert("Size selection dropdown not found!");
+        return;
+    }
+
+    let selectedSize = sizeDropdown.value;
+    
+    if (!selectedSize) {
         alert("Please select a size!");
         return;
     }
 
-    let formData = new FormData();
-    formData.append("product_id", productId);
-    formData.append("size", size);
-    formData.append("quantity", quantity);
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    fetch("add_to_cart.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "success") {
-            alert("Added to cart successfully!");
-        } else {
-            alert("Error: " + data.message);
-        }
-    })
-    .catch(error => console.error("Error:", error));
-}
+    // Check if the exact same product with the same size exists
+    let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
 
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({ 
+            id: product.id, 
+            name: product.name, 
+            price: product.price, 
+            image: product.image,
+            size: selectedSize, 
+            quantity: 1 
+        });
+    }
 
-function removeFromCart(cartId) {
-    fetch("remove_from_cart.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `cart_id=${cartId}`
-    })
-    .then(response => response.text())
-    .then(data => {
-        alert(data);
-        location.reload();
-    })
-    .catch(error => console.error("Error:", error));
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to Cart!");
 }
 
 
