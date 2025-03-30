@@ -12,11 +12,6 @@
 
 <?php include 'header.php'; ?>
 
-<!-- Discount Label -->
-<div class="discount-label">
-    <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-</div>
-
 <!-- Product Listing Section -->
 <main>
     <h1>Shop Our Collection</h1>
