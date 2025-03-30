@@ -79,7 +79,7 @@ $total_price = 0;
         <div id="cart-summary">
             <h2>Cart Summary</h2>
             <p>Total: <span id="cart-total">RM <?php echo number_format($total_price, 2); ?></span></p>
-            <a href="checkout.php"><button id="checkout-btn">Proceed to Checkout</button></a>
+            <a href="checkout.html"><button id="checkout-btn">Proceed to Checkout</button></a>
         </div>
     </section>
 </main>
