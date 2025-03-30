@@ -2,7 +2,39 @@
 session_start();
 include 'db.php';
 
-// Get cart items from the database
+// Debug: Log received POST data
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!isset($_POST['product_id'], $_POST['pv_id'], $_POST['quantity'])) {
+        echo "Missing required fields!";
+        exit;
+    }
+
+    $product_id = intval($_POST['product_id']);
+    $pv_id = intval($_POST['pv_id']);
+    $quantity = intval($_POST['quantity']);
+    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : NULL; // Assuming user_id exists
+
+    // Debug: Check values before inserting
+    echo "Received Data: Product ID = $product_id, PV_ID = $pv_id, Quantity = $quantity<br>";
+
+    // Prepare SQL statement
+    $insert_sql = "INSERT INTO cart (user_id, product_id, pv_id, quantity) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($insert_sql);
+
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("iiii", $user_id, $product_id, $pv_id, $quantity);
+    if ($stmt->execute()) {
+        echo "Product successfully added to cart!";
+    } else {
+        echo "Insert Error: " . $stmt->error; // Debug: Print MySQL error
+    }
+    exit;
+}
+
+// Fetch cart items
 $sql = "SELECT 
             cart.cart_id, 
             cart.quantity, 
@@ -16,26 +48,6 @@ $sql = "SELECT
 
 $result = $conn->query($sql);
 $total_price = 0;
-
-// Handle adding to cart
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $product_id = $_POST['product_id'];
-    $pv_id = $_POST['pv_id'];
-    $quantity = $_POST['quantity'];
-    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "NULL";
-
-    $insert_sql = "INSERT INTO cart (user_id, product_id, pv_id, quantity) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($insert_sql);
-    $stmt->bind_param("iiii", $user_id, $product_id, $pv_id, $quantity);
-
-    if ($stmt->execute()) {
-        echo "Product added to cart!";
-    } else {
-        echo "Failed to add product.";
-    }
-    exit;
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -47,8 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="cart.css">
 </head>
 <body>
-
-<?php include 'header.php'; ?>
 
 <main>
     <h1>Your Cart</h1>
@@ -90,8 +100,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </section>
 </main>
-
-<?php include 'footer.php'; ?>
 
 </body>
 </html>
