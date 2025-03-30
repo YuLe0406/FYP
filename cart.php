@@ -48,6 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 
+<?php include 'header.php'; ?>
+
 <main>
     <h1>Your Cart</h1>
     <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
@@ -88,6 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </section>
 </main>
+
+<?php include 'footer.php'; ?>
 
 </body>
 </html>
