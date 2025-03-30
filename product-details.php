@@ -1,5 +1,5 @@
 <?php
-include 'db.php'; // Database connection
+include 'db.php'; // Include database connection
 
 // Get product ID from URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -9,7 +9,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $product_id = intval($_GET['id']); // Convert to integer to prevent SQL injection
 
-// Fetch product details
+// Fetch product details from the database
 $sql = "SELECT * FROM PRODUCT WHERE P_ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $product_id);
@@ -23,7 +23,7 @@ if ($result->num_rows == 0) {
 
 $product = $result->fetch_assoc();
 
-// Fetch product variants (size, stock)
+// Fetch product variants (color, size, quantity)
 $sql_variants = "SELECT * FROM PRODUCT_VARIANTS WHERE P_ID = ?";
 $stmt = $conn->prepare($sql_variants);
 $stmt->bind_param("i", $product_id);
@@ -51,26 +51,30 @@ $conn->close();
 </head>
 <body>
 
-<?php include 'header.php'; ?>
+<?php include 'header.php'; ?> <!-- Include header -->
+
+<div class="discount-label">
+    <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+</div>
 
 <main>
     <div class="product-details">
         <div class="product-image">
-            <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
+        <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
         </div>
         <div class="product-info">
             <h1><?php echo $product['P_Name']; ?></h1>
             <p>RM <?php echo number_format($product['P_Price'], 2); ?></p>
             <p class="stock-status">✅ In Stock</p>
 
-            <!-- Size Selection -->
-            <label for="size"><p>Size:</p><img src="images/sizechart.png" alt="Size Chart"></label>
+             <!-- Size Selection -->
+             <label for="size">
+            <p>Size:</p>
+            <img src="images/sizechart.png" alt="Size Chart"></label>
             <select id="size-select">
                 <option value="">Select Size</option>
                 <?php foreach ($variants as $variant) { ?>
-                    <option value="<?php echo $variant['PV_ID']; ?>" data-size="<?php echo $variant['P_Size']; ?>">
-                        <?php echo $variant['P_Size']; ?>
-                    </option>
+                    <option value="<?php echo $variant['P_Size']; ?>"><?php echo $variant['P_Size']; ?></option>
                 <?php } ?>
             </select>
 
@@ -82,7 +86,7 @@ $conn->close();
             <button onclick="addToCart(<?php echo $product['P_ID']; ?>)">Add to Cart</button>
             <div class="wishlist-container">
                 <i class="far fa-heart"></i>
-                <a href="wishlist.php" onclick="addToWishlist()">Add to Wishlist</a>
+                <a href="#" onclick="addToWishlist()">Add to Wishlist</a>
             </div>
 
             <details>
@@ -96,36 +100,7 @@ $conn->close();
     </div>
 </main>
 
-<?php include 'footer.php'; ?>
-
-<script>
-function addToCart(productId) {
-    let sizeDropdown = document.getElementById('size-select');
-    let sizeValue = sizeDropdown.value;
-    let quantityValue = document.getElementById('quantity').value;
-
-    if (sizeValue === "") {
-        alert("Please select a size.");
-        return;
-    }
-
-    let formData = new FormData();
-    formData.append('product_id', productId);
-    formData.append('pv_id', sizeValue);
-    formData.append('quantity', quantityValue);
-
-    fetch('cart.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-        alert(data);
-        window.location.href = "cart.php";
-    })
-    .catch(error => console.error('Error:', error));
-}
-</script>
+<?php include 'footer.php'; ?> <!-- Include footer -->
 
 </body>
 </html>

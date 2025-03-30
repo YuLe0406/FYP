@@ -1,37 +1,94 @@
 <?php
 session_start();
-include 'db.php';
+include 'db.php'; // Include database connection
+include 'header.php'; // Include header
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $product_id = intval($_POST['product_id']);
-    $size = $_POST['size'];
-    $quantity = intval($_POST['quantity']);
-    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Change to actual user session ID
+// Retrieve cart items from session (or database if implementing persistent cart)
+$cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 
-    // ✅ Check if Product Variant exists
-    $sql_pv = "SELECT PV_ID FROM product_variants WHERE P_ID = ? AND P_Size = ?";
-    $stmt = $conn->prepare($sql_pv);
-    $stmt->bind_param("is", $product_id, $size);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows == 0) {
-        die("❌ No matching variant found for P_ID: $product_id and Size: $size <br>");
-    }
-
-    $row = $result->fetch_assoc();
-    $pv_id = $row['PV_ID'];
-    echo "✅ Found PV_ID: $pv_id <br>";
-
-    // ✅ Insert into Cart
-    $insert_sql = "INSERT INTO cart (user_id, product_id, pv_id, quantity) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($insert_sql);
-    $stmt->bind_param("iiii", $user_id, $product_id, $pv_id, $quantity);
-
-    if ($stmt->execute()) {
-        echo "🎉 Product added to cart!";
-    } else {
-        echo "❌ Insert Error: " . $stmt->error;
-    }
-}
+$total_price = 0;
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | CTRL+X</title>
+    <link rel="stylesheet" href="cart.css">
+    <script defer src="cart.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
+
+<main>
+    <h1>Your Cart</h1>
+    <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
+
+    <section id="cart-container">
+        <div id="cart-items">
+            <?php if (empty($cart_items)) { ?>
+                <p>Your cart is empty.</p>
+            <?php } else { ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Size</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($cart_items as $item) { 
+                            $product_id = $item['id'];
+                            $size = $item['size'];
+                            $quantity = $item['quantity'];
+
+                            // Fetch product details from database
+                            $sql = "SELECT P_Name, P_Price, P_Picture FROM PRODUCT WHERE P_ID = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $product_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $product = $result->fetch_assoc();
+
+                            if ($product) {
+                                $item_price = $product['P_Price'] * $quantity;
+                                $total_price += $item_price;
+                            ?>
+                                <tr>
+                                    <td>
+                                        <img src="images/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>" width="50">
+                                        <?php echo $product['P_Name']; ?>
+                                    </td>
+                                    <td><?php echo $size; ?></td>
+                                    <td><?php echo $quantity; ?></td>
+                                    <td>RM <?php echo number_format($product['P_Price'], 2); ?></td>
+                                    <td>RM <?php echo number_format($item_price, 2); ?></td>
+                                    <td><a href="remove_from_cart.php?id=<?php echo $product_id; ?>&size=<?php echo $size; ?>" class="remove-btn">❌</a></td>
+                                </tr>
+                        <?php } } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+        </div>
+
+        <div id="cart-summary">
+            <h2>Cart Summary</h2>
+            <p>Total: <span id="cart-total">RM <?php echo number_format($total_price, 2); ?></span></p>
+            <a href="checkout.html"><button id="checkout-btn">Proceed to Checkout</button></a>
+        </div>
+    </section>
+</main>
+
+<?php include 'footer.php'; ?>  <!-- Include footer -->
+
+</body>
+</html>
