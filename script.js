@@ -202,7 +202,7 @@ function addToCart() {
             id: product.id, 
             name: product.name, 
             price: product.price, 
-            image: product.image[0], // Use only the first image as thumbnail
+            image: product.image,
             size: selectedSize, 
             quantity: 1 
         });
