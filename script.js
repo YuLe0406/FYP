@@ -165,7 +165,6 @@ window.onload = () => {
 };
 
 // Add to cart function
-// Add to cart function
 function addToCart() {
     let urlParams = new URLSearchParams(window.location.search);
     let productId = urlParams.get("id");
@@ -185,7 +184,7 @@ function addToCart() {
     }
 
     let selectedSize = sizeDropdown.value;
-
+    
     if (!selectedSize) {
         alert("Please select a size!");
         return;
@@ -203,7 +202,7 @@ function addToCart() {
             id: product.id, 
             name: product.name, 
             price: product.price, 
-            image: product.image,
+            image: product.image[0], // Use only the first image as thumbnail
             size: selectedSize, 
             quantity: 1 
         });
@@ -212,6 +211,7 @@ function addToCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
     alert("Added to Cart!");
 }
+
 
 
 

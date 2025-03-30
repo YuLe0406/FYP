@@ -19,8 +19,8 @@ function loadCart() {
                 <div class="cart-item-info">
                     <p><strong>${item.name}</strong></p>
                     <p>Size: ${item.size}</p>
+                    <p>RM ${item.price.toFixed(2)}</p>
                 </div>
-                <p>RM ${item.price.toFixed(2)}</p>
                 <input type="number" min="1" value="${item.quantity}" data-index="${index}" class="cart-qty">
                 <button onclick="removeFromCart(${index})">Remove</button>
             `;
@@ -51,4 +51,5 @@ function removeFromCart(index) {
     localStorage.setItem("cart", JSON.stringify(cartItems));
     loadCart();
 }
+
 
