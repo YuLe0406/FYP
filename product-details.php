@@ -1,42 +1,41 @@
 <?php
-include 'db.php'; // Include database connection
+session_start();
+include 'db.php';
 
-// Get product ID from URL
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    echo "<h2>Product Not Found</h2>";
+// Get cart items from the database
+$sql = "SELECT 
+            cart.cart_id, 
+            cart.quantity, 
+            product.P_Name, 
+            product.P_Price, 
+            product.P_Picture, 
+            product_variants.P_Size
+        FROM cart
+        INNER JOIN product ON cart.product_id = product.P_ID
+        INNER JOIN product_variants ON cart.pv_id = product_variants.PV_ID";
+
+$result = $conn->query($sql);
+$total_price = 0;
+
+// Handle adding to cart
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $product_id = $_POST['product_id'];
+    $pv_id = $_POST['pv_id'];
+    $quantity = $_POST['quantity'];
+    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "NULL";
+
+    $insert_sql = "INSERT INTO cart (user_id, product_id, pv_id, quantity) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($insert_sql);
+    $stmt->bind_param("iiii", $user_id, $product_id, $pv_id, $quantity);
+
+    if ($stmt->execute()) {
+        echo "Product added to cart!";
+    } else {
+        echo "Failed to add product.";
+    }
     exit;
 }
 
-$product_id = intval($_GET['id']); // Convert to integer to prevent SQL injection
-
-// Fetch product details from the database
-$sql = "SELECT * FROM PRODUCT WHERE P_ID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $product_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows == 0) {
-    echo "<h2>Product Not Found</h2>";
-    exit;
-}
-
-$product = $result->fetch_assoc();
-
-// Fetch product variants (color, size, quantity)
-$sql_variants = "SELECT * FROM PRODUCT_VARIANTS WHERE P_ID = ?";
-$stmt = $conn->prepare($sql_variants);
-$stmt->bind_param("i", $product_id);
-$stmt->execute();
-$variants_result = $stmt->get_result();
-
-$variants = [];
-while ($variant = $variants_result->fetch_assoc()) {
-    $variants[] = $variant;
-}
-
-$stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -44,59 +43,51 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $product['P_Name']; ?> | CTRL+X</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <title>Cart | CTRL+X</title>
+    <link rel="stylesheet" href="cart.css">
 </head>
 <body>
 
-<?php include 'header.php'; ?> <!-- Include header -->
-
 <main>
-    <div class="product-details">
-        <div class="product-image">
-        <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
+    <h1>Your Cart</h1>
+    <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
+
+    <section id="cart-container">
+        <div id="cart-items">
+            <?php if ($result->num_rows == 0) { ?>
+                <p>Your cart is empty.</p>
+            <?php } else { ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Size</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($item = $result->fetch_assoc()) { 
+                            $item_price = $item['P_Price'] * $item['quantity'];
+                            $total_price += $item_price;
+                        ?>
+                            <tr>
+                                <td><img src="images/<?php echo $item['P_Picture']; ?>" width="50"><?php echo $item['P_Name']; ?></td>
+                                <td><?php echo $item['P_Size']; ?></td>
+                                <td><?php echo $item['quantity']; ?></td>
+                                <td>RM <?php echo number_format($item['P_Price'], 2); ?></td>
+                                <td>RM <?php echo number_format($item_price, 2); ?></td>
+                                <td><a href="remove_from_cart.php?id=<?php echo $item['cart_id']; ?>">❌</a></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
         </div>
-        <div class="product-info">
-            <h1><?php echo $product['P_Name']; ?></h1>
-            <p>RM <?php echo number_format($product['P_Price'], 2); ?></p>
-            <p class="stock-status">✅ In Stock</p>
-
-             <!-- Size Selection -->
-             <label for="size">
-            <p>Size:</p>
-            <img src="images/sizechart.png" alt="Size Chart"></label>
-            <select id="size-select">
-                <option value="">Select Size</option>
-                <?php foreach ($variants as $variant) { ?>
-                    <option value="<?php echo $variant['P_Size']; ?>"><?php echo $variant['P_Size']; ?></option>
-                <?php } ?>
-            </select>
-
-            <!-- Quantity Selector -->
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" value="1" min="1" max="15">
-
-            <!-- Buttons -->
-            <button onclick="addToCart(<?php echo $product['P_ID']; ?>)">Add to Cart</button>
-            <div class="wishlist-container">
-                <i class="far fa-heart"></i>
-                <a href="wishlist.php" onclick="addToWishlist()">Add to Wishlist</a>
-            </div>
-
-            <details>
-                <summary>Product Info</summary>
-                <p><strong>Material:</strong> 80% Polyamide, 20% Spandex</p>
-                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, cool iron.</p>
-            </details>
-
-            <p>Product Code: <?php echo $product['P_ID']; ?></p>
-        </div>
-    </div>
+    </section>
 </main>
-
-<?php include 'footer.php'; ?> <!-- Include footer -->
 
 </body>
 </html>
