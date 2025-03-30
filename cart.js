@@ -15,7 +15,7 @@ function loadCart() {
             let cartItemDiv = document.createElement("div");
             cartItemDiv.classList.add("cart-item");
             cartItemDiv.innerHTML = `
-                <img src="images/${item.image}" alt="${item.name}">
+                <img src="http://localhost/FYP/${item.image}" alt="${item.name}">
                 <div class="cart-item-info">
                     <p><strong>${item.name}</strong></p>
                     <p>Size: ${item.size}</p>
