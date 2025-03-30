@@ -21,7 +21,18 @@ $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 $total_price = 0;
 ?>
 
-<?php include 'header.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | CTRL+X</title>
+    <link rel="stylesheet" href="cart.css">
+    <script defer src="cart.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
 
 <main>
     <h1>Your Cart</h1>
