@@ -22,7 +22,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart | CTRL+X</title>
-    <link rel="stylesheet" href="cart.cs">
+    <link rel="stylesheet" href="cart.css">
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
