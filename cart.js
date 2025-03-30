@@ -1,63 +1,54 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const cartTable = document.querySelector("#cart-items tbody");
-    const cartTotal = document.querySelector("#cart-total");
+document.addEventListener("DOMContentLoaded", loadCart);
 
-    function updateTotal() {
-        let total = 0;
-        document.querySelectorAll(".item-total").forEach((item) => {
-            total += parseFloat(item.textContent.replace("RM ", ""));
+function loadCart() {
+    let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    let cartContainer = document.getElementById("cart-items");
+    let cartTotal = document.getElementById("cart-total");
+    cartContainer.innerHTML = "";
+
+    let total = 0;
+
+    if (cartItems.length === 0) {
+        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+    } else {
+        cartItems.forEach((item, index) => {
+            let cartItemDiv = document.createElement("div");
+            cartItemDiv.classList.add("cart-item");
+            cartItemDiv.innerHTML = `
+                <img src="images/${item.image}" alt="${item.name}">
+                <div class="cart-item-info">
+                    <p><strong>${item.name}</strong></p>
+                    <p>Size: ${item.size}</p>
+                </div>
+                <p>RM ${item.price.toFixed(2)}</p>
+                <input type="number" min="1" value="${item.quantity}" data-index="${index}" class="cart-qty">
+                <button onclick="removeFromCart(${index})">Remove</button>
+            `;
+            cartContainer.appendChild(cartItemDiv);
+            total += item.price * item.quantity;
         });
-        cartTotal.textContent = "RM " + total.toFixed(2);
     }
 
-    cartTable.addEventListener("click", function (event) {
-        const row = event.target.closest("tr");
-        const productId = row.getAttribute("data-id");
-        const size = row.getAttribute("data-size");
-        const quantityInput = row.querySelector(".quantity-input");
+    cartTotal.innerText = `RM ${total.toFixed(2)}`;
+    attachQuantityChangeEvents();
+}
 
-        if (event.target.classList.contains("plus")) {
-            let newQty = parseInt(quantityInput.value) + 1;
-            quantityInput.value = newQty;
-            updateItem(productId, size, newQty, row);
-        } else if (event.target.classList.contains("minus")) {
-            let newQty = parseInt(quantityInput.value) - 1;
-            if (newQty > 0) {
-                quantityInput.value = newQty;
-                updateItem(productId, size, newQty, row);
-            }
-        } else if (event.target.classList.contains("remove-btn")) {
-            removeItem(productId, size, row);
-        }
+function attachQuantityChangeEvents() {
+    document.querySelectorAll(".cart-qty").forEach(input => {
+        input.addEventListener("change", function () {
+            let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+            let index = this.getAttribute("data-index");
+            cartItems[index].quantity = parseInt(this.value);
+            localStorage.setItem("cart", JSON.stringify(cartItems));
+            loadCart();
+        });
     });
+}
 
-    function updateItem(productId, size, newQty, row) {
-        fetch("update_cart.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: productId, size: size, quantity: newQty }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                row.querySelector(".item-total").textContent = "RM " + data.newTotal.toFixed(2);
-                updateTotal();
-            }
-        });
-    }
+function removeFromCart(index) {
+    let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    cartItems.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+    loadCart();
+}
 
-    function removeItem(productId, size, row) {
-        fetch("remove_from_cart.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: productId, size: size }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                row.remove();
-                updateTotal();
-            }
-        });
-    }
-});
