@@ -21,6 +21,10 @@ $total_price = 0;
 </head>
 <body>
 
+    <div class="discount-label">
+        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
+    </div>
+
 <main>
     <h1>Your Cart</h1>
     <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
