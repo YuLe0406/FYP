@@ -165,34 +165,35 @@ window.onload = () => {
 };
 
 // Add to cart function
-function addToCart() {
-    let urlParams = new URLSearchParams(window.location.search);
-    let productId = urlParams.get("id");
-    let sizeDropdown = document.getElementById("size-select");
+function addToCart(productId) {
+    let size = document.getElementById("size-select").value;
+    let quantity = document.getElementById("quantity").value;
 
-    if (!sizeDropdown) {
-        alert("Size selection dropdown not found!");
-        return;
-    }
-
-    let selectedSize = sizeDropdown.value;
-    if (!selectedSize) {
+    if (!size) {
         alert("Please select a size!");
         return;
     }
 
-    let quantity = document.getElementById("quantity").value || 1;
+    let formData = new FormData();
+    formData.append("product_id", productId);
+    formData.append("size", size);
+    formData.append("quantity", quantity);
 
-    // Send cart data to PHP via AJAX
     fetch("add_to_cart.php", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `id=${productId}&size=${selectedSize}&quantity=${quantity}`
+        body: formData
     })
-    .then(response => response.text())
-    .then(data => alert(data))
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Added to cart successfully!");
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
     .catch(error => console.error("Error:", error));
 }
+
 
 function removeFromCart(cartId) {
     fetch("remove_from_cart.php", {
