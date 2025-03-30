@@ -1,9 +1,9 @@
 <?php
 session_start();
-include 'db.php'; // Include database connection
-include 'header.php'; // Include header
+include 'db.php'; // Database connection
+include 'header.php'; // Header
 
-// Retrieve cart items from session (or database if implementing persistent cart)
+// Retrieve cart items from session
 $cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 
 $total_price = 0;
@@ -51,7 +51,7 @@ $total_price = 0;
                             $size = $item['size'];
                             $quantity = $item['quantity'];
 
-                            // Fetch product details from database
+                            // Fetch product details
                             $sql = "SELECT P_Name, P_Price, P_Picture FROM PRODUCT WHERE P_ID = ?";
                             $stmt = $conn->prepare($sql);
                             $stmt->bind_param("i", $product_id);
@@ -63,16 +63,20 @@ $total_price = 0;
                                 $item_price = $product['P_Price'] * $quantity;
                                 $total_price += $item_price;
                             ?>
-                                <tr>
+                                <tr data-id="<?php echo $product_id; ?>" data-size="<?php echo $size; ?>">
                                     <td>
                                         <img src="images/<?php echo $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>" width="50">
                                         <?php echo $product['P_Name']; ?>
                                     </td>
                                     <td><?php echo $size; ?></td>
-                                    <td><?php echo $quantity; ?></td>
+                                    <td>
+                                        <button class="quantity-btn minus">-</button>
+                                        <input type="text" class="quantity-input" value="<?php echo $quantity; ?>" readonly>
+                                        <button class="quantity-btn plus">+</button>
+                                    </td>
                                     <td>RM <?php echo number_format($product['P_Price'], 2); ?></td>
-                                    <td>RM <?php echo number_format($item_price, 2); ?></td>
-                                    <td><a href="remove_from_cart.php?id=<?php echo $product_id; ?>&size=<?php echo $size; ?>" class="remove-btn">❌</a></td>
+                                    <td class="item-total">RM <?php echo number_format($item_price, 2); ?></td>
+                                    <td><button class="remove-btn">❌</button></td>
                                 </tr>
                         <?php } } ?>
                     </tbody>
@@ -88,7 +92,7 @@ $total_price = 0;
     </section>
 </main>
 
-<?php include 'footer.php'; ?>  <!-- Include footer -->
+<?php include 'footer.php'; ?> <!-- Footer -->
 
 </body>
 </html>

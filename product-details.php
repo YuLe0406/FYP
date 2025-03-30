@@ -86,7 +86,7 @@ $conn->close();
             <button onclick="addToCart(<?php echo $product['P_ID']; ?>)">Add to Cart</button>
             <div class="wishlist-container">
                 <i class="far fa-heart"></i>
-                <a href="#" onclick="addToWishlist()">Add to Wishlist</a>
+                <a href="wishlist.php" onclick="addToWishlist()">Add to Wishlist</a>
             </div>
 
             <details>
