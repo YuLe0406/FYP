@@ -51,5 +51,3 @@ function removeFromCart(index) {
     localStorage.setItem("cart", JSON.stringify(cartItems));
     loadCart();
 }
-
-
