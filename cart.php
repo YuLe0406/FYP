@@ -14,7 +14,7 @@ $total_price = 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | CTRL+X</title>
+    <title>Cart | CTRL+X</title>
     <link rel="stylesheet" href="cart.css">
     <script defer src="cart.js"></script>
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
