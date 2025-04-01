@@ -217,3 +217,4 @@ function addToWishlist() {
     let name = document.getElementById("productName").textContent;
     alert(`Added to Wishlist:\n${name}`);
 }
+
