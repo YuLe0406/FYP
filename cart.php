@@ -19,12 +19,6 @@ $total_price = 0;
     <script defer src="cart.js"></script>
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
-<body>
-
-    <div class="discount-label">
-        <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-    </div>
-
 <main>
     <h1>Your Cart</h1>
     <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
@@ -88,7 +82,7 @@ $total_price = 0;
     </section>
 </main>
 
-<?php include 'footer.php'; ?>  <!-- Include footer -->
+<?php include 'footer.php'; // Include footer ?>
 
 </body>
 </html>

@@ -212,10 +212,9 @@ function addToCart() {
     alert("Added to Cart!");
 }
 
-
-
 // Add to wishlist function
 function addToWishlist() {
     let name = document.getElementById("productName").textContent;
     alert(`Added to Wishlist:\n${name}`);
 }
+

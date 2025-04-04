@@ -136,7 +136,7 @@ header {
     border-radius: 20px;
     outline: none;
   }
-  
+
   .search-container button {
     position: absolute;
     right: 5px;
@@ -205,6 +205,9 @@ header {
     background-color: #222;
     color: white;
     padding:40px 20px 10px 20px;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
   }
   
   .footer-container {
@@ -263,7 +266,7 @@ header {
     margin-bottom: 10px;
     border: none;
     border-radius: 4px;
-    width: auto;
+    width: 93%;
   }
   
   .newsletter button {
@@ -273,6 +276,7 @@ header {
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    width:100%;
   }
   
   .footer-bottom {
@@ -281,4 +285,56 @@ header {
     border-top: 1px solid #444;
     margin-top: 20px;
   }
-  
+
+
+/*wishlist*/
+.wishlist-container {
+    width: 80%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#wishlist-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.wishlist-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    position: relative;
+}
+
+.wishlist-item img {
+    width: 100%;
+    height: auto;
+}
+
+.wishlist-item p {
+    margin: 10px 0;
+}
+
+.wishlist-item input[type="checkbox"] {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#add-to-cart-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#add-to-cart-btn:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
