@@ -7,9 +7,9 @@ CREATE TABLE USER (
     U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(20) NOT NULL
+    U_PNumber VARCHAR(20) NOT NULL,
     U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL;
+    U_SecurityAnswer VARCHAR(255) NOT NULL
 );
 
 -- ADMIN Table
@@ -44,7 +44,7 @@ CREATE TABLE PASSWORD_RESET (
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
     C_ID INT AUTO_INCREMENT PRIMARY KEY,
-    C_Name VARCHAR(255) NOT NULL,
+    C_Name VARCHAR(255) NOT NULL
 );
 
 -- PRODUCT Table
@@ -71,9 +71,7 @@ CREATE TABLE PRODUCT_COLOR (
     PC_ID INT AUTO_INCREMENT PRIMARY KEY,
     COLOR_NAME VARCHAR(50) NOT NULL,
     COLOR_HEX VARCHAR(7) NOT NULL,  -- Stores hex codes like #FF0000
-    COLOR_IMAGE VARCHAR(255),       -- Optional path to color swatch image
-    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE,
-    UNIQUE KEY (P_ID, COLOR_NAME)   -- Prevent duplicate colors for same product
+    COLOR_IMAGE VARCHAR(255)       -- Optional path to color swatch image
 );
 
 -- ADDRESS Table
@@ -143,11 +141,7 @@ CREATE TABLE PAYMENT (
     transaction_id VARCHAR(255) UNIQUE,
     payment_details JSON,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
-    FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE,
-    INDEX (payment_date),  --useless
-    INDEX (payment_status), --useless
-    CONSTRAINT chk_amount_matches_order,
-    CHECK (amount = (SELECT O_TotalAmount FROM ORDERS WHERE O_ID = payment.O_ID))
+    FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
 CREATE TABLE DELIVERY (
