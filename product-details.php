@@ -93,6 +93,23 @@ $conn->close();
     </div>
 </main>
 
+<script>
+    function addToWishlist(id, name, image, price) {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+    // Check if the item is already in the wishlist
+    let exists = wishlist.some(item => item.id === id);
+    if (!exists) {
+        wishlist.push({ id, name, image, price });
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        alert("Added to Wishlist! ❤️");
+    } else {
+        alert("This item is already in your Wishlist!");
+    }
+}
+
+</script>
+
 <?php include 'footer.php'; ?> <!-- Include footer -->
 
 </body>
