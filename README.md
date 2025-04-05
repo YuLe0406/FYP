@@ -29,7 +29,7 @@
 ```plaintext
 ├── frontend/     # Frontend code (React.js/Vue.js)
 ├── backend/      # Backend code (Node.js/PHP)
-├── database/     # Database schema and queries
+├── database/     # Database schema and queries (phpMyAdmin)
 ├── docs/         # Documentation files
 ├── README.md     # Project introduction
 └── .gitignore    # Git ignored files
