@@ -213,16 +213,15 @@ function addToCart() {
 }
 
 function addToWishlist(id, name, image, price) {
+    console.log("Adding to wishlist:", id, name); // For testing
+
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-    // Check if the item is already in the wishlist
-    let exists = wishlist.some(item => item.id === id);
-    if (!exists) {
+    if (!wishlist.some(item => item.id === id)) {
         wishlist.push({ id, name, image, price });
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
         alert("Added to Wishlist! ❤️");
     } else {
-        alert("This item is already in your Wishlist!");
+        alert("Already in Wishlist!");
     }
 }
-
