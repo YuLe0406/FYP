@@ -220,7 +220,7 @@ function addToWishlist(id, name, image, price) {
     if (!exists) {
         wishlist.push({ id, name, image, price });
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
-        alert("Added to Wishlist! ❤️");
+        alert("Added to Wishlist!");
     } else {
         alert("This item is already in your Wishlist!");
     }
