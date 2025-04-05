@@ -61,10 +61,19 @@ CREATE TABLE PRODUCT (
 CREATE TABLE PRODUCT_VARIANTS (
     PV_ID INT AUTO_INCREMENT PRIMARY KEY,
     P_ID INT NOT NULL,
-    P_Color VARCHAR(50) NOT NULL,
-    P_Size VARCHAR(50) NOT NULL,
+    PC_ID INT NOT NULL,
+    P_Size ENUM('XS','S','M','L','XL','XXL','XXXL') NOT NULL,
     P_Quantity INT NOT NULL,
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE PRODUCT_COLOR (
+    PC_ID INT AUTO_INCREMENT PRIMARY KEY,
+    COLOR_NAME VARCHAR(50) NOT NULL,
+    COLOR_HEX VARCHAR(7) NOT NULL,  -- Stores hex codes like #FF0000
+    COLOR_IMAGE VARCHAR(255),       -- Optional path to color swatch image
+    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE,
+    UNIQUE KEY (P_ID, COLOR_NAME)   -- Prevent duplicate colors for same product
 );
 
 -- ADDRESS Table
@@ -94,7 +103,6 @@ CREATE TABLE CART (
     CART_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     P_ID INT NOT NULL,
-    PV_ID INT NULL,
     CART_Quantity INT NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE,
@@ -107,7 +115,6 @@ CREATE TABLE ORDERS (
     U_ID INT NOT NULL,
     AD_ID INT NOT NULL,
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    O_Status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded') NOT NULL DEFAULT 'Pending',
     O_TotalAmount DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
     FOREIGN KEY (AD_ID) REFERENCES ADDRESS(AD_ID)
@@ -136,6 +143,23 @@ CREATE TABLE PAYMENT (
     transaction_id VARCHAR(255) UNIQUE,
     payment_details JSON,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
+    FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE,
+    INDEX (payment_date),  --useless
+    INDEX (payment_status), --useless
+    CONSTRAINT chk_amount_matches_order,
+    CHECK (amount = (SELECT O_TotalAmount FROM ORDERS WHERE O_ID = payment.O_ID))
+);
+
+CREATE TABLE DELIVERY (
+    D_ID INT AUTO_INCREMENT PRIMARY KEY,
+    O_ID INT NOT NULL,
+    D_Carrier VARCHAR(100) NOT NULL,          -- e.g., "FedEx", "DHL"
+    D_TrackingNumber VARCHAR(255),            -- Carrier's tracking ID
+    D_StartDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
+    D_ActualDelivery DATETIME NULL,           -- When actually delivered
+    D_Status ENUM('Preparing', 'In Transit', 'Out for Delivery', 
+                 'Delivered', 'Failed Attempt', 'Returned') NOT NULL DEFAULT 'Preparing',
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
