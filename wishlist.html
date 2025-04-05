@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wishlist | CTRL+X</title>
     <link rel="stylesheet" href="wishlist.css">
+    <script defer src="wishlist.js"></script>
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -20,7 +21,7 @@
         </div>
         <div class="icons">
             <a href="login.html" class="icon"><i class="fas fa-user"></i> Login / Register</a>
-            <a href="#" class="icon"><i class="fas fa-heart"></i></a>
+            <a href="wishlist.php" class="icon"><i class="fas fa-heart"></i></a>
             <a href="cart.php" class="icon"><i class="fas fa-shopping-cart"></i></a>
         </div>
     </header>   
@@ -31,15 +32,30 @@
     </div>
 
     <main>
+        <h1>Your Wishlist</h1>
+        <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
 
-        <!-- Wishlist Section -->
-    <section class="wishlist-container">
-        <h1>My Wishlist</h1>
-        <div id="wishlist-items"></div>
-        <button id="add-to-cart-btn" disabled>Add Selected to Cart</button>
-    </section>
-            
+        <!-- Filter & Sort -->
+        <div class="wishlist-controls">
+            <select id="filter-category">
+                <option value="all">All Categories</option>
+                <option value="tops">Tops</option>
+                <option value="bottoms">Bottoms</option>
+                <option value="accessories">Accessories</option>
+            </select>
 
+            <select id="sort-wishlist">
+                <option value="default">Sort By</option>
+                <option value="price-low-high">Price: Low to High</option>
+                <option value="price-high-low">Price: High to Low</option>
+            </select>
+        </div>
+
+        <section id="wishlist-container">
+            <div id="wishlist-items"></div>
+        </section>
+
+        <button id="add-selected-to-cart">Add Selected to Cart</button>
     </main>
 
     <!-- Include Footer -->
@@ -53,7 +69,7 @@
                     <li><a href="#">Track Your Order</a></li>
                 </ul>
             </div>
-    
+
             <div class="footer-column">
                 <h3>About Us</h3>
                 <ul>
@@ -62,7 +78,7 @@
                     <li><a href="#">Privacy Policy</a></li>
                 </ul>
             </div>
-    
+
             <div class="footer-column">
                 <h3>Help</h3>
                 <ul>
@@ -71,18 +87,18 @@
                     <li><a href="#">Terms & Conditions</a></li>
                 </ul>
             </div>
-    
+
             <div class="footer-column">
                 <h3>Customer Service</h3>
                 <p>📞 +6010 828 0026</p>
                 <p>📧 support@ctrlx.com</p>
             </div>
-    
+
             <div class="footer-column">
                 <h3>Operation Time</h3>
                 <p>Mon - Fri: 9:30am - 6:00pm</p>
             </div>
-    
+
             <div class="footer-column newsletter">
                 <h3>Sign up for our Newsletter</h3>
                 <form>
@@ -91,12 +107,11 @@
                 </form>
             </div>
         </div>
-    
+
         <div class="footer-bottom">
             <p>© 2025 CTRL+X. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <script src="checkout.js"></script>
 </body>
 </html>
