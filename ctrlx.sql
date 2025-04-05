@@ -182,3 +182,105 @@ WHERE
     AND P.C_ID = 1 -- Example category filter
 ORDER BY 
     O.O_Date DESC;
+
+INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
+(1, 'White Oversized T', 69.90, 'images/1front.png'),
+(1, 'Black Oversized T', 89.90, 'images/2front.png'),
+(1, 'Red Oversized T', 79.90, 'images/3front.png'),
+(1, 'Clay Oversized T', 79.90, 'images/4front.png'),
+(1, 'Butter Oversized T', 79.90, 'images/5front.png'),
+(1, 'Grey Oversized T', 69.90, 'images/6front.png'),
+(1, 'Orchid Oversized T', 79.90, 'images/7front.png'),
+(2, 'White Hoodie', 169.90, 'images/1Front.jpeg'),
+(2, 'Grey Hoodie', 169.90, 'images/2Front.jpeg'),
+(2, 'Charcoal Hoodie', 169.90, 'images/3Front.jpeg'),
+(2, 'Black Hoodie', 169.90, 'images/4Front.jpeg'),
+(2, 'Red Hoodie', 169.90, 'images/5Front.jpeg'),
+(2, 'Green Hoodie', 169.90, 'images/6Front.jpeg'),
+(2, 'Navy Hoodie', 169.90, 'images/7Front.jpeg');
+
+
+INSERT INTO PRODUCT_VARIANTS (P_ID, P_Color, P_Size, P_Quantity) VALUES
+-- White Oversized T-Shirt
+(1, 'White', 'S', 10),
+(1, 'White', 'M', 12),
+(1, 'White', 'L', 8),
+(1, 'White', 'XL', 6),
+
+-- Black Oversized T-Shirt
+(2, 'Black', 'S', 10),
+(2, 'Black', 'M', 12),
+(2, 'Black', 'L', 8),
+(2, 'Black', 'XL', 6),
+
+-- Red Oversized T-Shirt
+(3, 'Red', 'S', 10),
+(3, 'Red', 'M', 12),
+(3, 'Red', 'L', 8),
+(3, 'Red', 'XL', 6),
+
+-- Clay Oversized T-Shirt
+(4, 'Clay', 'S', 10),
+(4, 'Clay', 'M', 12),
+(4, 'Clay', 'L', 8),
+(4, 'Clay', 'XL', 6),
+
+-- Butter Oversized T-Shirt
+(5, 'Butter', 'S', 10),
+(5, 'Butter', 'M', 12),
+(5, 'Butter', 'L', 8),
+(5, 'Butter', 'XL', 6),
+
+-- Grey Oversized T-Shirt
+(6, 'Grey', 'S', 10),
+(6, 'Grey', 'M', 12),
+(6, 'Grey', 'L', 8),
+(6, 'Grey', 'XL', 6),
+
+-- Orchid Oversized T-Shirt
+(7, 'Orchid', 'S', 10),
+(7, 'Orchid', 'M', 12),
+(7, 'Orchid', 'L', 8),
+(7, 'Orchid', 'XL', 6),
+
+-- White Hoodie
+(8, 'White', 'S', 5),
+(8, 'White', 'M', 7),
+(8, 'White', 'L', 4),
+(8, 'White', 'XL', 3),
+
+-- Grey Hoodie
+(9, 'Grey', 'S', 5),
+(9, 'Grey', 'M', 7),
+(9, 'Grey', 'L', 4),
+(9, 'Grey', 'XL', 3),
+
+-- Charcoal Hoodie
+(10, 'Charcoal', 'S', 5),
+(10, 'Charcoal', 'M', 7),
+(10, 'Charcoal', 'L', 4),
+(10, 'Charcoal', 'XL', 3),
+
+-- Black Hoodie
+(11, 'Black', 'S', 5),
+(11, 'Black', 'M', 7),
+(11, 'Black', 'L', 4),
+(11, 'Black', 'XL', 3),
+
+-- Red Hoodie
+(12, 'Red', 'S', 5),
+(12, 'Red', 'M', 7),
+(12, 'Red', 'L', 4),
+(12, 'Red', 'XL', 3),
+
+-- Green Hoodie
+(13, 'Green', 'S', 5),
+(13, 'Green', 'M', 7),
+(13, 'Green', 'L', 4),
+(13, 'Green', 'XL', 3),
+
+-- Navy Hoodie
+(14, 'Navy', 'S', 5),
+(14, 'Navy', 'M', 7),
+(14, 'Navy', 'L', 4),
+(14, 'Navy', 'XL', 3);
