@@ -225,3 +225,4 @@ function addToWishlist(id, name, image, price) {
         alert("This item is already in your Wishlist!");
     }
 }
+
