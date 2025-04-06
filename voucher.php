@@ -106,7 +106,7 @@ $vouchers = $conn->query("SELECT * FROM VOUCHER ORDER BY V_ExpiryDate DESC");
 </head>
 <body>
     <div class="container">
-        <!-- Include your sidebar navigation -->
+        
         <?php include 'sidebar.php'; ?>
 
         <div class="main-content">
