@@ -4,7 +4,7 @@ CREATE TABLE USER (
     U_FName VARCHAR(255) NOT NULL,
     U_LName VARCHAR(255) NOT NULL,
     U_DOB DATE NOT NULL,
-    U_Gender VARCHAR(255) NOT NULL,
+    U_Gender VARCHAR(6) NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE ADMIN (
     A_Name VARCHAR(255) NOT NULL,
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
-    A_CN VARCHAR(20) NOT NULL,
+    A_CN VARCHAR(11) NOT NULL,
     A_Level TINYINT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
 );
 
@@ -102,6 +102,7 @@ CREATE TABLE ORDERS (
     AD_ID INT NOT NULL,
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     O_TotalAmount DECIMAL(10,2) NOT NULL,
+    O_DC DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
     FOREIGN KEY (AD_ID) REFERENCES ADDRESS(AD_ID)
 );
@@ -170,52 +171,6 @@ CREATE TABLE ORDER_VOUCHER (
     FOREIGN KEY (V_ID) REFERENCES VOUCHER(V_ID)
 );
 
- --TESTING FOR ORDER
-
-SELECT 
-    O.O_ID AS OrderID,
-    U.U_FName AS CustomerName,
-    O.O_Date AS OrderDate,
-    O.O_TotalAmount AS TotalAmount,
-    P.P_Name AS ProductName,
-    OI.OI_Quantity AS Quantity,
-    OI.OI_Price AS Price
-FROM 
-    ORDERS O
-JOIN 
-    USER U ON O.U_ID = U.U_ID
-JOIN 
-    ORDER_ITEMS OI ON O.O_ID = OI.O_ID
-JOIN 
-    PRODUCT P ON OI.P_ID = P.P_ID
-ORDER BY 
-    O.O_Date DESC;
-
-
---TESTING FOR REPORT
-
-SELECT 
-    O.O_ID AS OrderID,
-    U.U_FName AS CustomerName,
-    O.O_Date AS OrderDate,
-    O.O_TotalAmount AS TotalAmount,
-    P.P_Name AS ProductName,
-    OI.OI_Quantity AS Quantity,
-    OI.OI_Price AS Price,
-    O.O_Status AS Status
-FROM 
-    ORDERS O
-JOIN 
-    USER U ON O.U_ID = U.U_ID
-JOIN 
-    ORDER_ITEMS OI ON O.O_ID = OI.O_ID
-JOIN 
-    PRODUCT P ON OI.P_ID = P.P_ID
-WHERE 
-    O.O_Date BETWEEN '2023-10-01' AND '2023-10-31' -- Example date range
-    AND P.C_ID = 1 -- Example category filter
-ORDER BY 
-    O.O_Date DESC;
 
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
 (1, 'White Oversized T', 69.90, 'images/1front.png'),
