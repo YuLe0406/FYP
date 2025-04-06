@@ -7,7 +7,7 @@ CREATE TABLE USER (
     U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(20) NOT NULL,
+    U_PNumber VARCHAR(11) NOT NULL,
     U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
     U_SecurityAnswer VARCHAR(255) NOT NULL
 );
