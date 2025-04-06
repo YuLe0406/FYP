@@ -69,15 +69,15 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
 
 <style>
 .sidebar {
-    background-color: #2c3e50;
-    color: white;
     width: 250px;
-    height: 100vh;
     position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #2c3e50;
     padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    color: white;
+    overflow-y: auto;
 }
 
 .sidebar h2 {
