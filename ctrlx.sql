@@ -7,9 +7,9 @@ CREATE TABLE USER (
     U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(20) NOT NULL,
+    U_PNumber VARCHAR(11) NOT NULL,
     U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL
+    U_SecurityAnswer VARCHAR(255) NOT NULL 
 );
 
 -- ADMIN Table
@@ -27,17 +27,6 @@ CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
-    FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
-);
-
--- PASSWORD_RESET (will need application logic to update password)
-CREATE TABLE PASSWORD_RESET (
-    PR_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_ID INT NOT NULL,
-    PR_Token VARCHAR(255) NOT NULL UNIQUE,
-    PR_Expiry TIMESTAMP NOT NULL,
-    PR_Attempts TINYINT DEFAULT 0,
-    PR_LockedUntil TIMESTAMP NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
 
