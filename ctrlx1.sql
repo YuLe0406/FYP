@@ -4,12 +4,12 @@ CREATE TABLE USER (
     U_FName VARCHAR(255) NOT NULL,
     U_LName VARCHAR(255) NOT NULL,
     U_DOB DATE NOT NULL,
-    U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    U_Gender VARCAHR(255) NOT NULL, --ENUM('Male', 'Female', 'Other')
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
-    U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL
+    U_SecurityQuestion VARCAHR(255) NOT NULL, --ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book')
+    U_SecurityAnswer VARCHAR(255) NOT NULL 
 );
 
 -- ADMIN Table
@@ -51,7 +51,7 @@ CREATE TABLE PRODUCT_VARIANTS (
     PV_ID INT AUTO_INCREMENT PRIMARY KEY,
     P_ID INT NOT NULL,
     PC_ID INT NOT NULL,
-    P_Size ENUM('XS','S','M','L','XL','XXL','XXXL') NOT NULL,
+    P_Size VARCHAR(255) NOT NULL, --ENUM('XS','S','M','L','XL','XXL','XXXL')
     P_Quantity INT NOT NULL,
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
@@ -60,9 +60,7 @@ CREATE TABLE PRODUCT_COLOR (
     PC_ID INT AUTO_INCREMENT PRIMARY KEY,
     COLOR_NAME VARCHAR(50) NOT NULL,
     COLOR_HEX VARCHAR(7) NOT NULL,  -- Stores hex codes like #FF0000
-    COLOR_IMAGE VARCHAR(255),       -- Optional path to color swatch image
-    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE,
-    UNIQUE KEY (P_ID, COLOR_NAME)   -- Prevent duplicate colors for same product
+    COLOR_IMAGE VARCHAR(255)       -- Optional path to color swatch image
 );
 
 -- ADDRESS Table
@@ -94,8 +92,7 @@ CREATE TABLE CART (
     P_ID INT NOT NULL,
     CART_Quantity INT NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
-    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE,
-    FOREIGN KEY (PV_ID) REFERENCES PRODUCT_VARIANTS(PV_ID) ON DELETE SET NULL
+    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
 
 -- Simplified ORDERS with only 3 statuses
@@ -126,17 +123,13 @@ CREATE TABLE PAYMENT (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     O_ID INT NOT NULL,
     payment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    payment_method ENUM('Credit Card', 'Debit Card', 'Cash on Delivery', 'E-Wallet') NOT NULL,
+    payment_method VARCHAR(255) NOT NULL, --ENUM('Credit Card', 'Debit Card', 'Cash on Delivery', 'E-Wallet')
     amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
-    payment_status ENUM('Pending', 'Completed', 'Failed', 'Refunded') NOT NULL DEFAULT 'Pending',
+    payment_status VARCHAR(255) NOT NULL DEFAULT 'Pending', --ENUM('Pending', 'Completed', 'Failed', 'Refunded')
     transaction_id VARCHAR(255) UNIQUE,
     payment_details JSON,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
-    FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE,
-    INDEX (payment_date),  --useless
-    INDEX (payment_status), --useless
-    CONSTRAINT chk_amount_matches_order,
-    CHECK (amount = (SELECT O_TotalAmount FROM ORDERS WHERE O_ID = payment.O_ID))
+    FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
 CREATE TABLE DELIVERY (
@@ -147,8 +140,7 @@ CREATE TABLE DELIVERY (
     D_StartDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
     D_ActualDelivery DATETIME NULL,           -- When actually delivered
-    D_Status ENUM('Preparing', 'In Transit', 'Out for Delivery', 
-                 'Delivered', 'Failed Attempt', 'Returned') NOT NULL DEFAULT 'Preparing',
+    D_Status VARCHAR(255) NOT NULL DEFAULT 'Preparing',  --ENUM('Preparing', 'In Transit', 'Out for Delivery','Delivered', 'Failed Attempt', 'Returned')
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
