@@ -30,7 +30,7 @@ include 'header.php';      // Header file
                         echo "
                             <div class='wishlist-item'>
                                 <input type='checkbox' class='wishlist-checkbox' data-id='{$row['id']}'>
-                                <img src='{$row['image']}' alt='{$row['product_name']}'>
+                                <img src='{$row['']}' alt='{$row['product_name']}'>
                                 <p>{$row['product_name']}</p>
                                 <p>RM {$row['price']}</p>
                             </div>

@@ -205,9 +205,6 @@ header {
     background-color: #222;
     color: white;
     padding:40px 20px 10px 20px;
-    bottom: 0;
-    position: fixed;
-    width: 100%;
   }
   
   .footer-container {
@@ -331,3 +328,24 @@ header {
     background-color: red;
     color: white;
 }
+
+#add-selected-to-cart {background-image: linear-gradient(to right, #000000 0%, #e74c3c  51%, #000000  100%)}
+#add-selected-to-cart {
+   margin: 10px;
+   padding: 15px 45px;
+   text-align: center;
+   text-transform: uppercase;
+   transition: 0.5s;
+   background-size: 200% auto;
+   color: white;            
+   box-shadow: 0 0 20px #eee;
+   border-radius: 10px;
+   display: block;
+   border: transparent;
+ }
+
+ #add-selected-to-cart:hover {
+   background-position: right center; /* change the direction of the change here */
+   color: #fff;
+   text-decoration: none;
+ }
