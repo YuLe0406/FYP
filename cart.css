@@ -51,6 +51,7 @@ input{
     margin-right: 10px;
 }
 
+/*remove button*/
 .cart-item button {
     background:red;
     color: white;
