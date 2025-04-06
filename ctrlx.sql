@@ -4,12 +4,12 @@ CREATE TABLE USER (
     U_FName VARCHAR(255) NOT NULL,
     U_LName VARCHAR(255) NOT NULL,
     U_DOB DATE NOT NULL,
-    U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    U_Gender VARCHAR(255) NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(20) NOT NULL,
-    U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL
+    U_PNumber VARCHAR(11) NOT NULL,
+    U_SecurityQuestion VARCHAR(255) NOT NULL,
+    U_SecurityAnswer VARCHAR(255) NOT NULL 
 );
 
 -- ADMIN Table
@@ -27,17 +27,6 @@ CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
-    FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
-);
-
--- PASSWORD_RESET (will need application logic to update password)
-CREATE TABLE PASSWORD_RESET (
-    PR_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_ID INT NOT NULL,
-    PR_Token VARCHAR(255) NOT NULL UNIQUE,
-    PR_Expiry TIMESTAMP NOT NULL,
-    PR_Attempts TINYINT DEFAULT 0,
-    PR_LockedUntil TIMESTAMP NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
 
@@ -62,7 +51,7 @@ CREATE TABLE PRODUCT_VARIANTS (
     PV_ID INT AUTO_INCREMENT PRIMARY KEY,
     P_ID INT NOT NULL,
     PC_ID INT NOT NULL,
-    P_Size ENUM('XS','S','M','L','XL','XXL','XXXL') NOT NULL,
+    P_Size VARCHAR(255) NOT NULL,
     P_Quantity INT NOT NULL,
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
@@ -134,9 +123,9 @@ CREATE TABLE PAYMENT (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     O_ID INT NOT NULL,
     payment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    payment_method ENUM('Credit Card', 'Debit Card', 'Cash on Delivery', 'E-Wallet') NOT NULL,
+    payment_method VARCHAR(255) NOT NULL,
     amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
-    payment_status ENUM('Pending', 'Completed', 'Failed', 'Refunded') NOT NULL DEFAULT 'Pending',
+    payment_status VARCHAR(255) NOT NULL DEFAULT 'Pending',
     transaction_id VARCHAR(255) UNIQUE,
     payment_details JSON,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
@@ -151,8 +140,7 @@ CREATE TABLE DELIVERY (
     D_StartDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
     D_ActualDelivery DATETIME NULL,           -- When actually delivered
-    D_Status ENUM('Preparing', 'In Transit', 'Out for Delivery', 
-                 'Delivered', 'Failed Attempt', 'Returned') NOT NULL DEFAULT 'Preparing',
+    D_Status VARCHAR(255) NOT NULL DEFAULT 'Preparing',
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
