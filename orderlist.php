@@ -1,140 +1,121 @@
+<?php
+include 'db.php'; // Database connection
+include 'sidebar.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="orderlist.css">
 </head>
 <body>
-    <div class="container">
-        
-        <?php include 'sidebar.php'; ?>
+<div class="container">
+    <main class="main-content">
+        <h1>Order Management</h1>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <h1>Order Management</h1>
+        <section class="order-list">
+            <h2>Order List</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Products</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $orderQuery = "
+                    SELECT O.O_ID, O.O_Date, O.O_TotalAmount, U.U_FName, U.U_LName, D.D_Status
+                    FROM ORDERS O
+                    JOIN USER U ON O.U_ID = U.U_ID
+                    LEFT JOIN DELIVERY D ON O.O_ID = D.O_ID
+                    ORDER BY O.O_Date DESC
+                ";
+                $orderResult = mysqli_query($conn, $orderQuery);
 
-            <!-- Order List Section -->
-            <section class="order-list">
-                <h2>Order List</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer Name</th>
-                            <th>Order Date</th>
-                            <th>Total Amount</th>
-                            <th>Products</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Example Row (Replace with dynamic data from your database) -->
-                        <tr>
-                            <td>768648</td>
-                            <td>YuLe</td>
-                            <td>Oct 21, 2023</td>
-                            <td>RM122.00</td>
-                            <td>
-                                <ul>
-                                    <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 2, <strong>Price:</strong> RM50.00</li>
-                                    <li><strong>Product:</strong> Women's Summer Dress, <strong>Quantity:</strong> 1, <strong>Price:</strong> RM22.00</li>
-                                </ul>
-                            </td>
-                            <td><span class="status processing">Processing</span></td>
-                            <td>
-                                <button class="view-btn">View</button>
-                                <button class="update-status-btn">Update Status</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>768649</td>
-                            <td>ShiHao</td>
-                            <td>Oct 21, 2023</td>
-                            <td>RM79.00</td>
-                            <td>
-                                <ul>
-                                    <li><strong>Product:</strong> Unisex Hoodie, <strong>Quantity:</strong> 1, <strong>Price:</strong> RM79.00</li>
-                                </ul>
-                            </td>
-                            <td><span class="status shipped">Shipped</span></td>
-                            <td>
-                                <button class="view-btn">View</button>
-                                <button class="update-status-btn">Update Status</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>768650</td>
-                            <td>WeiFu</td>
-                            <td>Oct 18, 2023</td>
-                            <td>RM79.00</td>
-                            <td>
-                                <ul>
-                                    <li><strong>Product:</strong> Men's Casual Shirt, <strong>Quantity:</strong> 1, <strong>Price:</strong> RM79.00</li>
-                                </ul>
-                            </td>
-                            <td><span class="status delivered">Delivered</span></td>
-                            <td>
-                                <button class="view-btn">View</button>
-                                <button class="update-status-btn">Update Status</button>
-                            </td>
-                        </tr>
-                        <!-- Add more rows dynamically -->
-                    </tbody>
-                </table>
-            </section>
+                while ($order = mysqli_fetch_assoc($orderResult)) {
+                    $orderId = $order['O_ID'];
+                    echo "<tr>
+                            <td>{$orderId}</td>
+                            <td>{$order['U_FName']} {$order['U_LName']}</td>
+                            <td>" . date('M d, Y', strtotime($order['O_Date'])) . "</td>
+                            <td>RM" . number_format($order['O_TotalAmount'], 2) . "</td>
+                            <td><ul>";
 
-            <!-- Order Status Modal -->
-            <div class="modal" id="statusModal">
-                <div class="modal-content">
-                    <span class="close-modal">&times;</span>
-                    <h2>Update Order Status</h2>
-                    <form class="status-form">
-                        <div class="form-group">
-                            <label for="orderStatus">Select Status:</label>
-                            <select id="orderStatus" name="orderStatus" required>
-                                <option value="processing">Processing</option>
-                                <option value="shipped">Shipped</option>
-                                <option value="delivered">Delivered</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="submit-btn">Update Status</button>
-                    </form>
-                </div>
+                    // Get products for each order
+                    $itemsQuery = "
+                        SELECT P.P_Name, OI.OI_Quantity, OI.OI_Price
+                        FROM ORDER_ITEMS OI
+                        JOIN PRODUCT P ON OI.P_ID = P.P_ID
+                        WHERE OI.O_ID = $orderId
+                    ";
+                    $itemsResult = mysqli_query($conn, $itemsQuery);
+                    while ($item = mysqli_fetch_assoc($itemsResult)) {
+                        echo "<li><strong>Product:</strong> {$item['P_Name']}, <strong>Quantity:</strong> {$item['OI_Quantity']}, <strong>Price:</strong> RM" . number_format($item['OI_Price'], 2) . "</li>";
+                    }
+
+                    // Status badge
+                    $status = strtolower($order['D_Status'] ?? 'Preparing');
+                    echo "</ul></td>
+                          <td><span class='status {$status}'>{$order['D_Status']}</span></td>
+                          <td>
+                              <button class='view-btn'>View</button>
+                              <button class='update-status-btn' data-order-id='{$orderId}'>Update Status</button>
+                          </td>
+                        </tr>";
+                }
+                ?>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Order Status Modal -->
+        <div class="modal" id="statusModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Update Order Status</h2>
+                <form class="status-form" method="POST" action="update_order_status.php">
+                    <input type="hidden" name="order_id" id="modalOrderId">
+                    <div class="form-group">
+                        <label for="orderStatus">Select Status:</label>
+                        <select id="orderStatus" name="orderStatus" required>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Update Status</button>
+                </form>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
 
-    <!-- JavaScript for Order Status Modal -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modal = document.getElementById('statusModal');
-            const updateStatusButtons = document.querySelectorAll('.update-status-btn');
-            const closeModal = document.querySelector('.close-modal');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('statusModal');
+        const closeModal = document.querySelector('.close-modal');
+        const modalOrderId = document.getElementById('modalOrderId');
 
-            // Open Modal
-            updateStatusButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    modal.style.display = 'block';
-                });
-            });
-
-            // Close Modal
-            closeModal.addEventListener('click', function () {
-                modal.style.display = 'none';
-            });
-
-            // Submit Status Form
-            document.querySelector('.status-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const selectedStatus = document.getElementById('orderStatus').value;
-                alert(`Order status updated to: ${selectedStatus}`);
-                modal.style.display = 'none';
+        document.querySelectorAll('.update-status-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                modal.style.display = 'flex';
+                modalOrderId.value = this.dataset.orderId;
             });
         });
-    </script>
+
+        closeModal.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+    });
+</script>
 </body>
 </html>

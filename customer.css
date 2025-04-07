@@ -1,12 +1,25 @@
 /* General Layout */
-.container {
-    display: flex;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
 }
 
+/* Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+    margin-left: 250px; /* Adjusted for sidebar */
+}
+
+/* Main Content */
 .main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 20px;
+    width: 100%;
+    max-width: 1000px;
+    padding: 30px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* Customer List Table Styles */
@@ -77,3 +90,20 @@
 .customer-list .delete-btn:hover {
     background: #c0392b;
 }
+
+/* Block/Unblock Button */
+.customer-list .toggle-status-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    background: #f39c12; /* Orange for block */
+    color: #fff;
+}
+
+.customer-list .toggle-status-btn:hover {
+    background: #e67e22;
+}
+

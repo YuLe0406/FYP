@@ -19,9 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && $_POST['
     } else {
         $roleValue = ($role === 'superadmin') ? 1 : 0;
         $stmt = $conn->prepare("INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES (?, ?, ?, ?, ?)");
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // REMOVED PASSWORD HASHING - storing plain text password
         if ($stmt) {
-            $stmt->bind_param("ssssi", $name, $hashedPassword, $email, $contact, $roleValue);
+            $stmt->bind_param("ssssi", $name, $password, $email, $contact, $roleValue);
             if ($stmt->execute()) {
                 $adminId = $stmt->insert_id;
                 $statusStmt = $conn->prepare("INSERT INTO ADMIN_STATUS (A_ID, A_Status) VALUES (?, 0)");
@@ -106,7 +106,6 @@ if ($result && $result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <title>Admin Management</title>
-    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="addadmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.24/sweetalert2.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.24/sweetalert2.all.min.js"></script>
