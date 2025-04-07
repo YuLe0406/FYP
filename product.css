@@ -1,12 +1,25 @@
 /* General Layout */
-.container {
-    display: flex;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
 }
 
+/* Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+    margin-left: 250px; /* Adjusted for sidebar */
+}
+
+/* Main Content */
 .main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 20px;
+    width: 100%;
+    max-width: 1000px;
+    padding: 30px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* Add Product Form Styles */

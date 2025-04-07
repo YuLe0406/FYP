@@ -178,8 +178,8 @@ CREATE TABLE ORDER_VOUCHER (
     FOREIGN KEY (V_ID) REFERENCES VOUCHER(V_ID)
 );
 
-INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level)
-VALUES ('WEIFU','weifu123','weifu@gmail.com','01234567890',1);
+INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES
+('WEIFU','weifu123','weifu@gmail.com','01234567890',1);
 
 
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
