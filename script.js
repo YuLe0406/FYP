@@ -213,19 +213,8 @@ function addToCart() {
 }
 
 function addToWishlist(id, name, image, price) {
-
-    let urlParams = new URLSearchParams(window.location.search);
-    let productId = urlParams.get("id");
-
-    let product = products.find(p => p.id == productId);
-    if (!product) {
-        alert("Product not found!");
-        return;
-    }
-
     let sizeDropdown = document.getElementById("size-select");
 
-    // Ensure the dropdown exists in the page
     if (!sizeDropdown) {
         alert("Size selection dropdown not found!");
         return;
@@ -240,14 +229,13 @@ function addToWishlist(id, name, image, price) {
 
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-    // Check if the item is already in the wishlist
-    let exists = wishlist.some(item => item.id === id);
+    // Check if the item is already in the wishlist with same size
+    let exists = wishlist.some(item => item.id === id && item.size === selectedSize);
     if (!exists) {
-        wishlist.push({ id, name, image, price });
+        wishlist.push({ id, name, image, price, size: selectedSize });
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
         alert("Added to Wishlist!");
     } else {
         alert("This item is already in your Wishlist!");
     }
-
 }
