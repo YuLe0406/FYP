@@ -17,7 +17,7 @@ function loadWishlist() {
             div.innerHTML = `
                 <input type="checkbox" data-index="${index}">
                 <img src="${item.image}" alt="${item.name}">
-                <p>${item.name}</p>
+                <p>${item.name}</p> 
                 <p>Size: ${item.size}</p>
                 <p>Price: RM ${item.price.toFixed(2)}</p>
                 <button class="remove-btn" onclick="removeFromWishlist(${index})">Remove</button>
