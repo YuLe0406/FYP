@@ -1,22 +1,11 @@
 <?php
 include 'db.php';
+session_start();
 
-// Handle banner image upload
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["banner"])) {
-    $target_dir = "uploads/";
-    $target_file = $target_dir . "banner.jpg"; // Overwrite previous banner
-    $imageFileType = strtolower(pathinfo($_FILES["banner"]["name"], PATHINFO_EXTENSION));
-
-    // Allow only image files
-    if (in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
-        if (move_uploaded_file($_FILES["banner"]["tmp_name"], $target_file)) {
-            $upload_message = "Banner image updated successfully!";
-        } else {
-            $upload_message = "Error uploading the banner image.";
-        }
-    } else {
-        $upload_message = "Only JPG, JPEG, PNG, and GIF files are allowed.";
-    }
+// Check admin authentication
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: admin_login.php");
+    exit();
 }
 
 // Handle banner text update
@@ -24,21 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["banner_text"])) {
     $new_banner_text = mysqli_real_escape_string($conn, $_POST["banner_text"]);
     $status = isset($_POST["banner_status"]) ? 1 : 0;
 
-    $sql = "UPDATE BANNER SET BANNER_TEXT='$new_banner_text', BANNER_STATUS=$status WHERE BANNER_ID = 1";
+    // Update the banner text and status
+    $sql = "UPDATE BANNER SET B_Text='$new_banner_text', B_Status=$status WHERE B_ID = 1";
     if (mysqli_query($conn, $sql)) {
-        $text_message = "Banner text updated successfully!";
+        $message = "Banner updated successfully!";
     } else {
-        $text_message = "Error updating banner text: " . mysqli_error($conn);
+        $message = "Error updating banner: " . mysqli_error($conn);
     }
 }
 
 // Fetch banner details
-$sql = "SELECT * FROM BANNER WHERE BANNER_ID = 1";
+$sql = "SELECT * FROM BANNER WHERE B_ID = 1";
 $result = mysqli_query($conn, $sql);
 $banner = mysqli_fetch_assoc($result);
 
-// Set default banner image if no upload exists
-$banner_image = file_exists("uploads/banner.jpg") ? "uploads/banner.jpg" : "default-banner.jpg";
+// If no banner exists, create a default one
+if (!$banner) {
+    $default_text = "Welcome to CTRL-X Clothing";
+    $sql = "INSERT INTO BANNER (B_Text, B_Status) VALUES ('$default_text', 1)";
+    mysqli_query($conn, $sql);
+    $banner = ['B_Text' => $default_text, 'B_Status' => 1];
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,75 +45,155 @@ $banner_image = file_exists("uploads/banner.jpg") ? "uploads/banner.jpg" : "defa
     <link rel="stylesheet" href="admin.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
-            display: flex;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
         }
 
         .container {
             background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 600px;
-            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
             text-align: center;
         }
 
-        .banner-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        .banner-preview {
+            background-color: #f1f1f1;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .upload-form, .text-form {
-            margin-top: 20px;
+        .banner-preview p {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .status-toggle label {
+            margin: 0 0 0 10px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
 
         .message {
-            color: green;
-            font-weight: bold;
-            margin-top: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: center;
         }
 
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <?php include 'sidebar.php'; ?>
 
-<!-- Main Content -->
 <div class="main-content">
     <div class="container">
-        <h1>Manage Banner</h1>
+        <h1>Manage Banner Text</h1>
         
-        <h3>Current Banner</h3>
-        <div class="banner-container">
-            <img id="current-banner" src="<?php echo $banner_image; ?>" alt="Current Banner">
+        <?php if (isset($message)): ?>
+            <div class="message <?php echo strpos($message, 'Error') !== false ? 'error' : 'success'; ?>">
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="banner-preview">
+            <p><?php echo htmlspecialchars($banner['B_Text']); ?></p>
         </div>
 
-        <!-- Upload Status Messages -->
-        <?php if (isset($upload_message)) echo "<p class='message'>$upload_message</p>"; ?>
-        <?php if (isset($text_message)) echo "<p class='message'>$text_message</p>"; ?>
+        <form method="POST" action="banner.php">
+            <div class="form-group">
+                <label for="banner_text">Banner Text:</label>
+                <textarea id="banner_text" name="banner_text" required><?php echo htmlspecialchars($banner['B_Text']); ?></textarea>
+            </div>
 
-        <!-- Upload New Banner Image -->
-        <form class="upload-form" action="banner.php" method="POST" enctype="multipart/form-data">
-            <label><b>Upload New Banner Image:</b></label><br>
-            <input type="file" name="banner" accept="image/*" required>
-            <br><br>
-            <button type="submit">Upload Banner</button>
-        </form>
+            <div class="status-toggle">
+                <input type="checkbox" id="banner_status" name="banner_status" value="1" <?php echo ($banner['B_Status'] == 1) ? 'checked' : ''; ?>>
+                <label for="banner_status">Active (Show on website)</label>
+            </div>
 
-        <!-- Update Banner Text -->
-        <form class="text-form" action="banner.php" method="POST">
-            <label><b>Update Banner Text:</b></label><br>
-            <textarea name="banner_text" rows="3" cols="50"><?php echo htmlspecialchars($banner['BANNER_TEXT']); ?></textarea><br>
-            <label>Active:</label>
-            <input type="checkbox" name="banner_status" value="1" <?php echo ($banner['BANNER_STATUS'] == 1) ? 'checked' : ''; ?>><br><br>
-            <button type="submit">Update Text</button>
+            <button type="submit">Update Banner</button>
         </form>
     </div>
 </div>

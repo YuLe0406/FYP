@@ -29,13 +29,13 @@ CREATE TABLE ADMIN_STATUS (
     FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID) ON DELETE CASCADE
 );
 
--- Simplified USER_STATUS for blocking users
 CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
+
 
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
@@ -49,7 +49,7 @@ CREATE TABLE PRODUCT (
     C_ID INT NOT NULL,
     P_Name VARCHAR(255) NOT NULL,
     P_Price DECIMAL(10,2) NOT NULL,
-    P_Picture BLOB,
+    P_Picture VARCHAR(255) NOT NULL,
     FOREIGN KEY (C_ID) REFERENCES CATEGORIES(C_ID)
 );
 
@@ -178,8 +178,32 @@ CREATE TABLE ORDER_VOUCHER (
     FOREIGN KEY (V_ID) REFERENCES VOUCHER(V_ID)
 );
 
-INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level)
-VALUES ('WEIFU','weifu123','weifu@gmail.com','01234567890',1);
+CREATE TABLE FEEDBACK (
+    F_ID INT AUTO_INCREMENT PRIMARY KEY,
+    U_ID INT NOT NULL,
+    F_Type VARCHAR(100) NOT NULL,
+    F_Description TEXT NOT NULL,
+    FOREIGN KEY (U_ID) REFERENCES USER(U_ID)
+);
+
+CREATE TABLE REPLY_FEEDBACK (
+    RF_ID INT AUTO_INCREMENT PRIMARY KEY,
+    A_ID INT NOT NULL,
+    F_ID INT NOT NULL,
+    RF_Reply TEXT NOT NULL,
+    FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID),
+    FOREIGN KEY (F_ID) REFERENCES FEEDBACK(F_ID)
+);
+
+
+INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES
+('WEIFU','weifu123','weifu@gmail.com','01234567890',1),
+('YULE','yule123','yule@gmail.com','0123456789',1),
+('SHIHAO','shihao123','shihao@gmail.com','01234567891',0);
+
+INSERT INTO CATEGORIES (C_NAME) VALUES
+('Men Top'),
+('Woman Top');
 
 
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
@@ -198,88 +222,101 @@ INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
 (2, 'Green Hoodie', 169.90, 'images/6Front.jpeg'),
 (2, 'Navy Hoodie', 169.90, 'images/7Front.jpeg');
 
+INSERT INTO PRODUCT_COLOR (COLOR_NAME, COLOR_HEX) VALUES
+('White', '#FFFFFF'),
+('Black', '#000000'),
+('Red', '#FF0000'),
+('Clay', '#B66E41'),
+('Butter', '#FEEFB3'),
+('Grey', '#808080'),
+('Orchid', '#DA70D6'),
+('Charcoal', '#36454F'),
+('Green', '#228B22'),
+('Navy', '#000080');
 
-INSERT INTO PRODUCT_VARIANTS (P_ID, P_Color, P_Size, P_Quantity) VALUES
--- White Oversized T-Shirt
-(1, 'White', 'S', 10),
-(1, 'White', 'M', 12),
-(1, 'White', 'L', 8),
-(1, 'White', 'XL', 6),
+INSERT INTO PRODUCT_VARIANTS (P_ID, PC_ID, P_Size, P_Quantity) VALUES
+-- White Oversized T-Shirt (P_ID = 1)
+(1, 1, 'S', 10),
+(1, 1, 'M', 12),
+(1, 1, 'L', 8),
+(1, 1, 'XL', 6),
 
--- Black Oversized T-Shirt
-(2, 'Black', 'S', 10),
-(2, 'Black', 'M', 12),
-(2, 'Black', 'L', 8),
-(2, 'Black', 'XL', 6),
+-- Black Oversized T-Shirt (P_ID = 2)
+(2, 2, 'S', 10),
+(2, 2, 'M', 12),
+(2, 2, 'L', 8),
+(2, 2, 'XL', 6),
 
--- Red Oversized T-Shirt
-(3, 'Red', 'S', 10),
-(3, 'Red', 'M', 12),
-(3, 'Red', 'L', 8),
-(3, 'Red', 'XL', 6),
+-- Red Oversized T-Shirt (P_ID = 3)
+(3, 3, 'S', 10),
+(3, 3, 'M', 12),
+(3, 3, 'L', 8),
+(3, 3, 'XL', 6),
 
--- Clay Oversized T-Shirt
-(4, 'Clay', 'S', 10),
-(4, 'Clay', 'M', 12),
-(4, 'Clay', 'L', 8),
-(4, 'Clay', 'XL', 6),
+-- Clay Oversized T-Shirt (P_ID = 4)
+(4, 4, 'S', 10),
+(4, 4, 'M', 12),
+(4, 4, 'L', 8),
+(4, 4, 'XL', 6),
 
--- Butter Oversized T-Shirt
-(5, 'Butter', 'S', 10),
-(5, 'Butter', 'M', 12),
-(5, 'Butter', 'L', 8),
-(5, 'Butter', 'XL', 6),
+-- Butter Oversized T-Shirt (P_ID = 5)
+(5, 5, 'S', 10),
+(5, 5, 'M', 12),
+(5, 5, 'L', 8),
+(5, 5, 'XL', 6),
 
--- Grey Oversized T-Shirt
-(6, 'Grey', 'S', 10),
-(6, 'Grey', 'M', 12),
-(6, 'Grey', 'L', 8),
-(6, 'Grey', 'XL', 6),
+-- Grey Oversized T-Shirt (P_ID = 6)
+(6, 6, 'S', 10),
+(6, 6, 'M', 12),
+(6, 6, 'L', 8),
+(6, 6, 'XL', 6),
 
--- Orchid Oversized T-Shirt
-(7, 'Orchid', 'S', 10),
-(7, 'Orchid', 'M', 12),
-(7, 'Orchid', 'L', 8),
-(7, 'Orchid', 'XL', 6),
+-- Orchid Oversized T-Shirt (P_ID = 7)
+(7, 7, 'S', 10),
+(7, 7, 'M', 12),
+(7, 7, 'L', 8),
+(7, 7, 'XL', 6),
 
--- White Hoodie
-(8, 'White', 'S', 5),
-(8, 'White', 'M', 7),
-(8, 'White', 'L', 4),
-(8, 'White', 'XL', 3),
+-- White Hoodie (P_ID = 8)
+(8, 1, 'S', 5),
+(8, 1, 'M', 7),
+(8, 1, 'L', 4),
+(8, 1, 'XL', 3),
 
--- Grey Hoodie
-(9, 'Grey', 'S', 5),
-(9, 'Grey', 'M', 7),
-(9, 'Grey', 'L', 4),
-(9, 'Grey', 'XL', 3),
+-- Grey Hoodie (P_ID = 9)
+(9, 6, 'S', 5),
+(9, 6, 'M', 7),
+(9, 6, 'L', 4),
+(9, 6, 'XL', 3),
 
--- Charcoal Hoodie
-(10, 'Charcoal', 'S', 5),
-(10, 'Charcoal', 'M', 7),
-(10, 'Charcoal', 'L', 4),
-(10, 'Charcoal', 'XL', 3),
+-- Charcoal Hoodie (P_ID = 10)
+(10, 8, 'S', 5),
+(10, 8, 'M', 7),
+(10, 8, 'L', 4),
+(10, 8, 'XL', 3),
 
--- Black Hoodie
-(11, 'Black', 'S', 5),
-(11, 'Black', 'M', 7),
-(11, 'Black', 'L', 4),
-(11, 'Black', 'XL', 3),
+-- Black Hoodie (P_ID = 11)
+(11, 2, 'S', 5),
+(11, 2, 'M', 7),
+(11, 2, 'L', 4),
+(11, 2, 'XL', 3),
 
--- Red Hoodie
-(12, 'Red', 'S', 5),
-(12, 'Red', 'M', 7),
-(12, 'Red', 'L', 4),
-(12, 'Red', 'XL', 3),
+-- Red Hoodie (P_ID = 12)
+(12, 3, 'S', 5),
+(12, 3, 'M', 7),
+(12, 3, 'L', 4),
+(12, 3, 'XL', 3),
 
--- Green Hoodie
-(13, 'Green', 'S', 5),
-(13, 'Green', 'M', 7),
-(13, 'Green', 'L', 4),
-(13, 'Green', 'XL', 3),
+-- Green Hoodie (P_ID = 13)
+(13, 9, 'S', 5),
+(13, 9, 'M', 7),
+(13, 9, 'L', 4),
+(13, 9, 'XL', 3),
 
--- Navy Hoodie
-(14, 'Navy', 'S', 5),
-(14, 'Navy', 'M', 7),
-(14, 'Navy', 'L', 4),
-(14, 'Navy', 'XL', 3);
+-- Navy Hoodie (P_ID = 14)
+(14, 10, 'S', 5),
+(14, 10, 'M', 7),
+(14, 10, 'L', 4),
+(14, 10, 'XL', 3);
+
+

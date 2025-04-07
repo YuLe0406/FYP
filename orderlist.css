@@ -1,12 +1,24 @@
 /* General Layout */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* Layout Container */
 .container {
     display: flex;
+    flex-direction: column;
+    margin-left: 250px; /* Sidebar offset */
+    background-color: #f5f7fa;
 }
 
 .main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 20px;
+    width: 100%;
+    max-width: 1000px;
+    padding: 30px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 /* Order List Table Styles */
