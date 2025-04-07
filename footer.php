@@ -14,9 +14,9 @@ echo '
         <div class="footer-column">
             <h3>About Us</h3>
             <ul>
-                <li><a href="#">Our Story</a></li>
-                <li><a href="#">Careers</a></li>
-                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="our_story.php">Our Story</a></li>
+                <li><a href="careers.php">Careers</a></li>
+                <li><a href="privacy_policy.php">Privacy Policy</a></li>
             </ul>
         </div>
 
