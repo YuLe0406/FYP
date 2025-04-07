@@ -1,5 +1,17 @@
 <?php include 'header.php'; ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist | CTRL+X</title>
+    <link rel="stylesheet" href="wishlist.css">
+    <script src="wishlist.js"></script>
+    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
 <section class="about-section">
     <div class="container">
         <h1 class="page-title">Our Story</h1>
@@ -37,3 +49,6 @@
 </section>
 
 <?php include 'footer.php'; ?>
+
+</body>
+</html>
