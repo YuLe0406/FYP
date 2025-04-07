@@ -29,13 +29,13 @@ CREATE TABLE ADMIN_STATUS (
     FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID) ON DELETE CASCADE
 );
 
--- Simplified USER_STATUS for blocking users
 CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
+
 
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
@@ -179,7 +179,9 @@ CREATE TABLE ORDER_VOUCHER (
 );
 
 INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES
-('WEIFU','weifu123','weifu@gmail.com','01234567890',1);
+('WEIFU','weifu123','weifu@gmail.com','01234567890',1),
+('YULE','yule123','yule@gmail.com','0123456789',1),
+('SHIHAO','shihao123','shihao@gmail.com','01234567891',0);
 
 
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
