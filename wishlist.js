@@ -37,7 +37,14 @@ function addSelectedToCart() {
     let wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
     let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
 
-    document.querySelectorAll("input[type='checkbox']:checked").forEach((checkbox) => {
+    const selectedCheckboxes = document.querySelectorAll("input[type='checkbox']:checked");
+
+    if (selectedCheckboxes.length === 0) {
+        alert("Please select at least one item to add to cart.");
+        return; // stop the function
+    }
+
+    selectedCheckboxes.forEach((checkbox) => {
         let index = checkbox.getAttribute("data-index");
         let item = wishlistItems[index];
 
