@@ -213,6 +213,31 @@ function addToCart() {
 }
 
 function addToWishlist(id, name, image, price) {
+
+    let urlParams = new URLSearchParams(window.location.search);
+    let productId = urlParams.get("id");
+
+    let product = products.find(p => p.id == productId);
+    if (!product) {
+        alert("Product not found!");
+        return;
+    }
+
+    let sizeDropdown = document.getElementById("size-select");
+
+    // Ensure the dropdown exists in the page
+    if (!sizeDropdown) {
+        alert("Size selection dropdown not found!");
+        return;
+    }
+
+    let selectedSize = sizeDropdown.value;
+    
+    if (!selectedSize) {
+        alert("Please select a size!");
+        return;
+    }
+
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
     // Check if the item is already in the wishlist
@@ -224,4 +249,5 @@ function addToWishlist(id, name, image, price) {
     } else {
         alert("This item is already in your Wishlist!");
     }
+
 }
