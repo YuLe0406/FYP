@@ -1,16 +1,16 @@
--- USER Table
-CREATE TABLE USER (
+CREATE TABLE `USER` (
     U_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_FName VARCHAR(255) NOT NULL,
     U_LName VARCHAR(255) NOT NULL,
     U_DOB DATE NOT NULL,
-    U_Gender VARCAHR(6) NOT NULL, --ENUM('Male', 'Female', 'Other')
+    U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
-    U_SecurityQuestion VARCAHR(255) NOT NULL, --ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book')
-    U_SecurityAnswer VARCHAR(255) NOT NULL 
+    U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
+    U_SecurityAnswer VARCHAR(255) NOT NULL
 );
+
 
 -- ADMIN Table
 CREATE TABLE ADMIN (
