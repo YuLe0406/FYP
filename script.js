@@ -169,7 +169,6 @@ function addToCart() {
     let urlParams = new URLSearchParams(window.location.search);
     let productId = urlParams.get("id");
 
-    let product = products.find(p => p.id == productId);
     if (!product) {
         alert("Product not found!");
         return;
