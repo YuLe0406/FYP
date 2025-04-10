@@ -41,9 +41,6 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
         <li><a href="voucher.php" class="<?= basename($_SERVER['PHP_SELF']) == 'voucher.php' ? 'active' : '' ?>">
             Voucher
         </a></li>
-        <li><a href="delivery.php" class="<?= basename($_SERVER['PHP_SELF']) == 'delivery.php' ? 'active' : '' ?>">
-            Delivery
-        </a></li>
     </ul>
 
     <div class="sidebar-footer">
