@@ -19,20 +19,20 @@ CREATE TABLE ADMIN (
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
     A_CN VARCHAR(11) NOT NULL,
-    A_Level TINYINT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
+    A_Level INT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
 );
 
 CREATE TABLE ADMIN_STATUS (
     AS_ID INT AUTO_INCREMENT PRIMARY KEY,
     A_ID INT NOT NULL,
-    A_Status TINYINT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
+    A_Status INT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
     FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID) ON DELETE CASCADE
 );
 
 CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
-    US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
+    US_Blocked INT(1) DEFAULT 0,  -- 1=blocked, 0=active
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
 
@@ -156,7 +156,7 @@ CREATE TABLE DELIVERY (
 CREATE TABLE BANNER (
     B_ID INT AUTO_INCREMENT PRIMARY KEY,
     B_Text TEXT NOT NULL,
-    B_Status TINYINT(1) DEFAULT 1  -- 1=active, 0=inactive
+    B_Status INT(1) DEFAULT 1  -- 1=active, 0=inactive
 );
 
 CREATE TABLE VOUCHER (
@@ -166,7 +166,7 @@ CREATE TABLE VOUCHER (
     V_ExpiryDate DATE NOT NULL,
     V_UsageLimit INT NOT NULL DEFAULT 1,
     V_UsedCount INT DEFAULT 0,
-    V_Status TINYINT(1) DEFAULT 1  -- 1=active, 0=inactive
+    V_Status INT(1) DEFAULT 1  -- 1=active, 0=inactive
 );
 
 -- Junction table for voucher usage tracking
