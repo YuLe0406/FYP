@@ -1,16 +1,16 @@
-CREATE TABLE `USER` (
+-- USER Table
+CREATE TABLE USER (
     U_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_FName VARCHAR(255) NOT NULL,
     U_LName VARCHAR(255) NOT NULL,
     U_DOB DATE NOT NULL,
-    U_Gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    U_Gender VARCHAR(6) NOT NULL,
     U_Email VARCHAR(255) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
-    U_SecurityQuestion ENUM('Primary School', 'First Pet', 'Mother Maiden Name', 'Favorite Book') NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL
+    U_SecurityQuestion VARCHAR(255) NOT NULL,
+    U_SecurityAnswer VARCHAR(255) NOT NULL 
 );
-
 
 -- ADMIN Table
 CREATE TABLE ADMIN (
@@ -19,23 +19,23 @@ CREATE TABLE ADMIN (
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
     A_CN VARCHAR(11) NOT NULL,
-    A_Level TINYINT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
+    A_Level INT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
 );
 
 CREATE TABLE ADMIN_STATUS (
     AS_ID INT AUTO_INCREMENT PRIMARY KEY,
     A_ID INT NOT NULL,
-    A_Status TINYINT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
+    A_Status INT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
     FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID) ON DELETE CASCADE
 );
 
--- Simplified USER_STATUS for blocking users
 CREATE TABLE USER_STATUS (
     US_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
-    US_Blocked TINYINT(1) DEFAULT 0,  -- 1=blocked, 0=active
+    US_Blocked INT(1) DEFAULT 0,  -- 1=blocked, 0=active
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
 );
+
 
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
@@ -49,7 +49,7 @@ CREATE TABLE PRODUCT (
     C_ID INT NOT NULL,
     P_Name VARCHAR(255) NOT NULL,
     P_Price DECIMAL(10,2) NOT NULL,
-    P_Picture BLOB,
+    P_Picture VARCHAR(255) NOT NULL,
     FOREIGN KEY (C_ID) REFERENCES CATEGORIES(C_ID)
 );
 
@@ -58,7 +58,7 @@ CREATE TABLE PRODUCT_VARIANTS (
     PV_ID INT AUTO_INCREMENT PRIMARY KEY,
     P_ID INT NOT NULL,
     PC_ID INT NOT NULL,
-    P_Size VARCHAR(255) NOT NULL, --ENUM('XS','S','M','L','XL','XXL','XXXL')
+    P_Size VARCHAR(255) NOT NULL,
     P_Quantity INT NOT NULL,
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
@@ -131,9 +131,9 @@ CREATE TABLE PAYMENT (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     O_ID INT NOT NULL,
     payment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    payment_method VARCHAR(255) NOT NULL, --ENUM('Credit Card', 'Debit Card', 'Cash on Delivery', 'E-Wallet')
+    payment_method VARCHAR(255) NOT NULL,
     amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
-    payment_status VARCHAR(255) NOT NULL DEFAULT 'Pending', --ENUM('Pending', 'Completed', 'Failed', 'Refunded')
+    payment_status VARCHAR(255) NOT NULL DEFAULT 'Pending',
     transaction_id VARCHAR(255) UNIQUE,
     payment_details JSON,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
@@ -148,15 +148,16 @@ CREATE TABLE DELIVERY (
     D_StartDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
     D_ActualDelivery DATETIME NULL,           -- When actually delivered
-    D_Status VARCHAR(255) NOT NULL DEFAULT 'Preparing',  --ENUM('Preparing', 'In Transit', 'Out for Delivery','Delivered', 'Failed Attempt', 'Returned')
+    D_Status VARCHAR(255) NOT NULL DEFAULT 'Preparing',
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
--- Simplified BANNER (text only)
+-- Simplified BANNER
 CREATE TABLE BANNER (
     B_ID INT AUTO_INCREMENT PRIMARY KEY,
     B_Text TEXT NOT NULL,
-    B_Status TINYINT(1) DEFAULT 1  -- 1=active, 0=inactive
+    B_Picture VARCHAR(255) NOT NULL,
+    B_Status INT(1) DEFAULT 1  -- 1=active, 0=inactive
 );
 
 CREATE TABLE VOUCHER (
@@ -166,7 +167,7 @@ CREATE TABLE VOUCHER (
     V_ExpiryDate DATE NOT NULL,
     V_UsageLimit INT NOT NULL DEFAULT 1,
     V_UsedCount INT DEFAULT 0,
-    V_Status TINYINT(1) DEFAULT 1  -- 1=active, 0=inactive
+    V_Status INT(1) DEFAULT 1  -- 1=active, 0=inactive
 );
 
 -- Junction table for voucher usage tracking
@@ -176,4 +177,21 @@ CREATE TABLE ORDER_VOUCHER (
     V_ID INT NOT NULL,
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID),
     FOREIGN KEY (V_ID) REFERENCES VOUCHER(V_ID)
+);
+
+CREATE TABLE FEEDBACK (
+    F_ID INT AUTO_INCREMENT PRIMARY KEY,
+    U_ID INT NOT NULL,
+    F_Type VARCHAR(100) NOT NULL,
+    F_Description TEXT NOT NULL,
+    FOREIGN KEY (U_ID) REFERENCES USER(U_ID)
+);
+
+CREATE TABLE REPLY_FEEDBACK (
+    RF_ID INT AUTO_INCREMENT PRIMARY KEY,
+    A_ID INT NOT NULL,
+    F_ID INT NOT NULL,
+    RF_Reply TEXT NOT NULL,
+    FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID),
+    FOREIGN KEY (F_ID) REFERENCES FEEDBACK(F_ID)
 );
