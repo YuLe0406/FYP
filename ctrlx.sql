@@ -9,7 +9,8 @@ CREATE TABLE USER (
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL 
+    U_SecurityAnswer VARCHAR(255) NOT NULL,
+    U_Status INT(1) DEFAULT 0  -- 1=blocked, 0=active
 );
 
 -- ADMIN Table
@@ -19,23 +20,9 @@ CREATE TABLE ADMIN (
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
     A_CN VARCHAR(11) NOT NULL,
-    A_Level INT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
+    A_Level INT(1) NOT NULL,  -- 1 for Superadmin, 0 for Admin
+    A_Status INT(1) DEFAULT 0  -- 1 = blocked, 0 = active
 );
-
-CREATE TABLE ADMIN_STATUS (
-    AS_ID INT AUTO_INCREMENT PRIMARY KEY,
-    A_ID INT NOT NULL,
-    A_Status INT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
-    FOREIGN KEY (A_ID) REFERENCES ADMIN(A_ID) ON DELETE CASCADE
-);
-
-CREATE TABLE USER_STATUS (
-    US_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_ID INT NOT NULL,
-    US_Blocked INT(1) DEFAULT 0,  -- 1=blocked, 0=active
-    FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE
-);
-
 
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
@@ -196,11 +183,10 @@ CREATE TABLE REPLY_FEEDBACK (
     FOREIGN KEY (F_ID) REFERENCES FEEDBACK(F_ID)
 );
 
-
-INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES
-('WEIFU','weifu123','weifu@gmail.com','01234567890',1),
-('YULE','yule123','yule@gmail.com','0123456789',1),
-('SHIHAO','shihao123','shihao@gmail.com','01234567891',0);
+INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level, A_Status) VALUES
+('WEIFU','weifu123','weifu@gmail.com','01234567890',1,0),
+('YULE','yule123','yule@gmail.com','0123456789',1,0),
+('SHIHAO','shihao123','shihao@gmail.com','01234567891',0,0);
 
 INSERT INTO CATEGORIES (C_NAME) VALUES
 ('Men Top'),
