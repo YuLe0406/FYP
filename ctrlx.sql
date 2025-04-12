@@ -9,8 +9,8 @@ CREATE TABLE USER (
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(11) NOT NULL,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
-    U_SecurityAnswer VARCHAR(255) NOT NULL 
-    U_Status INT(1) DEFAULT 0,  -- 1=blocked, 0=active
+    U_SecurityAnswer VARCHAR(255) NOT NULL,
+    U_Status INT(1) DEFAULT 0  -- 1=blocked, 0=active
 );
 
 -- ADMIN Table
@@ -20,8 +20,8 @@ CREATE TABLE ADMIN (
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
     A_CN VARCHAR(11) NOT NULL,
-    A_Level INT(1) NOT NULL  -- 1 for Superadmin, 0 for Admin
-    A_Status INT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
+    A_Level INT(1) NOT NULL,  -- 1 for Superadmin, 0 for Admin
+    A_Status INT(1) DEFAULT 0  -- 1 = blocked, 0 = active
 );
 
 -- CATEGORIES Table
