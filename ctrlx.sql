@@ -183,10 +183,10 @@ CREATE TABLE REPLY_FEEDBACK (
     FOREIGN KEY (F_ID) REFERENCES FEEDBACK(F_ID)
 );
 
-INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level) VALUES
-('WEIFU','weifu123','weifu@gmail.com','01234567890',1),
-('YULE','yule123','yule@gmail.com','0123456789',1),
-('SHIHAO','shihao123','shihao@gmail.com','01234567891',0);
+INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level, A_Status) VALUES
+('WEIFU','weifu123','weifu@gmail.com','01234567890',1,0),
+('YULE','yule123','yule@gmail.com','0123456789',1,0),
+('SHIHAO','shihao123','shihao@gmail.com','01234567891',0,0);
 
 INSERT INTO CATEGORIES (C_NAME) VALUES
 ('Men Top'),
