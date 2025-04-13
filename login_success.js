@@ -44,4 +44,3 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => console.error("Cart sync error:", err));
     }
 });
-
