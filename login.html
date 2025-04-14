@@ -5,42 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="payment.css">
-    <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
         <div class="logo">CTRL+X</div>
-        <div class="icons">
-            <a href="index.php" class="icon"><i class="fas fa-home"></i> Home</a>
-        </div>
+        <nav class="nav-links">
+            <a href="index.php" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        </nav>
     </header>
 
-    <div class="container" style="min-height: 80vh;">
-        <form class="payment-form" action="login.php" method="POST">
-            <div class="row">
-                <div class="col">
-                    <h3 class="title">Login to CTRL+X</h3>
-                    
-                    <div class="inputBox">
-                        <label><i class="fas fa-envelope"></i> Email</label>
-                        <input type="email" name="U_Email" required>
-                    </div>
+    <main class="auth-container">
+        <form class="auth-form" action="login.php" method="POST">
+            <div class="form-header">
+                <h2 class="form-title">Login to CTRL+X</h2>
+                <p class="form-subtitle">Welcome back!</p>
+            </div>
 
-                    <div class="inputBox">
-                        <label><i class="fas fa-lock"></i> Password</label>
-                        <input type="password" name="U_Password" required>
-                    </div>
-
-                    <button type="submit" class="submit_btn">Login</button>
-                    
-                    <div class="form-footer">
-                        <p>New user? <a href="register.html">Create an account</a></p>
-                        <p><a href="forgot_password.html">Forgot password?</a></p>
-                    </div>
+            <!-- Account Credentials -->
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
             </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+
+            <div class="form-footer">
+                <p>New user? <a href="register.html" class="auth-link">Create an account</a></p>
+                <p><a href="forgot_password.html" class="auth-link">Forgot password?</a></p>
+            </div>
         </form>
-    </div>
+    </main>
+
+
+    <script>
+        document.querySelector('input[name="email"]').addEventListener('input', function(e) {
+            const email = e.target.value;
+            const parts = email.split('@');
+            if (parts.length === 2) {
+                const domain = parts[1].toLowerCase();
+                e.target.value = parts[0] + '@' + domain;
+            }
+        });
+    </script>
 </body>
 </html>

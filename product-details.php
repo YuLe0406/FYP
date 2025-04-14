@@ -93,7 +93,7 @@ $conn->close();
             <details>
                 <summary>Product Info</summary>
                 <p><strong>Material:</strong> 80% Polyamide, 20% Spandex</p>
-                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, cool iron.</p>
+                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, non iron.</p>
             </details>
 
             <p>Product Code: <?php echo $product['P_ID']; ?></p>
