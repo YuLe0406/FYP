@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'includes/config.php';
+require __DIR__ . '/config.php';
 
 if (!isset($_SESSION['reset_email'])) {
     header("Location: forgot_password.html");

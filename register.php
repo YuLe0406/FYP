@@ -50,9 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Insert into database
         $stmt = $conn->prepare("
-            INSERT INTO users 
-            (first_name, last_name, email, password_hash, phone, date_of_birth, gender, security_question, security_answer)
-            VALUES (:first_name, :last_name, :email, :password, :phone, :dob, :gender, :security_question, :security_answer)
+           INSERT INTO users 
+        (first_name, last_name, email, password_hash, phone, dob, gender, security_question, security_answer)
+        VALUES (:first_name, :last_name, :email, :password, :phone, :dob, :gender, :security_question, :security_answer)
+        
         ");
         
         $stmt->execute([
