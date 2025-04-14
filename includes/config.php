@@ -1,6 +1,6 @@
-// config.php
+<?php
 $db_host = "localhost";
-$db_name = "user_system_test";  // 与新建数据库名一致
+$db_name = "user_system_test";  // 确保与数据库名一致
 $db_user = "root";
 $db_pass = "";
 
