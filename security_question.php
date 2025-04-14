@@ -6,7 +6,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['U_Email'];
     
     try {
-        $stmt = $conn->prepare("SELECT U_SecurityQuestion FROM USER WHERE U_Email = ?");
+       // 检查类似查询
+        $stmt = $conn->prepare("SELECT security_question FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

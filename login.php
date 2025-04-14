@@ -8,7 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         
-        $stmt = $conn->prepare("SELECT * FROM USER WHERE U_Email = ?");
+       // 正确表名 'users'
+$stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
