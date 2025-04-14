@@ -1,8 +1,8 @@
 <?php
 $db_host = "localhost";
-$db_name = "user_management";   // 与您的数据库名一致
+$db_name = "ctrlx_users";  // 替换为你的数据库名
 $db_user = "root";
-$db_pass = "";                  // XAMPP 默认空密码
+$db_pass = "";
 
 try {
     $conn = new PDO(
