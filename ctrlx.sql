@@ -36,8 +36,14 @@ CREATE TABLE PRODUCT (
     C_ID INT NOT NULL,
     P_Name VARCHAR(255) NOT NULL,
     P_Price DECIMAL(10,2) NOT NULL,
-    P_Picture VARCHAR(255) NOT NULL,
     FOREIGN KEY (C_ID) REFERENCES CATEGORIES(C_ID)
+);
+
+CREATE TABLE PRODUCT_IMAGES (
+    PI_ID INT AUTO_INCREMENT PRIMARY KEY,
+    P_ID INT NOT NULL,
+    PRODUCT_IMAGE VARCHAR(255) NOT NULL,
+    FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
 
 -- Simplified PRODUCT_VARIANTS (without color table)
@@ -147,6 +153,14 @@ CREATE TABLE BANNER (
     B_Status INT(1) DEFAULT 1  -- 1=active, 0=inactive
 );
 
+CREATE TABLE BANNER_PICTURE (
+    BP_ID INT AUTO_INCREMENT PRIMARY KEY,
+    B_ID INT NOT NULL,
+    B_Picture VARCHAR(255) NOT NULL,
+    BP_Status INT(1) DEFAULT 1,  -- 1=active, 0=inactive
+    FOREIGN KEY (B_ID) REFERENCES BANNER(B_ID) ON DELETE CASCADE
+);
+
 CREATE TABLE VOUCHER (
     V_ID INT AUTO_INCREMENT PRIMARY KEY,
     V_Code VARCHAR(50) NOT NULL UNIQUE,
@@ -192,22 +206,38 @@ INSERT INTO CATEGORIES (C_NAME) VALUES
 ('Men Top'),
 ('Woman Top');
 
+INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
+(1, 'White Oversized T', 69.90),
+(1, 'Black Oversized T', 89.90),
+(1, 'Red Oversized T', 79.90),
+(1, 'Clay Oversized T', 79.90),
+(1, 'Butter Oversized T', 79.90),
+(1, 'Grey Oversized T', 69.90),
+(1, 'Orchid Oversized T', 79.90),
+(2, 'White Hoodie', 169.90),
+(2, 'Grey Hoodie', 169.90),
+(2, 'Charcoal Hoodie', 169.90),
+(2, 'Black Hoodie', 169.90),
+(2, 'Red Hoodie', 169.90),
+(2, 'Green Hoodie', 169.90),
+(2, 'Navy Hoodie', 169.90);
 
-INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
-(1, 'White Oversized T', 69.90, 'images/1front.png'),
-(1, 'Black Oversized T', 89.90, 'images/2front.png'),
-(1, 'Red Oversized T', 79.90, 'images/3front.png'),
-(1, 'Clay Oversized T', 79.90, 'images/4front.png'),
-(1, 'Butter Oversized T', 79.90, 'images/5front.png'),
-(1, 'Grey Oversized T', 69.90, 'images/6front.png'),
-(1, 'Orchid Oversized T', 79.90, 'images/7front.png'),
-(2, 'White Hoodie', 169.90, 'images/1Front.jpeg'),
-(2, 'Grey Hoodie', 169.90, 'images/2Front.jpeg'),
-(2, 'Charcoal Hoodie', 169.90, 'images/3Front.jpeg'),
-(2, 'Black Hoodie', 169.90, 'images/4Front.jpeg'),
-(2, 'Red Hoodie', 169.90, 'images/5Front.jpeg'),
-(2, 'Green Hoodie', 169.90, 'images/6Front.jpeg'),
-(2, 'Navy Hoodie', 169.90, 'images/7Front.jpeg');
+INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
+(1, 'images/1front.png'),
+(2, 'images/2front.png'),
+(3, 'images/3front.png'),
+(4, 'images/4front.png'),
+(5, 'images/5front.png'),
+(6, 'images/6front.png'),
+(7, 'images/7front.png'),
+(8, 'images/1Front.jpeg'),
+(9, 'images/2Front.jpeg'),
+(10, 'images/3Front.jpeg'),
+(11, 'images/4Front.jpeg'),
+(12, 'images/5Front.jpeg'),
+(13, 'images/6Front.jpeg'),
+(14, 'images/7Front.jpeg');
+
 
 INSERT INTO PRODUCT_COLOR (COLOR_NAME, COLOR_HEX) VALUES
 ('White', '#FFFFFF'),
