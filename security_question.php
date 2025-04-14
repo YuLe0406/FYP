@@ -1,9 +1,9 @@
 <?php
 session_start();
-require 'config.php';
+require __DIR__ . '/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = strtolower($_POST['email'] ?? ''); // 统一使用 email 而非 U_Email
+    $email = strtolower($_POST['email'] ?? '');
     
     try {
         $stmt = $conn->prepare("SELECT security_question FROM users WHERE email = ?");
