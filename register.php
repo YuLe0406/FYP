@@ -1,28 +1,62 @@
 <?php
-// 在文件开头添加
+
 require __DIR__ . '/includes/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 获取表单数据
-    $firstName = $_POST['first_name'];
-    $lastName = $_POST['last_name'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $phone = $_POST['phone'];
+    // Get form data with null coalescing
+    $firstName = $_POST['first_name'] ?? '';
+    $lastName  = $_POST['last_name'] ?? '';
+    $email     = $_POST['email'] ?? '';
+    $password  = $_POST['password'] ?? '';
+    $phone     = $_POST['phone'] ?? '';
+
+    // Validation checks
+    $errors = [];
+    
+    if (empty($firstName)) $errors[] = "First name is required";
+    if (empty($lastName))  $errors[] = "Last name is required";
+    if (empty($email))     $errors[] = "Email is required";
+    if (empty($password))  $errors[] = "Password is required";
+    if (empty($phone))     $errors[] = "Phone number is required";
+    
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format";
+    }
+    
+    if (!preg_match('/^[0-9]{11}$/', $phone)) {
+        $errors[] = "Phone number must be 11 digits";
+    }
+    
+    if (!empty($errors)) {
+        die("Registration failed:<br>" . implode("<br>", $errors));
+    }
 
     try {
-        // 插入用户数据
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        
         $stmt = $conn->prepare("
             INSERT INTO users 
             (first_name, last_name, email, password_hash, phone)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (:first_name, :last_name, :email, :password, :phone)
         ");
-        $stmt->execute([$firstName, $lastName, $email, $password, $phone]);
+        
+        $stmt->execute([
+            ':first_name' => $firstName,
+            ':last_name'  => $lastName,
+            ':email'      => $email,
+            ':password'   => $passwordHash,
+            ':phone'      => $phone
+        ]);
         
         header("Location: login.html?registration=success");
         exit();
+        
     } catch (PDOException $e) {
-        die("注册失败: " . $e->getMessage());
+        if ($e->getCode() == '23000') {
+            die("Registration failed: Email already exists");
+        } else {
+            error_log("Registration Error: " . $e->getMessage());
+            die("System error. Please try later");
+        }
     }
 }
-?>
