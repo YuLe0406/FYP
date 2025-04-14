@@ -1,26 +1,28 @@
 <?php
-require __DIR__ . '/includes/config.php';
+require __DIR__ . '/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
-    $firstName = $_POST['first_name'] ?? '';
-    $lastName  = $_POST['last_name'] ?? '';
-    $email     = $_POST['email'] ?? '';
-    $password  = $_POST['password'] ?? '';
-    $phone     = $_POST['phone'] ?? '';
-    $dob       = $_POST['dob'] ?? '';
-    $gender    = $_POST['gender'] ?? '';
+    $firstName      = $_POST['first_name'] ?? '';
+    $lastName       = $_POST['last_name'] ?? '';
+    $email          = $_POST['email'] ?? '';
+    $password       = $_POST['password'] ?? '';
+    $confirmPassword= $_POST['confirm_password'] ?? '';
+    $phone          = $_POST['phone'] ?? '';
+    $dob            = $_POST['dob'] ?? '';
+    $gender         = $_POST['gender'] ?? '';
 
     // Validation checks
     $errors = [];
     
-    if (empty(trim($firstName))) $errors[] = "First name is required";
-    if (empty(trim($lastName)))  $errors[] = "Last name is required";
-    if (empty(trim($email)))     $errors[] = "Email is required";
-    if (empty(trim($password)))  $errors[] = "Password is required";
-    if (empty(trim($phone)))     $errors[] = "Phone number is required";
-    if (empty(trim($dob)))       $errors[] = "Date of birth is required";
-    if (empty(trim($gender)))    $errors[] = "Gender is required";
+    if (empty(trim($firstName)))      $errors[] = "First name is required";
+    if (empty(trim($lastName)))       $errors[] = "Last name is required";
+    if (empty(trim($email)))          $errors[] = "Email is required";
+    if (empty(trim($password)))       $errors[] = "Password is required";
+    if (empty(trim($confirmPassword))) $errors[] = "Confirm Password is required";
+    if (empty(trim($phone)))          $errors[] = "Phone number is required";
+    if (empty(trim($dob)))            $errors[] = "Date of birth is required";
+    if (empty(trim($gender)))         $errors[] = "Gender is required";
     
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format";
@@ -28,6 +30,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if (!preg_match('/^[0-9]{11}$/', $phone)) {
         $errors[] = "Phone number must be 11 digits";
+    }
+    
+    if ($password !== $confirmPassword) {
+        $errors[] = "Passwords do not match";
     }
     
     if (!empty($errors)) {
