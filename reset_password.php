@@ -1,3 +1,17 @@
+<!-- 在顶部添加PHP验证 -->
+<?php
+require 'includes/config.php';
+
+$token = $_GET['token'] ?? '';
+$stmt = $conn->prepare("SELECT U_Email FROM USER WHERE reset_token = ? AND reset_expires > NOW()");
+$stmt->execute([$token]);
+$validToken = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$validToken) {
+    die("Invalid or expired token");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
