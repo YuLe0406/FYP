@@ -29,7 +29,12 @@ $total_price = 0;
         <div id="cart-summary">
             <h2>Cart Summary</h2>
             <p>Total: <span id="cart-total">RM 0.00</span></p>
+            <?php if (isset($_SESSION['U_ID'])) { ?>
             <a href="checkout.php"><button id="checkout-btn">Proceed to Checkout</button></a>
+        <?php } else { ?>
+            <button id="checkout-btn" onclick="alert('Please log in before proceeding to checkout.'); window.location.href='login.html';">Proceed to Checkout</button>
+        <?php } ?>
+
         </div>
     </section>
 </main>
