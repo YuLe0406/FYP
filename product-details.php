@@ -47,6 +47,14 @@ $conn->close();
     <title><?php echo $product['P_Name']; ?> | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
+    <script>
+    const product = {
+        id: <?php echo $product['P_ID']; ?>,
+        name: "<?php echo addslashes($product['P_Name']); ?>",
+        price: <?php echo $product['P_Price']; ?>,
+        image: "<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>"
+    };
+    </script>
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -85,7 +93,7 @@ $conn->close();
             <details>
                 <summary>Product Info</summary>
                 <p><strong>Material:</strong> 80% Polyamide, 20% Spandex</p>
-                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, cool iron.</p>
+                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, non iron.</p>
             </details>
 
             <p>Product Code: <?php echo $product['P_ID']; ?></p>

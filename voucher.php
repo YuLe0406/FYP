@@ -44,26 +44,6 @@ $vouchers = $conn->query("SELECT * FROM VOUCHER ORDER BY V_ExpiryDate DESC");
     <title>Voucher Management - CTRL-X Admin</title>
     <link rel="stylesheet" href="admin.css">
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            background-color: #f5f7fa;
-            margin-left: 250px;
-        }
-
-        .main-content {
-            width: 100%;
-            max-width: 1500px;
-            padding: 30px;
-            margin: 0 auto;
-            box-sizing: border-box;
-        }
         .voucher-container {
             display: flex;
             gap: 20px;

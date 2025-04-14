@@ -1,5 +1,4 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -15,52 +14,53 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
     </div>
     <ul>
         <li><a href="dashboard.php" class="<?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/dashboard.png" alt="Dashboard" class="sidebar-icon-img"/>
             Dashboard
         </a></li>
         <li><a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/admin-settings-male.png" alt="Admin" class="sidebar-icon-img"/>
             Admin
         </a></li>
         <li><a href="category.php" class="<?= basename($_SERVER['PHP_SELF']) == 'category.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/category.png" alt="Category" class="sidebar-icon-img"/>
             Category
         </a></li>
         <li><a href="product.php" class="<?= basename($_SERVER['PHP_SELF']) == 'product.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/product.png" alt="Product" class="sidebar-icon-img"/>
             Product
         </a></li>
         <li><a href="customer.php" class="<?= basename($_SERVER['PHP_SELF']) == 'customer.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/conference.png" alt="Customers" class="sidebar-icon-img"/>
             Customer List
         </a></li>
         <li><a href="orderlist.php" class="<?= basename($_SERVER['PHP_SELF']) == 'orderlist.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/order-delivered.png" alt="Orders" class="sidebar-icon-img"/>
             Order List
         </a></li>
         <li><a href="report.php" class="<?= basename($_SERVER['PHP_SELF']) == 'report.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/report-file.png" alt="Reports" class="sidebar-icon-img"/>
             Generate Report
         </a></li>
         <li><a href="banner.php" class="<?= basename($_SERVER['PHP_SELF']) == 'banner.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/image.png" alt="Banners" class="sidebar-icon-img"/>
             Banner
         </a></li>
         <li><a href="voucher.php" class="<?= basename($_SERVER['PHP_SELF']) == 'voucher.php' ? 'active' : '' ?>">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/discount.png" alt="Vouchers" class="sidebar-icon-img"/>
             Voucher
-        </a></li>
-        <li><a href="delivery.php" class="<?= basename($_SERVER['PHP_SELF']) == 'delivery.php' ? 'active' : '' ?>">
-            Delivery
         </a></li>
     </ul>
 
     <div class="sidebar-footer">
         <div class="sidebar-icon">
             <a href="admin_profile.php">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                </svg>
+                <img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png" alt="Profile" class="sidebar-icon-img"/>
                 <span>My Profile</span>
             </a>
         </div>
         <div class="sidebar-icon logout">
             <a href="admin_logout.php">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                </svg>
+                <img src="https://img.icons8.com/ios-filled/20/ffffff/exit.png" alt="Logout" class="sidebar-icon-img"/>
                 <span>Logout</span>
             </a>
         </div>
@@ -68,6 +68,26 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
 </nav>
 
 <style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+    margin-left: 250px; /* Adjusted for sidebar */
+}
+
+.main-content {
+    width: 100%;
+    max-width: 1000px;
+    padding: 30px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
 .sidebar {
     width: 250px;
     position: fixed;
@@ -78,6 +98,8 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
     padding: 20px;
     color: white;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar h2 {
@@ -110,7 +132,8 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
 }
 
 .sidebar li a {
-    display: block;
+    display: flex;
+    align-items: center;
     color: #ecf0f1;
     padding: 12px 15px;
     margin-bottom: 5px;
@@ -154,8 +177,11 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
     background-color: #34495e;
 }
 
-.sidebar-icon svg {
+.sidebar-icon-img {
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
+    filter: brightness(0) invert(1);
 }
 
 .sidebar-icon span {
@@ -166,7 +192,7 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin'
     background-color: rgba(231, 76, 60, 0.2);
 }
 
-.sidebar-icon.logout svg {
-    color: #e74c3c;
+.sidebar-icon.logout .sidebar-icon-img {
+    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(118%) contrast(119%);
 }
 </style>

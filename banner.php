@@ -44,28 +44,6 @@ if (!$banner) {
     <title>Manage Banner - CTRL-X Admin</title>
     <link rel="stylesheet" href="admin.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-            min-height: 100vh;
-        }
-
-        .container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
         h1 {
             color: #2c3e50;
             margin-bottom: 30px;
