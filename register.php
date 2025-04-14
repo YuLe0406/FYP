@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/config.php';
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
     $firstName      = $_POST['first_name'] ?? '';
