@@ -1,40 +1,40 @@
--- Create the database
-CREATE DATABASE IF NOT EXISTS user_system 
+-- 创建数据库（使用您指定的名称）
+CREATE DATABASE IF NOT EXISTS user_system_test 
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE user_system;
+USE user_system_test;
 
--- Users table
+-- 用户表结构
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL COMMENT 'Hashed password using password_hash()',
+    password_hash VARCHAR(255) NOT NULL,
     phone VARCHAR(15) NOT NULL,
-    date_of_birth DATE NOT NULL,
+    dob DATE NOT NULL COMMENT '与register.php中的字段名一致',
     gender ENUM('male','female','other') NOT NULL,
-    security_question VARCHAR(255) NOT NULL COMMENT 'User-selected security question',
-    security_answer VARCHAR(255) NOT NULL COMMENT 'Plain text answer (not hashed)',
-    reset_token VARCHAR(64) DEFAULT NULL COMMENT 'Password reset token',
-    reset_token_expiry DATETIME DEFAULT NULL COMMENT 'Token expiration datetime',
+    security_question VARCHAR(255) NOT NULL,
+    security_answer VARCHAR(255) NOT NULL,
+    reset_token VARCHAR(64) DEFAULT NULL,
+    reset_token_expiry DATETIME DEFAULT NULL,
     account_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    -- Indexes
+    -- 索引
     INDEX idx_user_email (email),
     INDEX idx_reset_token (reset_token)
 ) ENGINE=InnoDB;
 
--- Sample test user
+-- 测试用户数据
 INSERT INTO users (
     first_name, 
     last_name, 
     email, 
     password_hash, 
     phone, 
-    date_of_birth, 
+    dob, 
     gender, 
     security_question, 
     security_answer
@@ -47,5 +47,5 @@ INSERT INTO users (
     '1985-05-15',
     'male',
     'What city were you born in?',
-    'New York' -- Stored in plain text as requested
+    'New York'
 );
