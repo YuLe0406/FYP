@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '/config.php';
 
-// 启用错误报告
+// 启用详细错误报告
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
