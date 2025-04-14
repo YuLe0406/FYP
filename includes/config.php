@@ -1,7 +1,7 @@
 <?php
-// Database configuration
+
 $db_host = "localhost";
-$db_name = "user_system_test";
+$db_name = "user_system_test"; 
 $db_user = "root";
 $db_pass = "";
 
