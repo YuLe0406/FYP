@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'includes/config.php';
+require 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = strtolower($_POST['email'] ?? ''); // 统一使用 email 而非 U_Email
