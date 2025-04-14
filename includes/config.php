@@ -1,6 +1,6 @@
-<?php
+// config.php
 $db_host = "localhost";
-$db_name = "ctrlx_users";  // 替换为你的数据库名
+$db_name = "user_system_test";  // 与新建数据库名一致
 $db_user = "root";
 $db_pass = "";
 
