@@ -40,6 +40,7 @@ $todays_orders = $conn->query("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - CTRL-X Clothing</title>
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     
@@ -53,7 +54,7 @@ $todays_orders = $conn->query("
             <div class="cards">
                 <div class="card sales">
                     <div class="card-icon">
-                        <img src="https://img.icons8.com/ios-filled/30/ffffff/money.png" alt="Sales" class="sidebar-icon-img">
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
                     <div class="card-content">
                         <h3>Total Sales</h3>
@@ -63,7 +64,7 @@ $todays_orders = $conn->query("
                 
                 <div class="card orders">
                     <div class="card-icon">
-                        <img src="https://img.icons8.com/ios-filled/30/ffffff/order-delivered.png" alt="Orders" class="sidebar-icon-img">
+                        <i class="fas fa-shopping-cart"></i>
                     </div>
                     <div class="card-content">
                         <h3>Total Orders</h3>
@@ -73,7 +74,7 @@ $todays_orders = $conn->query("
                 
                 <div class="card customers">
                     <div class="card-icon">
-                        <img src="https://img.icons8.com/ios-filled/30/ffffff/conference.png" alt="Customers" class="sidebar-icon-img">
+                        <i class="fas fa-users"></i>
                     </div>
                     <div class="card-content">
                         <h3>Customers</h3>
@@ -94,7 +95,7 @@ $todays_orders = $conn->query("
                             $revenue_trend = ($stats['monthly_sales'] > 0) ? 'up' : 'down';
                             $revenue_percent = ($stats['monthly_sales'] > 0) ? round(($stats['monthly_sales'] / max(1, $stats['total_sales'] - $stats['monthly_sales'])) * 100) : 0;
                             ?>
-                            <img src="https://img.icons8.com/ios-filled/20/<?= $revenue_trend == 'up' ? '4CAF50' : 'F44336' ?>/long-arrow-<?= $revenue_trend ?>.png" class="trend-icon">
+                            <i class="fas fa-arrow-<?= $revenue_trend ?>"></i>
                             <span><?= $revenue_percent ?>% of total</span>
                         </div>
                     </div>
@@ -107,7 +108,7 @@ $todays_orders = $conn->query("
                             $orders_trend = ($stats['monthly_orders'] > 0) ? 'up' : 'down';
                             $orders_percent = ($stats['monthly_orders'] > 0) ? round(($stats['monthly_orders'] / max(1, $stats['total_orders'] - $stats['monthly_orders'])) * 100) : 0;
                             ?>
-                            <img src="https://img.icons8.com/ios-filled/20/<?= $orders_trend == 'up' ? '4CAF50' : 'F44336' ?>/long-arrow-<?= $orders_trend ?>.png" class="trend-icon">
+                            <i class="fas fa-arrow-<?= $orders_trend ?>"></i>
                             <span><?= $orders_percent ?>% of total</span>
                         </div>
                     </div>
@@ -120,7 +121,7 @@ $todays_orders = $conn->query("
                             $customers_trend = ($stats['monthly_customers'] > 0) ? 'up' : 'down';
                             $customers_percent = ($stats['monthly_customers'] > 0) ? round(($stats['monthly_customers'] / max(1, $stats['total_customers'] - $stats['monthly_customers'])) * 100) : 0;
                             ?>
-                            <img src="https://img.icons8.com/ios-filled/20/<?= $customers_trend == 'up' ? '4CAF50' : 'F44336' ?>/long-arrow-<?= $customers_trend ?>.png" class="trend-icon">
+                            <i class="fas fa-arrow-<?= $customers_trend ?>"></i>
                             <span><?= $customers_percent ?>% of total</span>
                         </div>
                     </div>
@@ -129,12 +130,12 @@ $todays_orders = $conn->query("
                         <h4>Today's Summary</h4>
                         <div class="today-stats">
                             <div class="today-stat">
-                                <img src="https://img.icons8.com/ios-filled/20/ffffff/money.png" class="today-icon">
-                                <span>Sales: RM <?= number_format($stats['today_sales'] ?? 0, 2) ?></span>
+                                <span>Sales:</span>
+                                <strong>RM <?= number_format($stats['today_sales'] ?? 0, 2) ?></strong>
                             </div>
                             <div class="today-stat">
-                                <img src="https://img.icons8.com/ios-filled/20/ffffff/order-delivered.png" class="today-icon">
-                                <span>Orders: <?= $stats['today_orders'] ?? 0 ?></span>
+                                <span>Orders:</span>
+                                <strong><?= $stats['today_orders'] ?? 0 ?></strong>
                             </div>
                         </div>
                     </div>
@@ -145,10 +146,7 @@ $todays_orders = $conn->query("
             <div class="table-section">
                 <div class="section-header">
                     <h1 class="section-title">Today's Orders (<?= date('d M Y') ?>)</h1>
-                    <a href="orderlist.php" class="view-all">
-                        <img src="https://img.icons8.com/ios-filled/20/ffffff/visible.png" class="view-icon">
-                        View All Orders
-                    </a>
+                    <a href="orderlist.php" class="view-all">View All Orders</a>
                 </div>
                 <div class="table-container">
                     <?php if ($todays_orders->num_rows > 0): ?>
@@ -177,8 +175,7 @@ $todays_orders = $conn->query("
                                 </td>
                                 <td>
                                     <a href="order_detail.php?id=<?= $order['O_ID'] ?>" class="action-btn">
-                                        <img src="https://img.icons8.com/ios-filled/20/ffffff/visible.png" class="action-icon">
-                                        View
+                                        <i class="fas fa-eye"></i> View
                                     </a>
                                 </td>
                             </tr>
@@ -187,7 +184,7 @@ $todays_orders = $conn->query("
                     </table>
                     <?php else: ?>
                     <div class="no-orders">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/nothing-found.png">
+                        <i class="fas fa-clipboard-list"></i>
                         <p>No orders placed today</p>
                     </div>
                     <?php endif; ?>
