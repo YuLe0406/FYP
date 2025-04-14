@@ -3,10 +3,9 @@ session_start();
 require 'includes/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['U_Email'];
+    $email = strtolower($_POST['email'] ?? ''); // 统一使用 email 而非 U_Email
     
     try {
-       // 检查类似查询
         $stmt = $conn->prepare("SELECT security_question FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

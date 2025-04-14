@@ -1,9 +1,8 @@
-<!-- 在顶部添加PHP验证 -->
 <?php
 require 'includes/config.php';
 
 $token = $_GET['token'] ?? '';
-$stmt = $conn->prepare("SELECT U_Email FROM USER WHERE reset_token = ? AND reset_expires > NOW()");
+$stmt = $conn->prepare("SELECT email FROM users WHERE reset_token = ? AND reset_expires > NOW()");
 $stmt->execute([$token]);
 $validToken = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -11,43 +10,47 @@ if (!$validToken) {
     die("Invalid or expired token");
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Reset Password | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
         <div class="logo">CTRL+X</div>
-        <div class="icons">
-            <a href="index.php" class="icon"><i class="fas fa-home"></i> Home</a>
-        </div>
+        <nav class="nav-links">
+            <a href="index.php" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        </nav>
     </header>
 
-    <div class="container" style="min-height: 80vh;">
-        <form class="payment-form" action="update_password.php" method="POST">
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? ''); ?>">
-            <div class="row">
-                <div class="col">
-                    <h3 class="title">Set New Password</h3>
-                    
-                    <div class="inputBox">
-                        <label><i class="fas fa-lock"></i> New Password</label>
-                        <input type="password" name="new_password" required>
-                    </div>
+    <main class="auth-container">
+        <form class="auth-form" action="update_password.php" method="POST">
+            <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token']) ?>">
+            <div class="form-header">
+                <h2 class="form-title">Set New Password</h2>
+                <p class="form-subtitle">Enter a new password for your account</p>
+            </div>
 
-                    <div class="inputBox">
-                        <label><i class="fas fa-lock"></i> Confirm Password</label>
-                        <input type="password" name="confirm_password" required>
-                    </div>
-
-                    <button type="submit" class="submit_btn">Reset Password</button>
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="new_password"><i class="fas fa-lock"></i> New Password</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
                 </div>
             </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <i class="fas fa-sync"></i> Reset Password
+            </button>
         </form>
-    </div>
+    </main>
 </body>
 </html>
