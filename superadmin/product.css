@@ -241,3 +241,92 @@ section h2 {
 .add-variant-btn:hover {
     background: #2980b9;
 }
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-preview-item {
+    position: relative;
+    width: 100px;
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.manage-images-btn {
+    background: #9b59b6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background 0.3s ease;
+}
+
+.manage-images-btn:hover {
+    background: #8e44ad;
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-gallery-item {
+    position: relative;
+    width: 80px;
+}
+
+.image-gallery-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.image-gallery-item .remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.add-more-btn {
+    margin-top: 5px;
+    display: inline-block;
+    padding: 6px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-more-btn i {
+    margin-right: 5px;
+}
+
+.image-preview-item img {
+    height: 60px;
+    margin: 5px;
+    border-radius: 5px;
+}
