@@ -1,6 +1,7 @@
 <?php
+// Database configuration
 $db_host = "localhost";
-$db_name = "user_system_test";  // 确保与数据库名一致
+$db_name = "user_system_test";
 $db_user = "root";
 $db_pass = "";
 
@@ -15,6 +16,6 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("数据库连接失败: " . $e->getMessage());
+    die("Database connection failed: " . $e->getMessage());
 }
 ?>

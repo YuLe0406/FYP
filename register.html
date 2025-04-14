@@ -5,76 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | CTRL+X</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="payment.css">
+    <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
         <div class="logo">CTRL+X</div>
-        <div class="icons">
-            <a href="index.php" class="icon"><i class="fas fa-home"></i> Home</a>
-        </div>
+        <nav class="nav-links">
+            <a href="index.php" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        </nav>
     </header>
 
-    <div class="container" style="min-height: 80vh; padding: 50px 25px;">
-        <form class="payment-form" action="register.php" method="POST" style="max-width: 500px; margin: 0 auto;">
-            <div class="row">
-                <div class="col">
-                    <div class="form-header">
-                        <h3 class="title">CREATE ACCOUNT</h3>
-                        <p>Join the CTRL+X community</p>
-                    </div>
+    <main class="auth-container">
+        <form class="auth-form" action="register.php" method="POST">
+            <div class="form-header">
+                <h2 class="form-title">Create Account</h2>
+                <p class="form-subtitle">Join the CTRL+X community</p>
+            </div>
 
-                    <div class="input-group">
-                        <!-- 必填字段 -->
-                        <div class="inputBox">
-                            <label><i class="fas fa-user"></i> First Name</label>
-                            <input type="text" name="U_FName" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-user"></i> Last Name</label>
-                            <input type="text" name="U_LName" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-calendar"></i> Date of Birth</label>
-                            <input type="date" name="U_DOB" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-venus-mars"></i> Gender</label>
-                            <select name="U_Gender" required>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-envelope"></i> Email</label>
-                            <input type="email" name="U_Email" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-lock"></i> Password</label>
-                            <input type="password" name="U_Password" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-lock"></i> Confirm Password</label>
-                            <input type="password" name="confirm_password" required>
-                        </div>
-                        <div class="inputBox">
-                            <label><i class="fas fa-phone"></i> Phone Number</label>
-                            <input type="tel" name="U_PNumber" pattern="[0-9]{11}" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="submit_btn">
-                        <i class="fas fa-user-plus"></i> Register Now
-                    </button>
-
-                    <div class="form-footer">
-                        <p>Already have an account? <a href="login.html">Sign In Here</a></p>
-                    </div>
+            <!-- Personal Information -->
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="first_name"><i class="fas fa-user"></i> First Name</label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="last_name"><i class="fas fa-user"></i> Last Name</label>
+                    <input type="text" id="last_name" name="last_name" required>
                 </div>
             </div>
+
+            <!-- Account Credentials -->
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" minlength="8" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="dob"><i class="fas fa-calendar"></i> Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="gender"><i class="fas fa-venus-mars"></i> Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="input-field">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" placeholder="12345678901" required>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+
+            <div class="form-footer">
+                <p>Already have an account? <a href="login.html" class="auth-link">Sign in here</a></p>
+            </div>
         </form>
-    </div>
+    </main>
+
+    <!-- Frontend Validation Script -->
+    <script>
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Error: Passwords do not match!');
+                document.getElementById('confirm_password').focus();
+            }
+        });
+    </script>
 </body>
 </html>

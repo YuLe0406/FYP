@@ -1,23 +1,26 @@
 <?php
-
 require __DIR__ . '/includes/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data with null coalescing
+    // Retrieve form data
     $firstName = $_POST['first_name'] ?? '';
     $lastName  = $_POST['last_name'] ?? '';
     $email     = $_POST['email'] ?? '';
     $password  = $_POST['password'] ?? '';
     $phone     = $_POST['phone'] ?? '';
+    $dob       = $_POST['dob'] ?? '';
+    $gender    = $_POST['gender'] ?? '';
 
     // Validation checks
     $errors = [];
     
-    if (empty($firstName)) $errors[] = "First name is required";
-    if (empty($lastName))  $errors[] = "Last name is required";
-    if (empty($email))     $errors[] = "Email is required";
-    if (empty($password))  $errors[] = "Password is required";
-    if (empty($phone))     $errors[] = "Phone number is required";
+    if (empty(trim($firstName))) $errors[] = "First name is required";
+    if (empty(trim($lastName)))  $errors[] = "Last name is required";
+    if (empty(trim($email)))     $errors[] = "Email is required";
+    if (empty(trim($password)))  $errors[] = "Password is required";
+    if (empty(trim($phone)))     $errors[] = "Phone number is required";
+    if (empty(trim($dob)))       $errors[] = "Date of birth is required";
+    if (empty(trim($gender)))    $errors[] = "Gender is required";
     
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format";
@@ -32,12 +35,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
+        // Hash password
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         
+        // Insert into database
         $stmt = $conn->prepare("
             INSERT INTO users 
-            (first_name, last_name, email, password_hash, phone)
-            VALUES (:first_name, :last_name, :email, :password, :phone)
+            (first_name, last_name, email, password_hash, phone, dob, gender)
+            VALUES (:first_name, :last_name, :email, :password, :phone, :dob, :gender)
         ");
         
         $stmt->execute([
@@ -45,7 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':last_name'  => $lastName,
             ':email'      => $email,
             ':password'   => $passwordHash,
-            ':phone'      => $phone
+            ':phone'      => $phone,
+            ':dob'        => $dob,
+            ':gender'     => $gender
         ]);
         
         header("Location: login.html?registration=success");
