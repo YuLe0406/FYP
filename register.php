@@ -24,8 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Registration failed:<br>" . implode("<br>", $errors));
     }
 
-    // Hash password
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    $passwordHash = $password; // Store password in plaintext
     
     // Insert into database using MySQLi
     $stmt = $conn->prepare("
