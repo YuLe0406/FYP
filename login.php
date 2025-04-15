@@ -32,11 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->get_result(); // Get result set
     $user = $result->fetch_assoc(); // Fetch associative array
 
-    // Debug output (optional)
-    echo "<pre>User Data: ";
-    print_r($user);
-    echo "</pre>";
-
     // Verify password
     if ($user && $password === $user['password_hash']) {
         $_SESSION['user_id'] = $user['user_id'];

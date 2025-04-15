@@ -1,15 +1,23 @@
 <?php
-require 'db.php';
+session_start();
 
-$token = $_GET['token'] ?? '';
-$stmt = $conn->prepare("SELECT email FROM users WHERE reset_token = ? AND reset_expires > NOW()");
-$stmt->execute([$token]);
-$validToken = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user_answer = $_POST['user_answer'];
+    $correct_answer = $_SESSION['security_answer'];
 
-if (!$validToken) {
-    die("Invalid or expired token");
+    if (strcasecmp($user_answer, $correct_answer) == 0) {
+        // Correct answer, show reset form
+        echo "<form method='POST' action='update_password.php'>
+                <label>New Password</label>
+                <input type='password' name='new_password' required>
+                <button type='submit'>Reset Password</button>
+              </form>";
+    } else {
+        echo "Incorrect answer. Try again.";
+    }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
