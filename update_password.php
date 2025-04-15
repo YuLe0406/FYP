@@ -1,7 +1,6 @@
 <?php
-// 必须在脚本最开头启动会话
 session_start();
-require 'includes/config.php';
+require 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $token = $_POST['token'];
@@ -13,35 +12,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("错误：两次输入的密码不一致");
     }
 
-    try {
-        // 2. 验证令牌有效性
-        $stmt = $conn->prepare("SELECT U_Email FROM USER WHERE reset_token = ? AND reset_expires > NOW()");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // 2. 验证令牌有效性
+    $stmt = $conn->prepare("SELECT email FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
-        if ($user) {
-            // 3. 更新密码
-            $hash = password_hash($newPassword, PASSWORD_DEFAULT);
-            $updateStmt = $conn->prepare("UPDATE USER SET U_Password = ?, reset_token = NULL, reset_expires = NULL WHERE U_Email = ?");
-            $updateStmt->execute([$hash, $user['U_Email']]);
-            
-            // 4. 安全清除会话
-            session_unset();    // 清除所有会话变量
-            session_destroy(); // 销毁会话
-            session_write_close(); // 确保会话数据写入文件
-            
-            // 5. 跳转与提示优化
-            echo '<script>
-                alert("密码更新成功！");
-                window.location.href = "login.html";
-            </script>';
-            exit();
-        } else {
-            die("错误：无效或过期的重置令牌");
-        }
-    } catch (PDOException $e) {
-        error_log("密码更新错误: " . $e->getMessage());
-        die("系统错误，请联系管理员");
+    if ($user) {
+        // 3. 更新密码
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $updateStmt = $conn->prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expiry = NULL WHERE U_Email = ?");
+        $updateStmt->bind_param("ss", $hash, $user['email']);
+        $updateStmt->execute();
+
+        // 4. 清除会话
+        session_unset();
+        session_destroy();
+        session_write_close();
+
+        // 5. 提示用户
+        echo '<script>
+            alert("密码更新成功！");
+            window.location.href = "login.html";
+        </script>';
+        exit();
+    } else {
+        die("Invalid or expired reset tokens");
     }
 }
 ?>
