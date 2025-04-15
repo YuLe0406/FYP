@@ -54,6 +54,19 @@
                 </div>
             </div>
 
+            <div class="input-field">
+                <label for="security_question">Security Question</label>
+                <select id="security_question" name="security_question" required>
+                    <option value="">-- Select a question --</option>
+                    <option value="What city were you born in?">What city were you born in?</option>
+                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                    <option value="What was your first pet's name?">What was your first pet's name?</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="security_answer">Security Answer</label>
+                <input type="text" id="security_answer" name="security_answer" required>
+            </div>
             <!-- Additional Information -->
             <div class="input-group">
                 <div class="input-field">
@@ -86,6 +99,7 @@
         </form>
     </main>
 
+    
     <!-- Frontend Validation Script -->
     <script>
         document.querySelector('.auth-form').addEventListener('submit', function(e) {

@@ -1,12 +1,11 @@
 <?php
 session_start();
-require 'includes/config.php';
+require __DIR__ . '/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['U_Email'];
+    $email = strtolower($_POST['email'] ?? '');
     
     try {
-       // 检查类似查询
         $stmt = $conn->prepare("SELECT security_question FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
