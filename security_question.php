@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/config.php';
+require __DIR__ . '/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = strtolower($_POST['email'] ?? '');

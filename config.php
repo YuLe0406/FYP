@@ -3,7 +3,7 @@
 
 // Database credentials
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'user_system_test');  // Matches your SQL file
+define('DB_NAME', 'ctr');  // Matches your SQL file
 define('DB_USER', 'root');             // Default username (change if needed)
 define('DB_PASS', '');                 // Default empty password (change if needed)
 

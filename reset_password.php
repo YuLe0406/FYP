@@ -1,5 +1,5 @@
 <?php
-require 'includes/config.php';
+require 'db.php';
 
 $token = $_GET['token'] ?? '';
 $stmt = $conn->prepare("SELECT email FROM users WHERE reset_token = ? AND reset_expires > NOW()");

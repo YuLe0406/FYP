@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/config.php';
+require __DIR__ . '/db.php';
 
 if (!isset($_SESSION['reset_email'])) {
     header("Location: forgot_password.html");

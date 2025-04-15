@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/config.php';
+require __DIR__ . '/db.php';
 
 // 启用详细错误报告
 ini_set('display_errors', 1);
