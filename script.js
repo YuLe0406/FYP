@@ -207,7 +207,7 @@ function addToCart() {
             id: product.id,
             name: product.name,
             price: product.price,
-            image: product.image,
+            image: "images/" + product.image,
             size: selectedSize,
             quantity: selectedQuantity
         });
