@@ -169,41 +169,47 @@ function addToCart() {
     let urlParams = new URLSearchParams(window.location.search);
     let productId = urlParams.get("id");
 
+    let product = products.find(p => p.id == productId);
     if (!product) {
         alert("Product not found!");
         return;
     }
 
     let sizeDropdown = document.getElementById("size-select");
+    let quantityInput = document.getElementById("quantity");
 
-    // Ensure the dropdown exists in the page
-    if (!sizeDropdown) {
-        alert("Size selection dropdown not found!");
+    if (!sizeDropdown || !quantityInput) {
+        alert("Size or quantity input not found!");
         return;
     }
 
     let selectedSize = sizeDropdown.value;
-    
+    let selectedQuantity = parseInt(quantityInput.value);
+
     if (!selectedSize) {
         alert("Please select a size!");
         return;
     }
 
+    if (isNaN(selectedQuantity) || selectedQuantity < 1) {
+        alert("Please enter a valid quantity!");
+        return;
+    }
+
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // Check if the exact same product with the same size exists
     let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
 
     if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity += selectedQuantity;
     } else {
-        cart.push({ 
-            id: product.id, 
-            name: product.name, 
-            price: product.price, 
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
             image: product.image,
-            size: selectedSize, 
-            quantity: 1 
+            size: selectedSize,
+            quantity: selectedQuantity
         });
     }
 
