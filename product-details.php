@@ -78,8 +78,11 @@ $conn->close();
             <select id="size-select">
                 <option value="">Select Size</option>
                 <?php foreach ($variants as $variant) { ?>
-                    <option value="<?php echo $variant['P_Size']; ?>">
-                    <?php echo $variant['P_Size'] . ' (Stock: ' . $variant['P_Quantity'] . ')'; ?></option>
+                    <option value="<?php echo $variant['P_Size']; ?>"
+                    data-stock="<?php echo $variant['P_Quantity']; ?>"
+                    <?php if ($variant['P_Quantity'] <= 0) echo 'disabled'; ?>>
+                    <?php echo $variant['P_Size'] . ($variant['P_Quantity'] > 0 ? " (Stock: {$variant['P_Quantity']})" : " (Out of Stock)"); ?>
+                </option>
                 <?php } ?>
             </select>
 
