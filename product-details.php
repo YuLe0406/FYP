@@ -24,7 +24,7 @@ if ($result->num_rows == 0) {
 $product = $result->fetch_assoc();
 
 // Fetch product variants (color, size, quantity)
-$sql_variants = "SELECT * FROM PRODUCT_VARIANTS WHERE P_ID = ?";
+$sql_variants = "SELECT * FROM PRODUCT_VARIANTS WHERE P_ID = ? AND P_Quantity > 0";
 $stmt = $conn->prepare($sql_variants);
 $stmt->bind_param("i", $product_id);
 $stmt->execute();
