@@ -78,7 +78,8 @@ $conn->close();
             <select id="size-select">
                 <option value="">Select Size</option>
                 <?php foreach ($variants as $variant) { ?>
-                    <option value="<?php echo $variant['P_Size']; ?>"><?php echo $variant['P_Size']; ?></option>
+                    <option value="<?php echo $variant['P_Size']; ?>">
+                    <?php echo $variant['P_Size'] . ' (Stock: ' . $variant['P_Quantity'] . ')'; ?></option>
                 <?php } ?>
             </select>
 
