@@ -88,7 +88,7 @@ $conn->close();
 
             <!-- Quantity Selector -->
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" value="1" min="1" max="15">
+            <input type="number" id="quantity" value="1" min="1" max="10">
 
             <!-- Buttons -->
             <button onclick="addToCart(<?php echo $product['P_ID']; ?>)">Add to Cart</button>
