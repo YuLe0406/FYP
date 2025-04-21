@@ -76,27 +76,6 @@
     height: 20px;
 }
 
-/* Status Styles */
-.status {
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.status-active {
-    background: #28a745;
-    color: #fff;
-}
-
-.status-blocked {
-    background: #e74c3c;
-    color: #fff;
-}
-
 /* Action Buttons */
 .action-button {
     padding: 6px 12px;
@@ -105,28 +84,28 @@
     cursor: pointer;
     font-size: 14px;
     transition: background 0.3s ease;
-    margin-right: 5px;
+    color: #fff;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
 }
 
-.action-button.deactivate {
+/* Deactivate button */
+.action-button.Deactivate {
     background: #e74c3c;
-    color: #fff;
 }
 
-.action-button.deactivate:hover {
+.action-button.Deactivate:hover {
     background: #c0392b;
 }
 
-.action-button.activate {
-    background: #28a745;
-    color: #fff;
+/* Activate button */
+.action-button.Activate {
+    background: #2ecc71;
 }
 
-.action-button.activate:hover {
-    background: #218838;
+.action-button.Activate:hover {
+    background: #27ae60;
 }
 
 /* Forms in table cells */

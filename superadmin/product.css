@@ -10,6 +10,8 @@ section h2 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #2c3e50;
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 10px;
 }
 
 /* Form Styles */
@@ -45,8 +47,10 @@ section h2 {
 .form-group select:focus {
     border-color: #1abc9c;
     outline: none;
+    box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
 }
 
+/* Buttons */
 .submit-btn {
     background: #1abc9c;
     color: #fff;
@@ -57,6 +61,7 @@ section h2 {
     cursor: pointer;
     transition: background 0.3s ease;
     margin-top: 10px;
+    width: 200px;
 }
 
 .submit-btn:hover {
@@ -64,9 +69,14 @@ section h2 {
 }
 
 /* Table Styles */
+.existing-products {
+    overflow-x: auto;
+}
+
 .existing-products table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
 .existing-products th,
@@ -80,6 +90,8 @@ section h2 {
     background: #1abc9c;
     color: #fff;
     font-weight: bold;
+    position: sticky;
+    top: 0;
 }
 
 .existing-products tr:hover {
@@ -88,11 +100,13 @@ section h2 {
 
 .existing-products td {
     color: #333;
+    vertical-align: middle;
 }
 
 .existing-products img {
     max-width: 50px;
     border-radius: 4px;
+    border: 1px solid #ddd;
 }
 
 .existing-products td ul {
@@ -108,21 +122,24 @@ section h2 {
 }
 
 /* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
 .edit-btn,
-.delete-btn,
-.add-variants-btn {
+.delete-btn {
     padding: 6px 12px;
     font-size: 14px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.3s ease;
-    margin-right: 5px;
-    color: #fff;
+    transition: all 0.3s ease;
 }
 
 .edit-btn {
     background: #f39c12;
+    color: white;
 }
 .edit-btn:hover {
     background: #e67e22;
@@ -130,116 +147,27 @@ section h2 {
 
 .delete-btn {
     background: #e74c3c;
+    color: white;
 }
 .delete-btn:hover {
     background: #c0392b;
 }
 
-.add-variants-btn {
-    background: #3498db;
-}
-.add-variants-btn:hover {
-    background: #2980b9;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: #fff;
-    width: 400px;
-    max-width: 90%;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
-.modal-content h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
-
-.close-modal {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-}
-.close-modal:hover {
-    color: #000;
-}
-
-/* Variant Fields */
-.variant-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.variant {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.variant input {
-    padding: 8px;
-    font-size: 14px;
-    background: #f4f7f6;
-    border: 1px solid #ecf0f1;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-}
-
-.variant input:focus {
-    border-color: #1abc9c;
-    outline: none;
-}
-
-.remove-variant-btn {
-    background: #e74c3c;
-    color: #fff;
+/* Image Upload */
+.add-more-btn {
+    margin-top: 5px;
+    display: inline-block;
+    padding: 6px 10px;
+    background-color: #3498db;
+    color: white;
     border: none;
-    padding: 8px 12px;
-    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.remove-variant-btn:hover {
-    background: #c0392b;
-}
-
-.add-variant-btn {
-    background: #3498db;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
     font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 10px;
 }
 
-.add-variant-btn:hover {
-    background: #2980b9;
+.add-more-btn:hover {
+    background-color: #2980b9;
 }
 
 .image-preview {
@@ -251,82 +179,23 @@ section h2 {
 
 .image-preview-item {
     position: relative;
-    width: 100px;
-}
-
-.image-preview-item img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-}
-
-.manage-images-btn {
-    background: #9b59b6;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 5px;
-    transition: background 0.3s ease;
-}
-
-.manage-images-btn:hover {
-    background: #8e44ad;
-}
-
-.image-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.image-gallery-item {
-    position: relative;
     width: 80px;
 }
 
-.image-gallery-item img {
+.image-preview-item img {
     width: 100%;
     height: auto;
     border-radius: 4px;
+    border: 1px solid #ddd;
 }
 
-.image-gallery-item .remove-image {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.add-more-btn {
-    margin-top: 5px;
-    display: inline-block;
-    padding: 6px 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.add-more-btn i {
-    margin-right: 5px;
-}
-
-.image-preview-item img {
-    height: 60px;
-    margin: 5px;
-    border-radius: 5px;
+/* Responsive */
+@media (max-width: 768px) {
+    .existing-products table {
+        display: block;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
 }

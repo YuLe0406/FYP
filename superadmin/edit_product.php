@@ -14,7 +14,8 @@ $stmt->execute();
 $product = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-$category_result = mysqli_query($conn, "SELECT * FROM CATEGORIES");
+// Fetch only active categories
+$category_result = mysqli_query($conn, "SELECT * FROM CATEGORIES WHERE C_Status = 0");
 
 $variant_result = mysqli_query($conn, "
     SELECT pv.PV_ID, pv.P_Size, pv.P_Quantity, pc.COLOR_NAME, pc.PC_ID
@@ -38,7 +39,111 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
     <meta charset="UTF-8">
     <title>Edit Product</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="edit_product.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        .btn-back {
+            padding: 8px 15px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-back:hover {
+            background: #2980b9;
+        }
+        
+        form {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #27ae60;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .variant-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .variant-actions button {
+            margin: 0;
+        }
+        
+        .variant-editing {
+            background: #e3f2fd;
+        }
+        
+        img {
+            max-width: 100px;
+            height: auto;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -76,14 +181,27 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 
         <!-- Product Images -->
         <h2>Product Images</h2>
-        <div style="display:flex; flex-wrap: wrap;">
-            <?php while ($img = mysqli_fetch_assoc($images_result)) { ?>
+        <div style="display:flex; flex-wrap: wrap; gap: 15px;">
+            <?php while ($img = mysqli_fetch_assoc($images_result)) { 
+                // Fix image path - remove FYP/ if it exists and prepend ../
+                $image_path = $img['PRODUCT_IMAGE'];
+                if (strpos($image_path, 'FYP/') === 0) {
+                    $image_path = substr($image_path, 4); // Remove 'FYP/'
+                }
+                $image_path = '../' . $image_path; // Go up one level from superadmin
+            ?>
                 <div style="margin: 5px; text-align: center;">
-                    <img src="<?= htmlspecialchars($img['PRODUCT_IMAGE']) ?>" width="100" alt="Product Image">
+                    <?php if (file_exists($image_path)): ?>
+                        <img src="<?= htmlspecialchars($image_path) ?>" width="100" alt="Product Image">
+                    <?php else: ?>
+                        <div style="width:100px; height:100px; background:#eee; display:flex; align-items:center; justify-content:center;">
+                            Image not found
+                        </div>
+                    <?php endif; ?>
                     <form action="delete_image.php" method="POST" onsubmit="return confirm('Delete this image?')">
                         <input type="hidden" name="productId" value="<?= $productId ?>">
                         <input type="hidden" name="imageId" value="<?= $img['PI_ID'] ?>">
-                        <button type="submit">Delete</button>
+                        <button type="submit" style="background:#e74c3c;">Delete</button>
                     </form>
                 </div>
             <?php } ?>
@@ -91,6 +209,7 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 
         <form action="update_product_images.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="productId" value="<?= $productId ?>">
+            <label>Upload New Images:</label>
             <input type="file" name="newImages[]" multiple accept="image/*">
             <button type="submit">Upload Images</button>
         </form>
@@ -125,20 +244,15 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 
                             <div class="variant-actions">
                                 <button type="submit">Save</button>
-                                <a href="edit_product.php?productId=<?= $productId ?>"><button type="button">Cancel</button></a>
+                                <a href="edit_product.php?productId=<?= $productId ?>"><button type="button" style="background:#95a5a6;">Cancel</button></a>
                             </div>
                         </form>
                     <?php } else { ?>
                         <span>Color: <?= htmlspecialchars($variant['COLOR_NAME']) ?>, Size: <?= htmlspecialchars($variant['P_Size']) ?>, Quantity: <?= htmlspecialchars($variant['P_Quantity']) ?></span>
                         <div class="variant-actions">
                             <a href="edit_product.php?productId=<?= $productId ?>&editVariantId=<?= $variant['PV_ID'] ?>">
-                                <button type="button">Edit</button>
+                                <button type="button" style="background:#f39c12;">Edit</button>
                             </a>
-                            <form action="delete_variant.php" method="POST" onsubmit="return confirm('Delete this variant?')">
-                                <input type="hidden" name="variantId" value="<?= $variant['PV_ID'] ?>">
-                                <input type="hidden" name="productId" value="<?= $productId ?>">
-                                <button type="submit">Delete</button>
-                            </form>
                         </div>
                     <?php } ?>
                 </li>

@@ -11,44 +11,44 @@ if (!isset($_SESSION['admin_id'])) {
 $error = '';
 $success = '';
 
-// Block User
-if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'block') {
+// Deactivate User
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Deactivate') {
     $userId = (int)$_POST['userId'];
     $stmt = $conn->prepare("UPDATE USER SET U_Status = 1 WHERE U_ID = ?");
     $stmt->bind_param("i", $userId);
     if ($stmt->execute()) {
-        $_SESSION['block_success'] = true;
+        $_SESSION['Deactivate_success'] = true;
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     } else {
-        $error = "Error blocking user: " . $stmt->error;
+        $error = "Error Deactivateing user: " . $stmt->error;
     }
     $stmt->close();
 }
 
-// Unblock User
-if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'unblock') {
+// Activate User
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Activate') {
     $userId = (int)$_POST['userId'];
     $stmt = $conn->prepare("UPDATE USER SET U_Status = 0 WHERE U_ID = ?");
     $stmt->bind_param("i", $userId);
     if ($stmt->execute()) {
-        $_SESSION['unblock_success'] = true;
+        $_SESSION['Activate_success'] = true;
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     } else {
-        $error = "Error unblocking user: " . $stmt->error;
+        $error = "Error Activateing user: " . $stmt->error;
     }
     $stmt->close();
 }
 
 // Show success messages
-if (isset($_SESSION['block_success'])) {
-    $success = "User blocked successfully!";
-    unset($_SESSION['block_success']);
+if (isset($_SESSION['Deactivate_success'])) {
+    $success = "User Deactivateed successfully!";
+    unset($_SESSION['Deactivate_success']);
 }
-if (isset($_SESSION['unblock_success'])) {
-    $success = "User unblocked successfully!";
-    unset($_SESSION['unblock_success']);
+if (isset($_SESSION['Activate_success'])) {
+    $success = "User Activateed successfully!";
+    unset($_SESSION['Activate_success']);
 }
 
 // Fetch all users
@@ -94,23 +94,23 @@ if ($result && $result->num_rows > 0) {
                         <span><?= htmlspecialchars($user['U_Gender']); ?></span>
                         <span>
                             <?php if ($user['U_Status'] == 1): ?>
-                                <img src="https://img.icons8.com/ios-filled/24/cancel.png"/> Blocked
+                                <img src="https://img.icons8.com/ios-filled/24/cancel.png"/> Deactivateed
                             <?php else: ?>
                                 <img src="https://img.icons8.com/ios-filled/24/checkmark.png"/> Active
                             <?php endif; ?>
                         </span>
                         <span>
                             <?php if ($user['U_Status'] == 0): ?>
-                                <form method="POST" onsubmit="return confirmBlock(event, this);">
-                                    <input type="hidden" name="action" value="block">
+                                <form method="POST" onsubmit="return confirmDeactivate(event, this);">
+                                    <input type="hidden" name="action" value="Deactivate">
                                     <input type="hidden" name="userId" value="<?= $user['U_ID']; ?>">
-                                    <button type="submit" class="action-button deactivate">Block</button>
+                                    <button type="submit" class="action-button Deactivate">Deactivate</button>
                                 </form>
                             <?php else: ?>
-                                <form method="POST" onsubmit="return confirmUnblock(event, this);">
-                                    <input type="hidden" name="action" value="unblock">
+                                <form method="POST" onsubmit="return confirmActivate(event, this);">
+                                    <input type="hidden" name="action" value="Activate">
                                     <input type="hidden" name="userId" value="<?= $user['U_ID']; ?>">
-                                    <button type="submit" class="action-button activate">Unblock</button>
+                                    <button type="submit" class="action-button Activate">Activate</button>
                                 </form>
                             <?php endif; ?>
                         </span>
@@ -122,16 +122,16 @@ if ($result && $result->num_rows > 0) {
 </div>
 
 <script>
-function confirmBlock(event, form) {
+function confirmDeactivate(event, form) {
     event.preventDefault();
     Swal.fire({
-        title: 'Block this user?',
+        title: 'Deactivate this user?',
         text: "They won't be able to log in anymore!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#e74c3c',
         cancelButtonColor: '#7f8c8d',
-        confirmButtonText: 'Block'
+        confirmButtonText: 'Deactivate'
     }).then((result) => {
         if (result.isConfirmed) {
             form.submit();
@@ -140,16 +140,16 @@ function confirmBlock(event, form) {
     return false;
 }
 
-function confirmUnblock(event, form) {
+function confirmActivate(event, form) {
     event.preventDefault();
     Swal.fire({
-        title: 'Unblock this user?',
+        title: 'Activate this user?',
         text: "They will regain access to their account.",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#2ecc71',
         cancelButtonColor: '#7f8c8d',
-        confirmButtonText: 'Unblock'
+        confirmButtonText: 'Activate'
     }).then((result) => {
         if (result.isConfirmed) {
             form.submit();

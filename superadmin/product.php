@@ -2,19 +2,21 @@
 include 'db.php';
 include 'sidebar.php';
 
-// Fetch categories
-$category_query = "SELECT * FROM CATEGORIES";
+// Fetch only active categories
+$category_query = "SELECT * FROM CATEGORIES WHERE C_Status = 0";
 $category_result = mysqli_query($conn, $category_query);
 
-// Fetch products with their first image
+// Fetch products with their first image from active categories
 $product_query = "
     SELECT p.*, c.C_Name, 
            (SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE P_ID = p.P_ID LIMIT 1) AS primary_image
     FROM PRODUCT p
     JOIN CATEGORIES c ON p.C_ID = c.C_ID
-";
+    WHERE c.C_Status = 0
+    ORDER BY p.P_ID DESC";
 $product_result = mysqli_query($conn, $product_query);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,17 +81,27 @@ $product_result = mysqli_query($conn, $product_query);
                 </tr>
                 </thead>
                 <tbody>
-                <?php while ($row = mysqli_fetch_assoc($product_result)) { ?>
+                <?php 
+                // Reset the pointer for the product result
+                mysqli_data_seek($product_result, 0);
+                while ($row = mysqli_fetch_assoc($product_result)) { 
+                    // Fix image path - remove FYP/ if it exists and prepend ../
+                    $image_path = $row['primary_image'];
+                    if (strpos($image_path, 'FYP/') === 0) {
+                        $image_path = substr($image_path, 4); // Remove 'FYP/'
+                    }
+                    $image_path = '../' . $image_path; // Go up one level from superadmin
+                ?>
                     <tr>
                         <td><?= $row['P_ID'] ?></td>
                         <td><?= htmlspecialchars($row['C_Name']) ?></td>
                         <td><?= htmlspecialchars($row['P_Name']) ?></td>
                         <td>RM<?= number_format($row['P_Price'], 2) ?></td>
                         <td>
-                            <?php if ($row['primary_image']): ?>
-                                <img src="<?= htmlspecialchars($row['primary_image']) ?>" alt="Product Image" width="50">
+                            <?php if ($row['primary_image'] && file_exists($image_path)): ?>
+                                <img src="<?= htmlspecialchars($image_path) ?>" alt="Product Image" width="50">
                             <?php else: ?>
-                                <span>No Image</span>
+                                <span>No Image (Path: <?= htmlspecialchars($image_path) ?>)</span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -112,10 +124,6 @@ $product_result = mysqli_query($conn, $product_query);
                             </ul>
                         </td>
                         <td>
-                            <form action="delete_product.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="productId" value="<?= $row['P_ID'] ?>">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
                             <a href="edit_product.php?productId=<?= $row['P_ID'] ?>">
                                 <button class="edit-btn">Edit</button>
                             </a>
