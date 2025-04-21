@@ -1,25 +1,48 @@
 <?php
 include 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $orderId = intval($_POST['order_id']);
-    $status = mysqli_real_escape_string($conn, $_POST['orderStatus']);
+header('Content-Type: application/json');
 
-    // If delivery row exists, update it; else, insert it
-    $checkQuery = "SELECT * FROM DELIVERY WHERE O_ID = $orderId";
-    $result = mysqli_query($conn, $checkQuery);
+$orderId = $_POST['order_id'];
+$status = $_POST['status'];
 
-    if (mysqli_num_rows($result) > 0) {
-        $updateQuery = "UPDATE DELIVERY SET D_Status = '$status' WHERE O_ID = $orderId";
-    } else {
-        $estimatedDate = date('Y-m-d', strtotime('+3 days'));
-        $updateQuery = "INSERT INTO DELIVERY (O_ID, D_Status, D_EstimatedDelivery) VALUES ($orderId, '$status', '$estimatedDate')";
-    }
+// Get the OS_ID for the new status
+$statusQuery = "SELECT OS_ID FROM ORDER_STATUS WHERE O_Status = '$status'";
+$statusResult = mysqli_query($conn, $statusQuery);
 
+if (mysqli_num_rows($statusResult) > 0) {
+    $statusRow = mysqli_fetch_assoc($statusResult);
+    $osId = $statusRow['OS_ID'];
+    
+    // Update the order status
+    $updateQuery = "UPDATE ORDERS SET OS_ID = $osId WHERE O_ID = $orderId";
+    
     if (mysqli_query($conn, $updateQuery)) {
-        header("Location: admin_orders.php?success=1");
+        // If status is Delivered, update delivery status to Delivered if exists
+        if ($status == 'Delivered') {
+            $deliveryQuery = "SELECT D_ID FROM DELIVERY WHERE O_ID = $orderId";
+            $deliveryResult = mysqli_query($conn, $deliveryQuery);
+            
+            if (mysqli_num_rows($deliveryResult) > 0) {
+                $deliveryRow = mysqli_fetch_assoc($deliveryResult);
+                $dId = $deliveryRow['D_ID'];
+                
+                // Get DS_ID for Delivered status
+                $dsQuery = "SELECT DS_ID FROM DELIVERY_STATUS WHERE D_Status = 'Delivered'";
+                $dsResult = mysqli_query($conn, $dsQuery);
+                $dsRow = mysqli_fetch_assoc($dsResult);
+                $dsId = $dsRow['DS_ID'];
+                
+                // Update delivery status
+                mysqli_query($conn, "UPDATE DELIVERY SET DS_ID = $dsId, D_ActualDelivery = NOW() WHERE D_ID = $dId");
+            }
+        }
+        
+        echo json_encode(['success' => true]);
     } else {
-        echo "Error updating status: " . mysqli_error($conn);
+        echo json_encode(['success' => false, 'error' => mysqli_error($conn)]);
     }
+} else {
+    echo json_encode(['success' => false, 'error' => 'Invalid status']);
 }
 ?>
