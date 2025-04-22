@@ -62,7 +62,7 @@ $conn->close();
 <?php include 'header.php'; ?> <!-- Include header -->
 
 <main>
-    <h1>Pruduct Details</h1>
+    <h2>Pruduct Details</h2>
     <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
     <div class="product-details">
         <div class="product-image">
