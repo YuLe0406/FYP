@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const dotsContainer = document.querySelector(".dots-container");
     const leftBtn = document.querySelector(".left-btn");
     const rightBtn = document.querySelector(".right-btn");
+    const sizeDropdown = document.getElementById("size-select");
+    const quantityInput = document.getElementById("quantity");
 
     let index = 1; // Start at cloned first image
     let autoSlide;
@@ -106,6 +108,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     restartAutoSlide();
 
+
+    if (sizeDropdown) {
+        sizeDropdown.addEventListener("change", function () {
+            const selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
+            const stock = parseInt(selectedOption.getAttribute("data-stock")) || 1;
+
+            quantityInput.max = stock;
+            quantityInput.value = 1;
+
+            if (stock <= 0) {
+                quantityInput.disabled = true;
+            } else {
+                quantityInput.disabled = false;
+            }
+        });
+    }
 });
 
 
