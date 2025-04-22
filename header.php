@@ -21,7 +21,7 @@ $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
                 </a>
                 <div class="dropdown-menu">
                     <a href="account_settings.php">Account Settings</a>
-                    <a href="logout.php">Logout</a>
+                    <a href="login.php">Logout</a>
                 </div>
             </div>
         <?php else: ?>
