@@ -2,7 +2,6 @@
 session_start();
 require __DIR__ . '/db.php';
 
-// Enable detailed error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -11,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = strtolower($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    // Input validation
     $errors = [];
     if (empty(trim($email)))    $errors[] = "Email is required";
     if (empty(trim($password))) $errors[] = "Password is required";
@@ -20,23 +18,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Login failed:<br>" . implode("<br>", $errors));
     }
 
-    // Use MySQLi correctly
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT * FROM USER WHERE U_Email = ?");
     if (!$stmt) {
         die("Error: " . $conn->error);
     }
-    
-    $stmt->bind_param("s", $email); // Bind parameter
-    $stmt->execute();
-    
-    $result = $stmt->get_result(); // Get result set
-    $user = $result->fetch_assoc(); // Fetch associative array
 
-    // Verify password
-    if ($user && $password === $user['password_hash']) {
-        $_SESSION['user_id'] = $user['user_id'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user && $password === $user['U_Password']) {
+        $_SESSION['user_id'] = $user['U_ID'];
+        $_SESSION['user_email'] = $user['U_Email'];
+        $_SESSION['user_name'] = $user['U_FName'] . ' ' . $user['U_LName'];
         header("Location: index.php");
         exit();
     } else {
