@@ -1,5 +1,4 @@
 <?php
-session_start();
 include 'db.php';  // Database connection
 include 'header.php';      // Header file
 ?>

@@ -14,30 +14,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $securityQuestion = $_POST['security_question'] ?? '';
     $securityAnswer = $_POST['security_answer'] ?? '';
 
-    // Validation checks (unchanged)
+    // Validation checks
     $errors = [];
-    
+
     if (empty(trim($firstName))) $errors[] = "First name is required";
-    // ... [Keep all validation checks the same] ...
-    
+    if (empty(trim($lastName))) $errors[] = "Last name is required";
+    if (empty(trim($email))) $errors[] = "Email is required";
+    if (empty(trim($password))) $errors[] = "Password is required";
+    if ($password !== $confirmPassword) $errors[] = "Passwords do not match";
+    if (empty(trim($phone))) $errors[] = "Phone number is required";
+    if (empty(trim($dob))) $errors[] = "Date of birth is required";
+    if (empty(trim($gender))) $errors[] = "Gender is required";
+    if (empty(trim($securityQuestion))) $errors[] = "Security question is required";
+    if (empty(trim($securityAnswer))) $errors[] = "Security answer is required";
+
     if (!empty($errors)) {
         die("Registration failed:<br>" . implode("<br>", $errors));
     }
 
-    $passwordHash = $password; // Store password in plaintext
-    
-    // Insert into database using MySQLi
+    $passwordHash = $password; // (Use password_hash later for better security)
+
+    // Updated SQL with new column names
     $stmt = $conn->prepare("
-        INSERT INTO users 
-        (first_name, last_name, email, password_hash, phone, dob, gender, security_question, security_answer)
+        INSERT INTO USER 
+        (U_FName, U_LName, U_Email, U_Password, U_PNumber, U_DOB, U_Gender, U_SecurityQuestion, U_SecurityAnswer)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    
+
     if (!$stmt) {
         die("Registration failed: " . $conn->error);
     }
-    
-    // Bind parameters
+
     $stmt->bind_param(
         "sssssssss", // 9 strings
         $firstName,
@@ -50,19 +57,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $securityQuestion,
         $securityAnswer
     );
-    
-    // Execute query
+
     if (!$stmt->execute()) {
-        if ($conn->errno == 1062) { // Duplicate email error code
+        if ($conn->errno == 1062) {
             die("Registration failed: Email already exists");
         } else {
             error_log("Registration Error: " . $conn->error);
             die("System error. Please try later");
         }
     }
-    
+
     $stmt->close();
-    
+
     header("Location: login.html?registration=success");
     exit();
 }

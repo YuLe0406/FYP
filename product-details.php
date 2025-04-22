@@ -62,6 +62,7 @@ $conn->close();
 <?php include 'header.php'; ?> <!-- Include header -->
 
 <main>
+    <h1><a href="shop.php" class="back-to-shop">← Continue Shopping</a></h1>
     <div class="product-details">
         <div class="product-image">
         <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
@@ -78,10 +79,13 @@ $conn->close();
             <select id="size-select">
                 <option value="">Select Size</option>
                 <?php foreach ($variants as $variant) { ?>
-                    <option value="<?php echo $variant['P_Size']; ?>"
+                <option 
+                    value="<?php echo $variant['P_Size']; ?>"
                     data-stock="<?php echo $variant['P_Quantity']; ?>"
                     <?php if ($variant['P_Quantity'] <= 0) echo 'disabled'; ?>>
-                    <?php echo $variant['P_Size'] . ($variant['P_Quantity'] > 0 ? " (Stock: {$variant['P_Quantity']})" : " (Out of Stock)"); ?></option>
+                    <?php echo $variant['P_Size']; ?> 
+                    <?php echo $variant['P_Quantity'] > 0 ? "(Stock: {$variant['P_Quantity']})" : "(Out of Stock)"; ?>
+                </option>
                 <?php } ?>
             </select>
 
@@ -105,6 +109,30 @@ $conn->close();
 </main>
 
 <?php include 'footer.php'; ?> <!-- Include footer -->
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sizeDropdown = document.getElementById("size-select");
+    const quantityInput = document.getElementById("quantity");
+
+    if (sizeDropdown && quantityInput) {
+        sizeDropdown.addEventListener("change", function () {
+            const selected = sizeDropdown.options[sizeDropdown.selectedIndex];
+            const stock = parseInt(selected.getAttribute("data-stock")) || 1;
+
+            quantityInput.max = stock;
+            quantityInput.value = 1;
+
+            if (stock <= 0) {
+                quantityInput.disabled = true;
+            } else {
+                quantityInput.disabled = false;
+            }
+        });
+    }
+});
+</script>
 
 </body>
 </html>

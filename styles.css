@@ -595,3 +595,12 @@ details {
   color: var(--primary-color);
   margin-bottom: 1rem;
 }
+
+.back-to-shop {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+  justify-content: right;
+  width: 100%;  /* Adjust width to prevent overflow */
+  margin-left: 20px;
+}
