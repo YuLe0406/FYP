@@ -103,6 +103,11 @@ section h2 {
     vertical-align: middle;
 }
 
+/* Center align the actions cell */
+.existing-products td:last-child {
+    text-align: center;
+}
+
 .existing-products img {
     max-width: 50px;
     border-radius: 4px;
@@ -124,11 +129,12 @@ section h2 {
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 5px;
+    gap: 8px;
+    justify-content: center;
 }
 
 .edit-btn,
-.delete-btn {
+.deactivate-btn {
     padding: 6px 12px;
     font-size: 14px;
     border: none;
@@ -141,15 +147,17 @@ section h2 {
     background: #f39c12;
     color: white;
 }
+
 .edit-btn:hover {
     background: #e67e22;
 }
 
-.delete-btn {
+.deactivate-btn {
     background: #e74c3c;
     color: white;
 }
-.delete-btn:hover {
+
+.deactivate-btn:hover {
     background: #c0392b;
 }
 
@@ -168,6 +176,38 @@ section h2 {
 
 .add-more-btn:hover {
     background-color: #2980b9;
+}
+
+.actions-cell {
+    text-align: center;
+    width: 1%;
+    white-space: nowrap;
+}
+
+.action-buttons {
+    display: inline-flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.activate-btn {
+    background: #2ecc71;
+    color: white;
+    padding: 6px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.activate-btn:hover {
+    background: #27ae60;
+}
+
+.existing-products td {
+    vertical-align: middle;
 }
 
 .image-preview {
@@ -197,5 +237,6 @@ section h2 {
     
     .action-buttons {
         flex-direction: column;
+        align-items: center;
     }
 }
