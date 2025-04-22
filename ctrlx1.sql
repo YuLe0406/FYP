@@ -1,17 +1,22 @@
 -- USER Table
 CREATE TABLE USER (
     U_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_FName VARCHAR(255) NOT NULL,
-    U_LName VARCHAR(255) NOT NULL,
-    U_DOB DATE NOT NULL,
-    U_Gender VARCHAR(6) NOT NULL,
-    U_Email VARCHAR(255) NOT NULL UNIQUE,
+    U_FName VARCHAR(50) NOT NULL,
+    U_LName VARCHAR(50) NOT NULL,
+    U_Email VARCHAR(100) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(11) NOT NULL,
+    U_PNumber VARCHAR(15) NOT NULL,
+    U_DOB DATE NOT NULL COMMENT '与register.php中的字段名一致',
+    U_Gender ENUM('male','female','other') NOT NULL,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
     U_SecurityAnswer VARCHAR(255) NOT NULL,
-    U_Status INT(1) DEFAULT 0  -- 1=blocked, 0=active
-);
+    U_ResetToken VARCHAR(64) DEFAULT NULL,
+    U_ResetTokenExpiry DATETIME DEFAULT NULL,
+    U_AccountCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    U_LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_user_email (U_Email),
+    INDEX idx_reset_token (U_ResetToken)
+) ENGINE=InnoDB;
 
 -- ADMIN Table
 CREATE TABLE ADMIN (
