@@ -92,45 +92,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["banner_text"])) {
 
 // Handle additional picture upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["additional_picture"])) {
-    // Sanitize filename
-    $fileName = preg_replace("/[^a-zA-Z0-9\.]/", "_", basename($_FILES["additional_picture"]["name"]));
-    $targetFilePath = $targetDir . $fileName;
-    $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+    // First check if we've reached the maximum of 5 pictures
+    $countResult = $conn->query("SELECT COUNT(*) as count FROM BANNER_PICTURE WHERE B_ID = 1");
+    $countRow = $countResult->fetch_assoc();
     
-    $check = getimagesize($_FILES["additional_picture"]["tmp_name"]);
-    if($check !== false) {
-        $allowTypes = array('jpg','png','jpeg','gif');
-        if(in_array($fileType, $allowTypes)) {
-            // Check file size (max 2MB)
-            if ($_FILES["additional_picture"]["size"] <= 2000000) {
-                // Generate unique filename if file exists
-                $counter = 1;
-                while (file_exists($targetFilePath)) {
-                    $fileInfo = pathinfo($fileName);
-                    $fileName = $fileInfo['filename'] . '_' . $counter . '.' . $fileInfo['extension'];
-                    $targetFilePath = $targetDir . $fileName;
-                    $counter++;
-                }
-                
-                if (move_uploaded_file($_FILES["additional_picture"]["tmp_name"], $targetFilePath)) {
-                    $insert = $conn->query("INSERT INTO BANNER_PICTURE (B_ID, B_Picture) VALUES (1, '$fileName')");
-                    if($insert){
-                        $message = $message ? $message."<br>Additional picture uploaded!" : "Additional picture uploaded!";
+    if ($countRow['count'] >= 5) {
+        $uploadError = "Maximum of 5 additional pictures reached. Please delete some before uploading new ones.";
+    } else {
+        // Sanitize filename
+        $fileName = preg_replace("/[^a-zA-Z0-9\.]/", "_", basename($_FILES["additional_picture"]["name"]));
+        $targetFilePath = $targetDir . $fileName;
+        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+        
+        $check = getimagesize($_FILES["additional_picture"]["tmp_name"]);
+        if($check !== false) {
+            $allowTypes = array('jpg','png','jpeg','gif');
+            if(in_array($fileType, $allowTypes)) {
+                // Check file size (max 2MB)
+                if ($_FILES["additional_picture"]["size"] <= 2000000) {
+                    // Generate unique filename if file exists
+                    $counter = 1;
+                    while (file_exists($targetFilePath)) {
+                        $fileInfo = pathinfo($fileName);
+                        $fileName = $fileInfo['filename'] . '_' . $counter . '.' . $fileInfo['extension'];
+                        $targetFilePath = $targetDir . $fileName;
+                        $counter++;
+                    }
+                    
+                    if (move_uploaded_file($_FILES["additional_picture"]["tmp_name"], $targetFilePath)) {
+                        $insert = $conn->query("INSERT INTO BANNER_PICTURE (B_ID, B_Picture) VALUES (1, '$fileName')");
+                        if($insert){
+                            $message = $message ? $message."<br>Additional picture uploaded!" : "Additional picture uploaded!";
+                        } else {
+                            $uploadError = "Error saving picture to database";
+                        } 
                     } else {
-                        $uploadError = "Error saving picture to database";
-                    } 
+                        $uploadError = "Error uploading additional picture. Please try again.";
+                        error_log("Upload error: " . $_FILES["additional_picture"]["error"]);
+                    }
                 } else {
-                    $uploadError = "Error uploading additional picture. Please try again.";
-                    error_log("Upload error: " . $_FILES["additional_picture"]["error"]);
+                    $uploadError = "Additional picture is too large (max 2MB)";
                 }
             } else {
-                $uploadError = "Additional picture is too large (max 2MB)";
+                $uploadError = "Only JPG, JPEG, PNG & GIF files are allowed for additional pictures";
             }
         } else {
-            $uploadError = "Only JPG, JPEG, PNG & GIF files are allowed for additional pictures";
+            $uploadError = "Additional picture file is not an image";
         }
-    } else {
-        $uploadError = "Additional picture file is not an image";
     }
 }
 
@@ -177,6 +185,7 @@ if (!$banner) {
 
 // Fetch additional pictures
 $additional_pictures = $conn->query("SELECT * FROM BANNER_PICTURE WHERE B_ID = 1 ORDER BY BP_ID")->fetch_all(MYSQLI_ASSOC);
+$picture_count = count($additional_pictures);
 ?>
 
 <!DOCTYPE html>
@@ -261,6 +270,11 @@ $additional_pictures = $conn->query("SELECT * FROM BANNER_PICTURE WHERE B_ID = 1
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .picture-limit {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
         @media (max-width: 768px) {
             .banner-management {
                 grid-template-columns: 1fr;
@@ -318,12 +332,17 @@ $additional_pictures = $conn->query("SELECT * FROM BANNER_PICTURE WHERE B_ID = 1
             <div class="additional-pictures">
                 <h2>Additional Pictures</h2>
                 
+                <p class="picture-limit">You have <?= $picture_count ?> of 5 additional pictures</p>
+                
                 <form method="POST" action="banner.php" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Upload Additional Picture (2MB max):</label>
-                        <input type="file" name="additional_picture" accept="image/*" required>
+                        <input type="file" name="additional_picture" accept="image/*" <?= ($picture_count >= 5) ? 'disabled' : 'required' ?>>
+                        <?php if ($picture_count >= 5): ?>
+                            <p class="error">Maximum of 5 additional pictures reached. Delete some to upload new ones.</p>
+                        <?php endif; ?>
                     </div>
-                    <button type="submit" class="btn-secondary">Upload Picture</button>
+                    <button type="submit" class="btn-secondary" <?= ($picture_count >= 5) ? 'disabled' : '' ?>>Upload Picture</button>
                 </form>
 
                 <?php if ($additional_pictures): ?>
