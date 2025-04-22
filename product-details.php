@@ -62,6 +62,7 @@ $conn->close();
 <?php include 'header.php'; ?> <!-- Include header -->
 
 <main>
+<a href="shop.php" class="back-to-shop">← Continue Shopping</a>
     <div class="product-details">
         <div class="product-image">
         <img id="productImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>">         
