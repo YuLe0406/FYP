@@ -76,24 +76,77 @@ document.addEventListener("DOMContentLoaded", function () {
         const cartItemsContainer = document.getElementById("cart-items");
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         let total = 0;
-
+    
         cartItemsContainer.innerHTML = "";
-        cart.forEach((item) => {
+        cart.forEach((item, index) => {
             const itemElement = document.createElement("div");
             itemElement.classList.add("cart-item");
-
+    
             itemElement.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
-                <p>${item.name}</p>
-                <p>RM ${parseFloat(item.price).toFixed(2)}</p>
+                <div class="checkout-item-info">
+                    <p><strong>${item.name}</strong></p>
+                    <p>Size: ${item.size}</p>
+                    <p>Price: RM ${parseFloat(item.price).toFixed(2)}</p>
+                    <input type="number" min="1" value="${item.quantity}" data-index="${index}" class="checkout-qty">
+                    <button onclick="removeFromCheckout(${index})">Remove</button>
+                </div>
             `;
-
+    
             cartItemsContainer.appendChild(itemElement);
-            total += parseFloat(item.price) || 0; // Ensure numeric value
+            total += item.price * item.quantity;
         });
-
+    
         document.getElementById("cart-total").innerText = `RM ${total.toFixed(2)}`;
+        attachCheckoutQtyEvents();
     }
 
+    function attachCheckoutQtyEvents() {
+        document.querySelectorAll(".checkout-qty").forEach(input => {
+            input.addEventListener("change", function () {
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const index = this.getAttribute("data-index");
+                cart[index].quantity = parseInt(this.value) || 1;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                loadCartItems();
+            });
+        });
+    }
+    
+    function removeFromCheckout(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCartItems();
+    }
+    
+
     loadCartItems();
+
+
+
+    fetch("save_order.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            fullname,
+            email,
+            phone,
+            address1,
+            payment,
+            items: cart
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            localStorage.removeItem("cart");
+            window.location.href = `success.php?order_id=${data.order_id}`;
+        } else {
+            alert("Something went wrong. Please try again.");
+        }
+    });
+    
 });
