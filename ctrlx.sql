@@ -264,7 +264,7 @@ INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
 (13, 'FYP/images/6Front.jpeg'),
 (13, 'FYP/images/6Back.jpeg'),
 (14, 'FYP/images/7Front.jpeg'),
-(14, 'FYP/images/7Back.jpeg'),
+(14, 'FYP/images/7Back.jpeg');
 
 INSERT INTO PRODUCT_COLOR (COLOR_NAME, COLOR_HEX) VALUES
 ('White', '#FFFFFF'),
