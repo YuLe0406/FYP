@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Activate') {
 
 // Show success messages
 if (isset($_SESSION['Deactivate_success'])) {
-    $success = "User Deactivateed successfully!";
+    $success = "User Deactivated successfully!";
     unset($_SESSION['Deactivate_success']);
 }
 if (isset($_SESSION['Activate_success'])) {
@@ -94,7 +94,7 @@ if ($result && $result->num_rows > 0) {
                         <span><?= htmlspecialchars($user['U_Gender']); ?></span>
                         <span>
                             <?php if ($user['U_Status'] == 1): ?>
-                                <img src="https://img.icons8.com/ios-filled/24/cancel.png"/> Deactivateed
+                                <img src="https://img.icons8.com/ios-filled/24/cancel.png"/> Deactivated
                             <?php else: ?>
                                 <img src="https://img.icons8.com/ios-filled/24/checkmark.png"/> Active
                             <?php endif; ?>

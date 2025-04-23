@@ -1,0 +1,2 @@
+[23-Apr-2025 02:41:48 Europe/Berlin] PHP Warning:  mysqli_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in C:\xampp\htdocs\xampp\FYP\superadmin\db.php on line 7
+[23-Apr-2025 02:42:44 Europe/Berlin] PHP Warning:  mysqli_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in C:\xampp\htdocs\xampp\FYP\superadmin\db.php on line 7
