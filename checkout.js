@@ -37,53 +37,70 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Form Validation & Payment Processing Simulation
-    placeOrderBtn.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default form submission
-
-        if (paymentMethod.value === "credit_card") {
-            const cardNumber = document.getElementById("card-number").value.trim();
-            const cardName = document.getElementById("card-name").value.trim();
-            const expiryDate = document.getElementById("expiry-date").value.trim();
-            const cvv = document.getElementById("cvv").value.trim();
-
-            if (cardNumber === "" || cardName === "" || expiryDate === "" || cvv === "") {
-                alert("Please enter all details.");
-                return;
-            }
-        }
-
-        // Validate Address Fields
+    placeOrderBtn.addEventListener("click", async function (event) {
+        event.preventDefault();
+    
+        // Validate fields
+        const fullName = document.getElementById("fullname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
         const address1 = document.getElementById("address1").value.trim();
-        if (address1 === "") {
-            alert("Please enter Address Line 1.");
+        const paymentMethod = document.getElementById("payment-method").value;
+    
+        if (!fullName || !email || !phone || !address1) {
+            alert("Please fill in all required billing details.");
             return;
         }
+    
+        const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    
+        if (cartItems.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+    
+        // Build order data
+        const orderData = {
+            fullname: fullName,
+            email: email,
+            phone: phone,
+            address: address1,
+            payment_method: paymentMethod,
+            cart: cartItems
+        };
+    
+        try {
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerText = "Placing Order...";
+            loadingMessage.style.display = "block";
+    
+            const response = await fetch("save_order.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+            });
+    
+            const result = await response.json();
+    
+            if (result.success) {
+                // Clear localStorage
+                localStorage.removeItem("cart");
+    
+                loadingMessage.style.display = "none";
+                successMessage.style.display = "block";
 
-        alert("Order placed successfully!");
-        checkoutForm.submit(); // <-- Ensure form submits after validation
-
-        // Disable button to prevent multiple clicks
-        placeOrderBtn.disabled = true;
-        placeOrderBtn.innerText = "Processing...";
-
-        // Show "Processing Payment..." message
-        loadingMessage.style.display = "block";
-
-        // Simulate a payment processing delay (3 seconds)
-        setTimeout(() => {
-            loadingMessage.style.display = "none"; // Hide "Processing..." message
-            successMessage.style.display = "block"; // Show "Order Successful!"
-            placeOrderBtn.after(successMessage); // Ensure it appears below the button
-
-
-            // Clear the cart since order is placed
-            localStorage.removeItem("cart");
-
-            // Redirect to homepage or order summary page after 3 seconds
-            setTimeout(() => {
-                window.location.href = "http://localhost/FYP/index.php"; // Change this if you have an order summary page
-            }, 3000);
-        }, 3000);
+                setTimeout(() => {
+                    window.location.href = "order_success.php"; // You can change this
+                }, 3000);
+            } else {
+                throw new Error(result.message || "Failed to save order.");
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.innerText = "Place Order";
+            loadingMessage.style.display = "none";
+        }
     });
 
     // Load Cart Items into Order Summary
