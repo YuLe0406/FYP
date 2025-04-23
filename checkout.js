@@ -6,6 +6,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
+    const addressDropdown = document.getElementById("existing-address");
+    const address1Input = document.getElementById("address1");
+
+    addressDropdown.addEventListener("change", function () {
+        const selectedOption = addressDropdown.options[addressDropdown.selectedIndex];
+        const addressDetails = selectedOption.getAttribute("data-details");
+        if (addressDetails) {
+            address1Input.value = addressDetails;
+        } else {
+            address1Input.value = "";
+        }
+    });
 
     // Show/Hide Card Details Based on Payment Method
     paymentMethod.addEventListener("change", function () {
@@ -46,6 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please enter Address Line 1.");
             return;
         }
+
+        alert("Order placed successfully!");
+        checkoutForm.submit(); // <-- Ensure form submits after validation
 
         // Disable button to prevent multiple clicks
         placeOrderBtn.disabled = true;
@@ -148,5 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Something went wrong. Please try again.");
         }
     });
+    
+
     
 });

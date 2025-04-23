@@ -39,6 +39,23 @@ if (!isset($_SESSION['U_ID'])) {
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone" placeholder="012-345 6789" required>
 
+                <label for="existing-address">Choose Saved Address</label>
+                    <select id="existing-address" name="existing-address">
+                        <option value="">-- Select an Address --</option>
+                        <?php
+                        include 'db.php';
+                        $user_id = $_SESSION['U_ID'];
+                        $sql = "SELECT * FROM ADDRESS WHERE U_ID = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("i", $user_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='{$row['AD_ID']}' data-details='" . htmlspecialchars($row['AD_Details']) . "'>{$row['AD_Details']}</option>";
+                        }
+                        ?>
+                    </select>
+
                 <label for="address1">Address Line 1</label>
                 <input type="text" id="address1" name="address1" required>
 
