@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
 
             <div class="form-footer">
-                <p>Remember your password? <a href="login.php" class="auth-link">Login here</a></p>
+                <p>Remember your password? <a href="login.html" class="auth-link">Login here</a></p>
             </div>
         </form>
     </main>

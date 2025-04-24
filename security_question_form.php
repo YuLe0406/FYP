@@ -3,20 +3,28 @@ session_start();
 require __DIR__ . '/db.php';
 
 if (!isset($_SESSION['reset_email'])) {
-    header("Location: forgot_password.html");
+    header("Location: forgot_password.php");
     exit();
 }
 
-$stmt = $conn->prepare("SELECT security_question FROM users WHERE email = ?");
-$stmt->execute([$_SESSION['reset_email']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+// Fetch security question for the user
+$stmt = $conn->prepare("SELECT U_SecurityQuestion FROM USER WHERE U_Email = ?");
+$stmt->bind_param("s", $_SESSION['reset_email']);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    die("User not found");
+}
+
+$user = $result->fetch_assoc();
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Security Question | CTRL+X</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -37,8 +45,8 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             <div class="input-group">
                 <div class="input-field">
-                    <label><?= htmlspecialchars($user['security_question']) ?></label>
-                    <input type="text" name="security_answer" required>
+                    <label><i class="fas fa-question-circle"></i> <?= htmlspecialchars($user['U_SecurityQuestion']) ?></label>
+                    <input type="text" name="security_answer" placeholder="Your answer" required>
                 </div>
             </div>
 

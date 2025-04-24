@@ -1,34 +1,37 @@
 <?php
 session_start();
-include 'db.php'; // if you use a database connection file
+require 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['U_Email'];
 
     // Check if the user exists
-    $stmt = $conn->prepare("SELECT security_question, security_answer FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT U_SecurityQuestion, U_SecurityAnswer FROM USER WHERE U_Email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $stmt->store_result();
+    $result = $stmt->get_result();
 
-    if ($stmt->num_rows === 1) {
-        $stmt->bind_result($question, $answer);
-        $stmt->fetch();
-
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        
         // Save for later comparison
-        $_SESSION['email'] = $email;
-        $_SESSION['security_answer'] = $answer;
-
-        echo "<form method='POST' action='reset_password.php'>
-                <label>$question</label>
-                <input type='text' name='user_answer' required>
-                <button type='submit'>Submit Answer</button>
-              </form>";
+        $_SESSION['reset_email'] = $email;
+        $_SESSION['security_answer'] = $user['U_SecurityAnswer'];
+        
+        // Redirect to the security question form
+        header("Location: security_question_form.php");
+        exit();
     } else {
-        echo "Email not found.";
+        // Email not found, redirect back with error
+        header("Location: forgot_password.php?error=Email not found");
+        exit();
     }
-
+    
     $stmt->close();
     $conn->close();
+} else {
+    // If not POST request, redirect to forgot password
+    header("Location: forgot_password.php");
+    exit();
 }
 ?>
