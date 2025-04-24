@@ -1,12 +1,12 @@
 <?php
-include 'header.php';
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.html");
     exit();
 }
+include 'header.php';
+include 'db.php';
+$user_id = $_SESSION['user_id'];
 ?>
 
 <!DOCTYPE html>
@@ -23,84 +23,84 @@ if (!isset($_SESSION['user_id'])) {
     <h1>Checkout</h1>
 
     <section id="checkout-container">
-        <!-- Billing -->
         <div id="billing-details">
             <h2>Billing Information</h2>
             <form id="checkout-form">
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                <input type="text" id="fullname" required>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" id="email" required>
 
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" placeholder="012-345 6789" required>
+                <input type="tel" id="phone" required>
 
                 <label for="existing-address">Choose Saved Address</label>
-                    <select id="existing-address" name="existing-address">
-                        <option value="">-- Select an Address --</option>
-                        <?php
-                        include 'db.php';
-                        $user_id = $_SESSION['U_ID'];
-                        $sql = "SELECT * FROM ADDRESS WHERE U_ID = ?";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("i", $user_id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<option value='{$row['AD_ID']}' data-details='" . htmlspecialchars($row['AD_Details']) . "'>{$row['AD_Details']}</option>";
-                        }
-                        ?>
-                    </select>
+                <select id="existing-address">
+                    <option value="">-- Select Saved Address --</option>
+                    <?php
+                    $stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ?");
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $res = $stmt->get_result();
+                    while ($row = $res->fetch_assoc()) {
+                        $fullAddress = $row['UA_Address1'] . ", " . $row['UA_Postcode'] . " " . $row['UA_City'] . ", " . $row['UA_State'];
+                        echo "<option value='{$row['UA_ID']}' data-address1='{$row['UA_Address1']}' data-city='{$row['UA_City']}' data-state='{$row['UA_State']}' data-postcode='{$row['UA_Postcode']}'>$fullAddress</option>";
+                    }
+                    ?>
+                </select>
 
-                <label for="address1">Address Line 1</label>
-                <input type="text" id="address1" name="address1" required>
+                <label for="address1">Street Address</label>
+                <input type="text" id="address1" required>
 
-                <div class="checkbox-wrapper-4">
-                    <input class="inp-cbx" id="morning" type="checkbox"/>
-                    <label class="cbx" for="morning"><span>
-                    <svg width="12px" height="10px">
-                        <use xlink:href="#check-4"></use>
-                    </svg></span><span>Save Address for Future Use</span></label>
-                    <svg class="inline-svg">
-                        <symbol id="check-4" viewbox="0 0 12 10">
-                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                        </symbol>
-                    </svg>
-                </div>
+                <label for="city">City</label>
+                <input type="text" id="city" required>
+
+                <label for="state">State</label>
+                <select id="state" required>
+                    <option value="">-- Select State --</option>
+                    <?php
+                    $states = ['Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Penang', 'Perak', 'Perlis', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu'];
+                    foreach ($states as $state) {
+                        echo "<option value='$state'>$state</option>";
+                    }
+                    ?>
+                </select>
+
+                <label for="postcode">Postcode</label>
+                <input type="text" id="postcode" required>
+
+                <label><input type="checkbox" id="save-address"> Save Address for Future Use</label>
 
                 <label for="payment-method">Payment Method</label>
-                <select id="payment-method" name="payment-method" required>
+                <select id="payment-method" required>
                     <option value="cod">Cash on Delivery</option>
                     <option value="credit_card">Credit/Debit Card</option>
                     <option value="paypal">PayPal</option>
                 </select>
 
-                <!-- Card Details -->
-                <div id="card-details">
+                <div id="card-details" style="display: none;">
                     <label for="card-number">Card Number</label>
-                    <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX">
+                    <input type="text" id="card-number">
 
                     <label for="card-name">Cardholder Name</label>
                     <input type="text" id="card-name">
 
                     <label for="expiry-date">Expiry Date</label>
-                    <input type="text" id="expiry-date" placeholder="MM/YY">
+                    <input type="text" id="expiry-date">
 
                     <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" placeholder="XXX">
+                    <input type="text" id="cvv">
                 </div>
             </form>
         </div>
 
-        <!-- Order Summary -->
         <div id="order-summary">
             <h2>Order Summary</h2>
             <div id="cart-items"></div>
             <hr>
             <p>Total: <span id="cart-total">RM 0.00</span></p>
-            <button type="button" id="place-order-btn">Place Order</button>
-
+            <button id="place-order-btn">Place Order</button>
             <p id="loading-message" style="display:none;">Processing payment...</p>
             <p id="success-message" style="display:none; color:green;">Order Successful! 🎉</p>
         </div>
@@ -109,6 +109,5 @@ if (!isset($_SESSION['user_id'])) {
 
 <?php include 'footer.php'; ?>
 <script src="checkout.js"></script>
-
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
-session_start(); // Make sure session is started here
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $loggedIn = isset($_SESSION['user_id']);
 $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
