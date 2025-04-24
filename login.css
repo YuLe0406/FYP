@@ -115,6 +115,42 @@ header {
   gap: 0.5rem;
 }
 
+/* [Previous CSS remains the same until .input-field] */
+
+.input-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--secondary);
+}
+
+.password-strength {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--secondary);
+}
+
+.password-strength.weak {
+  color: var(--error);
+}
+
+.password-strength.medium {
+  color: #f39c12;
+}
+
+.password-strength.strong {
+  color: #27ae60;
+}
+
+/* [Rest of the existing CSS remains the same] */
+
 .input-field label i {
   color: var(--accent);
   font-size: 0.9rem;
