@@ -1,4 +1,5 @@
 <?php
+session_start(); // Add this at the top
 require_once 'db.php';
 
 // Initialize variables
@@ -26,11 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Email not found in our system';
         } else {
             // Store email in session for security question page
-            session_start();
             $_SESSION['reset_email'] = $email;
             
             // Redirect to security question page
-            header("Location: security_question.php");
+            header("Location: security_question.php?email=".urlencode($email));
             exit();
         }
     }

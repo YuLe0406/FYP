@@ -1,29 +1,45 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user_answer = $_POST['user_answer'];
-    $correct_answer = $_SESSION['security_answer'];
+if (!isset($_SESSION['reset_email'])) {
+    header("Location: forgot_password.php");
+    exit();
+}
 
-    if (strcasecmp($user_answer, $correct_answer) == 0) {
-        // Correct answer, show reset form
-        echo "<form method='POST' action='update_password.php'>
-                <label>New Password</label>
-                <input type='password' name='new_password' required>
-                <button type='submit'>Reset Password</button>
-              </form>";
+// Check if form is submitted to update password
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require 'db.php';
+    
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+    
+    if ($new_password !== $confirm_password) {
+        $error = "Passwords don't match";
     } else {
-        echo "Incorrect answer. Try again.";
+        // Hash the new password
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        
+        // Update password in database
+        $stmt = $conn->prepare("UPDATE USER SET U_Password = ? WHERE U_Email = ?");
+        $stmt->bind_param("ss", $hashed_password, $_SESSION['reset_email']);
+        $stmt->execute();
+        
+        if ($stmt->affected_rows === 1) {
+            // Password updated successfully
+            session_destroy();
+            header("Location: login.php?success=Password updated successfully");
+            exit();
+        } else {
+            $error = "Failed to update password";
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Reset Password | CTRL+X</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -36,11 +52,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </header>
 
     <main class="auth-container">
-        <form class="auth-form" action="update_password.php" method="POST">
-            <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token']) ?>">
+        <form class="auth-form" method="POST">
             <div class="form-header">
                 <h2 class="form-title">Set New Password</h2>
                 <p class="form-subtitle">Enter a new password for your account</p>
+                <?php if (isset($error)): ?>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="input-group">
