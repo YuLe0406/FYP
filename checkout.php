@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_id'])) {
 <main>
     <h1>Checkout</h1>
 
-    <section id="checkout-container">
+
         <!-- Billing -->
         <div id="billing-details">
             <h2>Billing Information</h2>
@@ -104,7 +104,7 @@ if (!isset($_SESSION['user_id'])) {
             <p id="loading-message" style="display:none;">Processing payment...</p>
             <p id="success-message" style="display:none; color:green;">Order Successful! 🎉</p>
         </div>
-    </section>
+
 </main>
 
 <?php include 'footer.php'; ?>
