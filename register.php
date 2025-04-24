@@ -1,7 +1,5 @@
 <?php
-include 'header.php';
 require __DIR__ . '/db.php';
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
     $firstName = $_POST['first_name'] ?? '';
