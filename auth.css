@@ -1,163 +1,224 @@
-/* Combined Auth Styles - styles.css and auth.css merged */
+/* Auth.css - Forgot Password Styles */
+/* Matches login.css design system */
 
-/* General Styles */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+    --primary: #1a1a1a;
+    --secondary: #333;
+    --accent: #d4af37;
+    --light: #f5f5f5;
+    --white: #ffffff;
+    --gray: #e0e0e0;
+    --error: #e74c3c;
+  }
+  
+  /* Base Styles */
+  * {
     margin: 0;
     padding: 0;
-    color: #333;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light);
+    color: var(--primary);
     line-height: 1.6;
-    background-color: #f5f5f5;
-}
-
-/* Header Styles */
-header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 20px;
+  }
+  
+  /* Header Styles */
+  header {
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.nav-links {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+  
+  .nav-links {
     display: flex;
-    gap: 20px;
-}
-
-.nav-link {
-    color: white;
+    gap: 1.5rem;
+  }
+  
+  .nav-link {
+    color: var(--white);
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.nav-link:hover {
-    text-decoration: underline;
-}
-
-.nav-link i {
-    font-size: 16px;
-}
-
-/* Auth Container Styles */
-.auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 80px);
-    padding: 20px;
-}
-
-.auth-form {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-}
-
-.form-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.form-title {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.form-subtitle {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-field {
-    margin-bottom: 15px;
-}
-
-.input-field label {
-    display: block;
-    margin-bottom: 5px;
     font-weight: 500;
-    color: #444;
-}
-
-.input-field input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s;
+  }
+  
+  .nav-link:hover {
+    color: var(--accent);
+  }
+  
+  .nav-link i {
+    font-size: 1rem;
+  }
+  
+  /* Auth Container - Forgot Password Specific */
+  .forgot-password-container {
+    max-width: 500px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  
+  .forgot-password-form {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .form-title {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-subtitle {
+    color: var(--secondary);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Input Styles */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-field {
+    position: relative;
+  }
+  
+  .input-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .input-field label i {
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  
+  .input-field input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-.input-field i {
-    margin-right: 8px;
-    color: #666;
-}
-
-.auth-submit-btn {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .input-field input:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+  }
+  
+  /* Button Styles */
+  .auth-submit-btn {
     width: 100%;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
+    padding: 1rem;
+    background-color: var(--primary);
+    color: var(--white);
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 10px;
-}
-
-.auth-submit-btn:hover {
-    background-color: #45a049;
-}
-
-.auth-submit-btn i {
-    margin-right: 8px;
-}
-
-.form-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #666;
-}
-
-.auth-link {
-    color: #4CAF50;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.auth-link:hover {
-    text-decoration: underline;
-}
-
-/* Error message styling */
-.error-message {
-    color: #d32f2f;
-    background-color: #fde0e0;
-    padding: 10px 15px;
-    border-radius: 4px;
-    margin: 10px 0;
-    font-size: 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
-}
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .auth-submit-btn:hover {
+    background-color: var(--secondary);
+  }
+  
+  .auth-submit-btn i {
+    font-size: 1rem;
+  }
+  
+  /* Error Message Styles */
+  .error-message {
+    color: var(--error);
+    background-color: rgba(231, 76, 60, 0.1);
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .error-message i {
+    font-size: 1rem;
+  }
+  
+  /* Form Footer */
+  .form-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--secondary);
+  }
+  
+  .auth-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  
+  .auth-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    header {
+      padding: 1rem;
+    }
+    
+    .forgot-password-container {
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .forgot-password-form {
+      padding: 1.5rem;
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+    }
+  }
