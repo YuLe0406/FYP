@@ -20,7 +20,7 @@ $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
                     <i class="fas fa-user"></i> <?php echo htmlspecialchars($userFirstName); ?>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="account_settings.php">Account Settings</a>
+                    <a href="profile.php">Account Settings</a>
                     <a href="logout.php">Logout</a>
                 </div>
             </div>

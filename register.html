@@ -46,6 +46,15 @@
                     <label for="password"><i class="fas fa-lock"></i> Password</label>
                     <input type="password" id="password" name="password" minlength="8" required>
                 </div>
+
+                <div class="input-field">
+                    <small class="password-hint">Must be at least 8 characters with a number, a symbol, a lowercase and uppercase letter.</small>
+                    <input type="checkbox" id="togglePassword"> Show Password
+                    <div id="strength-bar" style="height: 6px; width: 100%; background: #e0e0e0; margin-top: 6px; border-radius: 4px;">
+                        <div id="strength-fill" style="height: 100%; width: 0%; background: #e74c3c; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                
                 
                 <div class="input-field">
                     <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
@@ -101,6 +110,54 @@
     
     <!-- Frontend Validation Script -->
     <script>
+        // 显示/隐藏密码
+document.getElementById('togglePassword').addEventListener('change', function () {
+    const pwd = document.getElementById('password');
+    pwd.type = this.checked ? 'text' : 'password';
+});
+
+// 密码强度检查
+document.getElementById('password').addEventListener('input', function () {
+    const pwd = this.value;
+    const strengthFill = document.getElementById('strength-fill');
+
+    const criteria = [
+        pwd.length >= 8,
+        /[a-z]/.test(pwd),
+        /[A-Z]/.test(pwd),
+        /[0-9]/.test(pwd),
+        /[\W_]/.test(pwd)
+    ];
+
+    const strength = criteria.filter(Boolean).length;
+    const colors = ["#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#27ae60"];
+    strengthFill.style.width = (strength * 20) + "%";
+    strengthFill.style.background = colors[strength - 1] || "#e0e0e0";
+});
+
+// 提交时验证密码强度
+document.querySelector('.auth-form').addEventListener('submit', function (e) {
+    const pwd = document.getElementById('password').value;
+    const confirmPwd = document.getElementById('confirm_password').value;
+
+    if (pwd !== confirmPwd) {
+        e.preventDefault();
+        alert('Error: Passwords do not match!');
+        return;
+    }
+
+    const isValid = pwd.length >= 8 &&
+        /[a-z]/.test(pwd) &&
+        /[A-Z]/.test(pwd) &&
+        /[0-9]/.test(pwd) &&
+        /[\W_]/.test(pwd);
+
+    if (!isValid) {
+        e.preventDefault();
+        alert('Password does not meet the complexity requirements.');
+    }
+});
+
         document.querySelector('.auth-form').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
