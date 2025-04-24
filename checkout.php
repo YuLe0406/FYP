@@ -1,4 +1,5 @@
 <?php
+include 'header.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,12 +18,6 @@ if (!isset($_SESSION['user_id'])) {
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-<?php include 'header.php'; ?>
-
-<div class="discount-label">
-    <p>🔥 20% OFF on all items! | Free shipping for orders above RM250! 🔥</p>
-</div>
 
 <main>
     <h1>Checkout</h1>
