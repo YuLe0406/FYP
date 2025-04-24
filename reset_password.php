@@ -15,9 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if ($new_password !== $confirm_password) {
         $error = "Passwords don't match";
-    } else {
-        // Hash the new password
-        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+    } 
         
         // Update password in database
         $stmt = $conn->prepare("UPDATE USER SET U_Password = ? WHERE U_Email = ?");
@@ -33,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Failed to update password";
         }
     }
-}
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
