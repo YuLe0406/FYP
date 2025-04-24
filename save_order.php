@@ -20,8 +20,10 @@ if (!$data || !isset($data['cart']) || !is_array($data['cart'])) {
 
 $userId = $_SESSION['user_id'];
 $cart = $data['cart'];
-$total = $data['total'];
-$discount = $data['discount'] ?? 0;
+$total = 0;
+foreach ($cart as $item) {
+    $total += $item['price'] * $item['quantity'];
+}
 $addressDetails = $data['address'];
 $saveAddress = $data['saveAddress'] ?? false;
 
