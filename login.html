@@ -16,7 +16,7 @@
     </header>
 
     <main class="auth-container">
-        <form class="auth-form" action="login.php" method="POST">
+        <form class="auth-form" action="login.php" method="POST" id="loginForm">
             <div class="form-header">
                 <h2 class="form-title">Login to CTRL+X</h2>
                 <p class="form-subtitle">Welcome back!</p>
@@ -31,7 +31,11 @@
                 
                 <div class="input-field">
                     <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required 
+                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                           title="Must contain at least 8 characters, one uppercase, one lowercase, one number and one special character">
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    <div class="password-strength" id="passwordStrength"></div>
                 </div>
             </div>
 
@@ -46,14 +50,76 @@
         </form>
     </main>
 
-
     <script>
+        // Email lowercase conversion
         document.querySelector('input[name="email"]').addEventListener('input', function(e) {
             const email = e.target.value;
             const parts = email.split('@');
             if (parts.length === 2) {
                 const domain = parts[1].toLowerCase();
                 e.target.value = parts[0] + '@' + domain;
+            }
+        });
+
+        // Password visibility toggle
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Password strength indicator
+        password.addEventListener('input', function() {
+            const strengthIndicator = document.querySelector('#passwordStrength');
+            const strength = checkPasswordStrength(this.value);
+            
+            strengthIndicator.textContent = strength.message;
+            strengthIndicator.className = 'password-strength ' + strength.class;
+        });
+
+        function checkPasswordStrength(password) {
+            // Define strength criteria
+            const hasMinLength = password.length >= 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChars = /[@$!%*?&]/.test(password);
+            
+            // Calculate strength score
+            let score = 0;
+            if (hasMinLength) score++;
+            if (hasUpperCase) score++;
+            if (hasLowerCase) score++;
+            if (hasNumbers) score++;
+            if (hasSpecialChars) score++;
+            
+            // Determine strength level
+            if (password.length === 0) {
+                return { message: '', class: '' };
+            } else if (password.length < 8) {
+                return { message: 'Password too short (min 8 characters)', class: 'weak' };
+            } else if (score <= 2) {
+                return { message: 'Weak password', class: 'weak' };
+            } else if (score <= 3) {
+                return { message: 'Medium password', class: 'medium' };
+            } else if (score <= 4) {
+                return { message: 'Strong password', class: 'strong' };
+            } else {
+                return { message: 'Very strong password', class: 'strong' };
+            }
+        }
+
+        // Form validation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            
+            if (!passwordRegex.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least 8 characters, including uppercase, lowercase, number and special character (@$!%*?&)');
             }
         });
     </script>

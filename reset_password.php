@@ -12,26 +12,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
+    $error = '';
     
     if ($new_password !== $confirm_password) {
         $error = "Passwords don't match";
-    } 
-        
-        // Update password in database
+    } else {
+        // Update password in database (without hashing)
         $stmt = $conn->prepare("UPDATE USER SET U_Password = ? WHERE U_Email = ?");
-        $stmt->bind_param("ss", $hashed_password, $_SESSION['reset_email']);
+        $stmt->bind_param("ss", $new_password, $_SESSION['reset_email']);
         $stmt->execute();
         
         if ($stmt->affected_rows === 1) {
             // Password updated successfully
             session_destroy();
-            header("Location: login.php?success=Password updated successfully");
+            // Show styled success alert
+            echo '<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Password Reset Success</title>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <link rel="stylesheet" href="auth.css">
+            </head>
+            <body>
+                <script>
+                Swal.fire({
+                    title: "Success!",
+                    text: "Password reset successfully!",
+                    icon: "success",
+                    confirmButtonColor: "#4CAF50",
+                    confirmButtonText: "Continue to Login",
+                    backdrop: `
+                        rgba(0,0,123,0.4)
+                        url("/images/nyan-cat.gif")
+                        left top
+                        no-repeat
+                    `
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "login.html";
+                    }
+                });
+                </script>
+            </body>
+            </html>';
             exit();
         } else {
             $error = "Failed to update password";
         }
     }
-    
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <title>Reset Password | CTRL+X</title>
     <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add SweetAlert2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header>
