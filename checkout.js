@@ -56,13 +56,18 @@ document.addEventListener("DOMContentLoaded", function () {
             fullname: fullName,
             email: email,
             phone: phone,
-            address: address1,
-            payment_method: paymentMethod,
             cart: cart,
             saveAddress: saveAddress,
+            discount: 0,
             total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            discount: 0 // update in future if needed
-        };
+            address: {
+              address1: address1,       // 👈 this will be $addressDetails['address1'] in PHP
+              city: "Skudai",           // you can change to input field later
+              state: "Johor",
+              postcode: "81300"
+            }
+          };
+          
 
         try {
             placeOrderBtn.disabled = true;
