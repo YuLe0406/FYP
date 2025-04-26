@@ -5,31 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
-    const addressDropdown = document.getElementById("existing-address");
-    const address1Input = document.getElementById("address1");
-    const cityInput = document.getElementById("city");
-    const stateInput = document.getElementById("state");
-    const postcodeInput = document.getElementById("postcode");
 
-    // Optional: populate saved address if dropdown exists
-    if (addressDropdown) {
-        addressDropdown.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const addressDetails = selectedOption.getAttribute("data-details");
-            if (addressDetails) {
-                address1Input.value = addressDetails;
-            } else {
-                address1Input.value = "";
-            }
-        });
-    }
-
-    // Show/hide card details
+    // 🟡 Toggle card details
     paymentMethodSelect.addEventListener("change", function () {
         cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
     });
 
-    // Malaysian phone formatting
+    // 🇲🇾 Malaysia phone number formatting
     phoneInput.addEventListener("input", function () {
         let val = this.value.replace(/\D/g, "");
         if (val.length >= 3) val = val.substring(0, 3) + "-" + val.substring(3);
@@ -37,22 +19,18 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = val;
     });
 
-    // Place order logic
+    // ✅ Place order
     placeOrderBtn.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        const fullName = document.getElementById("fullname").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const address1 = address1Input.value.trim();
-        const city = cityInput.value.trim();
-        const state = stateInput.value.trim();
-        const postcode = postcodeInput.value.trim();
-        const paymentMethod = paymentMethodSelect.value;
-        const saveAddress = document.getElementById("morning")?.checked || false;
+        const fullName = document.getElementById("fullname")?.value.trim();
+        const email = document.getElementById("email")?.value.trim();
+        const phone = document.getElementById("phone")?.value.trim();
+        const address1 = document.getElementById("address1")?.value.trim();
+        const paymentMethod = document.getElementById("payment-method")?.value;
 
-        if (!fullName || !email || !phone || !address1 || !city || !state || !postcode) {
-            alert("Please complete all required fields.");
+        if (!fullName || !email || !phone || !address1 || !paymentMethod) {
+            alert("Please fill in all required fields.");
             return;
         }
 
@@ -66,17 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
             fullname: fullName,
             email: email,
             phone: phone,
+            address1: address1,
             payment_method: paymentMethod,
             cart: cart,
-            saveAddress: saveAddress,
-            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            discount: 0,
-            address: {
-                address1: address1,
-                city: city,
-                state: state,
-                postcode: postcode
-            }
+            discount: 0, 
+            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
         };
 
         try {
@@ -96,12 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.removeItem("cart");
                 loadingMessage.style.display = "none";
                 successMessage.style.display = "block";
-
                 setTimeout(() => {
                     window.location.href = `order_success.php?order_id=${result.order_id}`;
                 }, 3000);
             } else {
-                throw new Error(result.error || "Failed to save order.");
+                throw new Error(result.message || "Order failed. Please try again.");
             }
         } catch (error) {
             alert("Error: " + error.message);
@@ -111,16 +82,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Cart UI logic
+    // 🛒 Load cart into checkout page
     function loadCartItems() {
         const container = document.getElementById("cart-items");
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         let total = 0;
+
         container.innerHTML = "";
 
         cart.forEach((item, index) => {
             const div = document.createElement("div");
             div.classList.add("cart-item");
+
             div.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
                 <div class="checkout-item-info">
@@ -131,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button onclick="removeFromCheckout(${index})">Remove</button>
                 </div>
             `;
+
             container.appendChild(div);
             total += item.price * item.quantity;
         });
