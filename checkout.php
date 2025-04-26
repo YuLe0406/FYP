@@ -35,6 +35,7 @@ $user_id = $_SESSION['user_id'];
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" required>
 
+                <!-- Saved Address Dropdown -->
                 <label for="existing-address">Choose Saved Address</label>
                 <select id="existing-address">
                     <option value="">-- Select Saved Address --</option>
@@ -45,11 +46,19 @@ $user_id = $_SESSION['user_id'];
                     $res = $stmt->get_result();
                     while ($row = $res->fetch_assoc()) {
                         $fullAddress = $row['UA_Address1'] . ", " . $row['UA_Postcode'] . " " . $row['UA_City'] . ", " . $row['UA_State'];
-                        echo "<option value='{$row['UA_ID']}' data-address1='{$row['UA_Address1']}' data-city='{$row['UA_City']}' data-state='{$row['UA_State']}' data-postcode='{$row['UA_Postcode']}'>$fullAddress</option>";
+                        echo "<option 
+                            value='{$row['UA_ID']}' 
+                            data-address1='".htmlspecialchars($row['UA_Address1'], ENT_QUOTES)."' 
+                            data-city='".htmlspecialchars($row['UA_City'], ENT_QUOTES)."' 
+                            data-state='".htmlspecialchars($row['UA_State'], ENT_QUOTES)."' 
+                            data-postcode='".htmlspecialchars($row['UA_Postcode'], ENT_QUOTES)."'>
+                            $fullAddress
+                        </option>";
                     }
                     ?>
                 </select>
 
+                <!-- New Address Fields -->
                 <label for="address1">Street Address</label>
                 <input type="text" id="address1" required>
 
@@ -70,8 +79,10 @@ $user_id = $_SESSION['user_id'];
                 <label for="postcode">Postcode</label>
                 <input type="text" id="postcode" required>
 
+                <!-- Save Address Checkbox -->
                 <label><input type="checkbox" id="save-address"> Save Address for Future Use</label>
 
+                <!-- Payment Method -->
                 <label for="payment-method">Payment Method</label>
                 <select id="payment-method" required>
                     <option value="cod">Cash on Delivery</option>
@@ -79,6 +90,7 @@ $user_id = $_SESSION['user_id'];
                     <option value="paypal">PayPal</option>
                 </select>
 
+                <!-- Card Payment Fields -->
                 <div id="card-details" style="display: none;">
                     <label for="card-number">Card Number</label>
                     <input type="text" id="card-number">
@@ -95,6 +107,7 @@ $user_id = $_SESSION['user_id'];
             </form>
         </div>
 
+        <!-- 🛒 Order Summary -->
         <div id="order-summary">
             <h2>Order Summary</h2>
             <div id="cart-items"></div>
