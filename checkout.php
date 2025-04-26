@@ -7,8 +7,18 @@ if (!isset($_SESSION['user_id'])) {
 include 'header.php';
 include 'db.php';
 $user_id = $_SESSION['user_id'];
-?>
 
+// 🔥 Fetch user info
+$stmt = $conn->prepare("SELECT U_FName, U_LName, U_Email, U_PNumber, U_Address FROM USER WHERE U_ID = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$user = $res->fetch_assoc();
+$stmt->close();
+
+// Combine full name
+$fullName = $user['U_FName'] . ' ' . $user['U_LName'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,60 +37,16 @@ $user_id = $_SESSION['user_id'];
             <h2>Billing Information</h2>
             <form id="checkout-form">
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" required>
+                <input type="text" id="fullname" value="<?php echo htmlspecialchars($fullName); ?>" readonly>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" required>
+                <input type="email" id="email" value="<?php echo htmlspecialchars($user['U_Email']); ?>" readonly>
 
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" required>
+                <input type="tel" id="phone" value="<?php echo htmlspecialchars($user['U_PNumber']); ?>" readonly>
 
-                <!-- Saved Address Dropdown -->
-                <label for="existing-address">Choose Saved Address</label>
-                <select id="existing-address">
-                    <option value="">-- Select Saved Address --</option>
-                    <?php
-                    $stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ?");
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-                    while ($row = $res->fetch_assoc()) {
-                        $fullAddress = $row['UA_Address1'] . ", " . $row['UA_Postcode'] . " " . $row['UA_City'] . ", " . $row['UA_State'];
-                        echo "<option 
-                            value='{$row['UA_ID']}' 
-                            data-address1='".htmlspecialchars($row['UA_Address1'], ENT_QUOTES)."' 
-                            data-city='".htmlspecialchars($row['UA_City'], ENT_QUOTES)."' 
-                            data-state='".htmlspecialchars($row['UA_State'], ENT_QUOTES)."' 
-                            data-postcode='".htmlspecialchars($row['UA_Postcode'], ENT_QUOTES)."'>
-                            $fullAddress
-                        </option>";
-                    }
-                    ?>
-                </select>
-
-                <!-- New Address Fields -->
-                <label for="address1">Street Address</label>
-                <input type="text" id="address1" required>
-
-                <label for="city">City</label>
-                <input type="text" id="city" required>
-
-                <label for="state">State</label>
-                <select id="state" required>
-                    <option value="">-- Select State --</option>
-                    <?php
-                    $states = ['Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Penang', 'Perak', 'Perlis', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu'];
-                    foreach ($states as $state) {
-                        echo "<option value='$state'>$state</option>";
-                    }
-                    ?>
-                </select>
-
-                <label for="postcode">Postcode</label>
-                <input type="text" id="postcode" required>
-
-                <!-- Save Address Checkbox -->
-                <label><input type="checkbox" id="save-address"> Save Address for Future Use</label>
+                <label for="address1">Saved Address</label>
+                <textarea id="address1" rows="3" readonly><?php echo htmlspecialchars($user['U_Address']); ?></textarea>
 
                 <!-- Payment Method -->
                 <label for="payment-method">Payment Method</label>
@@ -90,7 +56,7 @@ $user_id = $_SESSION['user_id'];
                     <option value="paypal">PayPal</option>
                 </select>
 
-                <!-- Card Payment Fields -->
+                <!-- Card Details Section -->
                 <div id="card-details" style="display: none;">
                     <label for="card-number">Card Number</label>
                     <input type="text" id="card-number">
@@ -104,10 +70,13 @@ $user_id = $_SESSION['user_id'];
                     <label for="cvv">CVV</label>
                     <input type="text" id="cvv">
                 </div>
+
+                <p style="font-size:12px; color:red;">* To update your address, please go to <a href="profile.php">Profile</a> page.</p>
+
             </form>
         </div>
 
-        <!-- 🛒 Order Summary -->
+        <!-- Order Summary -->
         <div id="order-summary">
             <h2>Order Summary</h2>
             <div id="cart-items"></div>
