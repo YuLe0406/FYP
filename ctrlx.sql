@@ -1,17 +1,22 @@
 -- USER Table
 CREATE TABLE USER (
     U_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_FName VARCHAR(255) NOT NULL,
-    U_LName VARCHAR(255) NOT NULL,
-    U_DOB DATE NOT NULL,
-    U_Gender VARCHAR(6) NOT NULL,
-    U_Email VARCHAR(255) NOT NULL UNIQUE,
+    U_FName VARCHAR(50) NOT NULL,
+    U_LName VARCHAR(50) NOT NULL,
+    U_Email VARCHAR(100) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
-    U_PNumber VARCHAR(11) NOT NULL,
+    U_PNumber VARCHAR(15) NOT NULL,
+    U_DOB DATE NOT NULL COMMENT '与register.php中的字段名一致',
+    U_Gender ENUM('male','female','other') NOT NULL,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
     U_SecurityAnswer VARCHAR(255) NOT NULL,
-    U_Status INT(1) DEFAULT 0  -- 1=blocked, 0=active
-);
+    U_ResetToken VARCHAR(64) DEFAULT NULL,
+    U_ResetTokenExpiry DATETIME DEFAULT NULL,
+    U_AccountCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    U_LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_user_email (U_Email),
+    INDEX idx_reset_token (U_ResetToken)
+) ENGINE=InnoDB;
 
 -- ADMIN Table
 CREATE TABLE ADMIN (
@@ -44,7 +49,6 @@ CREATE TABLE PRODUCT (
     C_ID INT NOT NULL,
     P_Name VARCHAR(255) NOT NULL,
     P_Price DECIMAL(10,2) NOT NULL,
-    P_Status INT(1) DEFAULT 0, -- 1 = blocked, 0 = active
     FOREIGN KEY (C_ID) REFERENCES CATEGORIES(C_ID)
 );
 
@@ -220,22 +224,6 @@ INSERT INTO CATEGORIES (C_NAME, C_Status) VALUES
 ('Men Top',0),
 ('Woman Top',0);
 
-INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
-(1, 'White Oversized T', 69.90),
-(1, 'Black Oversized T', 89.90),
-(1, 'Red Oversized T', 79.90),
-(1, 'Clay Oversized T', 79.90),
-(1, 'Butter Oversized T', 79.90),
-(1, 'Grey Oversized T', 69.90),
-(1, 'Orchid Oversized T', 79.90),
-(2, 'White Hoodie', 169.90),
-(2, 'Grey Hoodie', 169.90),
-(2, 'Charcoal Hoodie', 169.90),
-(2, 'Black Hoodie', 169.90),
-(2, 'Red Hoodie', 169.90),
-(2, 'Green Hoodie', 169.90),
-(2, 'Navy Hoodie', 169.90);
-
 INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
 (1, 'FYP/images/1Front.png'),
 (1, 'FYP/images/1Back.png'),
@@ -265,6 +253,7 @@ INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
 (13, 'FYP/images/6Back.jpeg'),
 (14, 'FYP/images/7Front.jpeg'),
 (14, 'FYP/images/7Back.jpeg');
+
 
 INSERT INTO PRODUCT_COLOR (COLOR_NAME, COLOR_HEX) VALUES
 ('White', '#FFFFFF'),

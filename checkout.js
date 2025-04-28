@@ -5,24 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
-    const addressDropdown = document.getElementById("existing-address");
-    const address1Input = document.getElementById("address1");
+    const cardNumberInput = document.getElementById("card-number");
+    const expiryDateInput = document.getElementById("expiry-date");
+    const cvvInput = document.getElementById("cvv");
 
-    // 🟡 Optional: If you use address dropdown
-    if (addressDropdown) {
-        addressDropdown.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const addressDetails = selectedOption.getAttribute("data-details");
-            address1Input.value = addressDetails || "";
-        });
-    }
-
-    // 🔁 Toggle credit card fields
+    // 🟡 Toggle card details
     paymentMethodSelect.addEventListener("change", function () {
         cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
     });
 
-    // 🇲🇾 Format Malaysian phone number
+    // 🇲🇾 Malaysia phone number formatting
     phoneInput.addEventListener("input", function () {
         let val = this.value.replace(/\D/g, "");
         if (val.length >= 3) val = val.substring(0, 3) + "-" + val.substring(3);
@@ -30,19 +22,18 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = val;
     });
 
-    // ✅ Handle Place Order click
+    // ✅ Place order
     placeOrderBtn.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        const fullName = document.getElementById("fullname").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const address1 = address1Input.value.trim();
-        const paymentMethod = paymentMethodSelect.value;
-        const saveAddress = document.getElementById("morning")?.checked || false;
+        const fullName = document.getElementById("fullname")?.value.trim();
+        const email = document.getElementById("email")?.value.trim();
+        const phone = document.getElementById("phone")?.value.trim();
+        const address1 = document.getElementById("address1")?.value.trim();
+        const paymentMethod = document.getElementById("payment-method")?.value;
 
-        if (!fullName || !email || !phone || !address1) {
-            alert("Please fill in all required billing details.");
+        if (!fullName || !email || !phone || !address1 || !paymentMethod) {
+            alert("Please fill in all required fields.");
             return;
         }
 
@@ -56,12 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
             fullname: fullName,
             email: email,
             phone: phone,
-            address: address1,
+            address1: address1,
             payment_method: paymentMethod,
             cart: cart,
-            saveAddress: saveAddress,
-            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            discount: 0 // update in future if needed
+            discount: 0, 
+            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
         };
 
         try {
@@ -81,12 +71,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.removeItem("cart");
                 loadingMessage.style.display = "none";
                 successMessage.style.display = "block";
-
                 setTimeout(() => {
                     window.location.href = `order_success.php?order_id=${result.order_id}`;
                 }, 3000);
             } else {
-                throw new Error(result.message || "Failed to save order.");
+                throw new Error(result.message || "Order failed. Please try again.");
             }
         } catch (error) {
             alert("Error: " + error.message);
@@ -96,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 🛒 Load cart items and calculate total
+    // 🛒 Load cart into checkout page
     function loadCartItems() {
         const container = document.getElementById("cart-items");
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -147,4 +136,71 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     loadCartItems();
+
+
+    
+    // Format card number
+    cardNumberInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    // Format expiry date MM/YY
+    expiryDateInput.addEventListener("input", function () {
+        let input = this.value.replace(/\D/g, '');
+        if (input.length > 2) {
+            input = input.slice(0, 2) + "/" + input.slice(2, 4);
+        }
+        this.value = input;
+    });
+
+    placeOrderBtn.addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        const cardNumber = cardNumberInput.value.trim();
+        const cardName = document.getElementById("card-name").value.trim();
+        const expiryDate = expiryDateInput.value.trim();
+        const cvv = cvvInput.value.trim();
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        if (!cardNumber || !cardName || !expiryDate || !cvv) {
+            alert("Please fill in all card details.");
+            return;
+        }
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        const orderData = {
+            cart: cart,
+            cardNumber: cardNumber,
+            expiryDate: expiryDate,
+            cvv: cvv,
+            payment_method: 'Credit Card'
+        };
+
+        try {
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerText = "Placing Order...";
+
+            const response = await fetch("save_order.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                localStorage.removeItem("cart");
+                window.location.href = `order_success.php?order_id=${result.order_id}`;
+            } else {
+                throw new Error(result.message || "Failed to save order.");
+            }
+        } catch (err) {
+            alert("Error: " + err.message);
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.innerText = "Place Order";
+        }
+    });
 });

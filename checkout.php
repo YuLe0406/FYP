@@ -6,7 +6,19 @@ if (!isset($_SESSION['user_id'])) {
 }
 include 'header.php';
 include 'db.php';
+
 $user_id = $_SESSION['user_id'];
+
+// 🛠️ Fetch user information from USER table
+$stmt = $conn->prepare("SELECT * FROM USER WHERE U_ID = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
+// Prepare full name
+$fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 ?>
 
 <!DOCTYPE html>
@@ -27,70 +39,35 @@ $user_id = $_SESSION['user_id'];
             <h2>Billing Information</h2>
             <form id="checkout-form">
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" required>
+                <input type="text" id="fullname" value="<?php echo htmlspecialchars($fullName); ?>" readonly>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" required>
+                <input type="email" id="email" value="<?php echo htmlspecialchars($user['U_Email']); ?>" readonly>
 
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" required>
+                <input type="tel" id="phone" value="<?php echo htmlspecialchars($user['U_PNumber']); ?>" readonly>
 
-                <label for="existing-address">Choose Saved Address</label>
-                <select id="existing-address">
-                    <option value="">-- Select Saved Address --</option>
-                    <?php
-                    $stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ?");
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-                    while ($row = $res->fetch_assoc()) {
-                        $fullAddress = $row['UA_Address1'] . ", " . $row['UA_Postcode'] . " " . $row['UA_City'] . ", " . $row['UA_State'];
-                        echo "<option value='{$row['UA_ID']}' data-address1='{$row['UA_Address1']}' data-city='{$row['UA_City']}' data-state='{$row['UA_State']}' data-postcode='{$row['UA_Postcode']}'>$fullAddress</option>";
-                    }
-                    ?>
-                </select>
-
-                <label for="address1">Street Address</label>
-                <input type="text" id="address1" required>
-
-                <label for="city">City</label>
-                <input type="text" id="city" required>
-
-                <label for="state">State</label>
-                <select id="state" required>
-                    <option value="">-- Select State --</option>
-                    <?php
-                    $states = ['Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Penang', 'Perak', 'Perlis', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu'];
-                    foreach ($states as $state) {
-                        echo "<option value='$state'>$state</option>";
-                    }
-                    ?>
-                </select>
-
-                <label for="postcode">Postcode</label>
-                <input type="text" id="postcode" required>
-
-                <label><input type="checkbox" id="save-address"> Save Address for Future Use</label>
+                <label for="address1">Saved Address</label>
+                <textarea id="address1" rows="3" readonly><?php echo htmlspecialchars($user['U_Address']); ?></textarea>
 
                 <label for="payment-method">Payment Method</label>
-                <select id="payment-method" required>
-                    <option value="cod">Cash on Delivery</option>
-                    <option value="credit_card">Credit/Debit Card</option>
-                    <option value="paypal">PayPal</option>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="">-- Select Payment Method --</option>
+                    <option value="credit_card">Credit/Debit Card</option> <!-- Only credit card allowed -->
                 </select>
 
                 <div id="card-details" style="display: none;">
                     <label for="card-number">Card Number</label>
-                    <input type="text" id="card-number">
+                    <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
 
                     <label for="card-name">Cardholder Name</label>
-                    <input type="text" id="card-name">
+                    <input type="text" id="card-name" placeholder="Name on Card">
 
                     <label for="expiry-date">Expiry Date</label>
-                    <input type="text" id="expiry-date">
+                    <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5">
 
                     <label for="cvv">CVV</label>
-                    <input type="text" id="cvv">
+                    <input type="text" id="cvv" placeholder="XXX" maxlength="3">
                 </div>
             </form>
         </div>
@@ -109,5 +86,6 @@ $user_id = $_SESSION['user_id'];
 
 <?php include 'footer.php'; ?>
 <script src="checkout.js"></script>
+
 </body>
 </html>
