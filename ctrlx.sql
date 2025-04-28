@@ -25,6 +25,7 @@ CREATE TABLE ADMIN (
     A_Password VARCHAR(255) NOT NULL,
     A_Email VARCHAR(255) NOT NULL UNIQUE,
     A_CN VARCHAR(11) NOT NULL,
+    A_Picture VARCHAR(255) NULL,
     A_Level INT(1) NOT NULL,  -- 1 for Superadmin, 0 for Admin
     A_Status INT(1) DEFAULT 0  -- 1 = blocked, 0 = active
 );
