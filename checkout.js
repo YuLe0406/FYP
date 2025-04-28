@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
+    const cardNumberInput = document.getElementById("card-number");
+    const expiryDateInput = document.getElementById("expiry-date");
+    const cvvInput = document.getElementById("cvv");
 
     // 🟡 Toggle card details
     paymentMethodSelect.addEventListener("change", function () {
@@ -133,15 +136,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     loadCartItems();
-});
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const cardNumberInput = document.getElementById("card-number");
-    const expiryDateInput = document.getElementById("expiry-date");
-    const cvvInput = document.getElementById("cvv");
-    const placeOrderBtn = document.getElementById("place-order-btn");
-
+    
     // Format card number
     cardNumberInput.addEventListener("input", function () {
         this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();

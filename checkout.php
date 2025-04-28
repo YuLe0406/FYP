@@ -6,19 +6,21 @@ if (!isset($_SESSION['user_id'])) {
 }
 include 'header.php';
 include 'db.php';
+
 $user_id = $_SESSION['user_id'];
 
-// 🔥 Fetch user info
-$stmt = $conn->prepare("SELECT U_FName, U_LName, U_Email, U_PNumber, U_Address FROM USER WHERE U_ID = ?");
+// 🛠️ Fetch user information from USER table
+$stmt = $conn->prepare("SELECT * FROM USER WHERE U_ID = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$res = $stmt->get_result();
-$user = $res->fetch_assoc();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 $stmt->close();
 
-// Combine full name
+// Prepare full name
 $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,43 +39,39 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
             <h2>Billing Information</h2>
             <form id="checkout-form">
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" value="<?php echo htmlspecialchars($_SESSION['user_name']); ?>" readonly>
+                <input type="text" id="fullname" value="<?php echo htmlspecialchars($fullName); ?>" readonly>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" value="<?php echo htmlspecialchars($_SESSION['user_email']); ?>" readonly>
+                <input type="email" id="email" value="<?php echo htmlspecialchars($user['U_Email']); ?>" readonly>
 
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" value="<?php echo htmlspecialchars($_SESSION['user_phone']); ?>" readonly>
+                <input type="tel" id="phone" value="<?php echo htmlspecialchars($user['U_PNumber']); ?>" readonly>
 
-                <label for="address1">Street Address</label>
-                <input type="text" id="address1" value="<?php echo htmlspecialchars($_SESSION['user_address']); ?>" readonly>
+                <label for="address1">Saved Address</label>
+                <textarea id="address1" rows="3" readonly><?php echo htmlspecialchars($user['U_Address']); ?></textarea>
 
                 <label for="payment-method">Payment Method</label>
-                <select id="payment-method" required>
-                    <option value="credit_card" selected>Credit/Debit Card</option>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="">-- Select Payment Method --</option>
+                    <option value="credit_card">Credit/Debit Card</option> <!-- Only credit card allowed -->
                 </select>
 
-                <!-- Card Details -->
-                <div id="card-details">
+                <div id="card-details" style="display: none;">
                     <label for="card-number">Card Number</label>
-                    <input type="text" id="card-number" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" required>
+                    <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
 
                     <label for="card-name">Cardholder Name</label>
-                    <input type="text" id="card-name" placeholder="Name on Card" required>
+                    <input type="text" id="card-name" placeholder="Name on Card">
 
                     <label for="expiry-date">Expiry Date</label>
-                    <input type="text" id="expiry-date" maxlength="5" placeholder="MM/YY" required>
+                    <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5">
 
                     <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" maxlength="3" placeholder="CVV" required>
+                    <input type="text" id="cvv" placeholder="XXX" maxlength="3">
                 </div>
-
-                <p style="font-size:12px; color:red;">* To update your address, please go to <a href="profile.php">Profile</a> page.</p>
-                
             </form>
         </div>
 
-        <!-- Order Summary -->
         <div id="order-summary">
             <h2>Order Summary</h2>
             <div id="cart-items"></div>
@@ -88,5 +86,6 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 
 <?php include 'footer.php'; ?>
 <script src="checkout.js"></script>
+
 </body>
 </html>
