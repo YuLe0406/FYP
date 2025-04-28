@@ -315,3 +315,22 @@ header {
         flex: 1 1 100%;
     }
 }
+
+.password-strength {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--secondary);
+  }
+  
+  .password-strength.weak {
+    color: var(--error);
+  }
+  
+  .password-strength.medium {
+    color: #f39c12;
+  }
+  
+  .password-strength.strong {
+    color: #27ae60;
+  }
+  
