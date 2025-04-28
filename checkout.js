@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
-    const cardNumberInput = document.getElementById("card-number");
     const expiryDateInput = document.getElementById("expiry-date");
     const cvvInput = document.getElementById("cvv");
 
@@ -32,12 +31,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const address1 = document.getElementById("address1")?.value.trim();
         const paymentMethod = document.getElementById("payment-method")?.value;
 
+        const cardNumber = cardNumberInput?.value.trim() || '';
+        const cardName = document.getElementById("card-name")?.value.trim() || '';
+        const expiryDate = expiryDateInput?.value.trim() || '';
+        const cvv = cvvInput?.value.trim() || '';
+
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
         if (!fullName || !email || !phone || !address1 || !paymentMethod) {
             alert("Please fill in all required fields.");
             return;
         }
 
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (paymentMethod === 'credit_card') {
+            if (!cardNumber || !cardName || !expiryDate || !cvv) {
+                alert("Please fill in all card details.");
+                return;
+            }
+        }
+
         if (cart.length === 0) {
             alert("Your cart is empty.");
             return;
@@ -50,7 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
             address1: address1,
             payment_method: paymentMethod,
             cart: cart,
-            discount: 0, 
+            cardNumber: paymentMethod === 'credit_card' ? cardNumber : '',
+            expiryDate: paymentMethod === 'credit_card' ? expiryDate : '',
+            cvv: paymentMethod === 'credit_card' ? cvv : '',
+            discount: 0,
             total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
         };
 
@@ -137,70 +152,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadCartItems();
 
-
     
-    // Format card number
+    // Format Card Number (XXXX XXXX XXXX XXXX)
+    const cardNumberInput = document.getElementById("card-number");
     cardNumberInput.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+        let value = this.value.replace(/\D/g, ""); // Remove all non-numeric
+        value = value.substring(0, 16); // Max 16 digits
+        let formatted = "";
+        for (let i = 0; i < value.length; i += 4) {
+            if (i > 0) formatted += " ";
+            formatted += value.substring(i, i + 4);
+        }
+        this.value = formatted;
     });
 
-    // Format expiry date MM/YY
-    expiryDateInput.addEventListener("input", function () {
-        let input = this.value.replace(/\D/g, '');
-        if (input.length > 2) {
-            input = input.slice(0, 2) + "/" + input.slice(2, 4);
+// Format Expiry Date (MM/YY)
+    const expiryInput = document.getElementById("expiry-date");
+    expiryInput.addEventListener("input", function () {
+        let value = this.value.replace(/\D/g, ""); // Remove all non-numeric
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + "/" + value.substring(2, 4);
         }
-        this.value = input;
+        this.value = value.substring(0, 5); // Max 5 characters
     });
 
-    placeOrderBtn.addEventListener("click", async function (e) {
-        e.preventDefault();
-
-        const cardNumber = cardNumberInput.value.trim();
-        const cardName = document.getElementById("card-name").value.trim();
-        const expiryDate = expiryDateInput.value.trim();
-        const cvv = cvvInput.value.trim();
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        if (!cardNumber || !cardName || !expiryDate || !cvv) {
-            alert("Please fill in all card details.");
-            return;
-        }
-        if (cart.length === 0) {
-            alert("Your cart is empty.");
-            return;
-        }
-
-        const orderData = {
-            cart: cart,
-            cardNumber: cardNumber,
-            expiryDate: expiryDate,
-            cvv: cvv,
-            payment_method: 'Credit Card'
-        };
-
-        try {
-            placeOrderBtn.disabled = true;
-            placeOrderBtn.innerText = "Placing Order...";
-
-            const response = await fetch("save_order.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                localStorage.removeItem("cart");
-                window.location.href = `order_success.php?order_id=${result.order_id}`;
-            } else {
-                throw new Error(result.message || "Failed to save order.");
-            }
-        } catch (err) {
-            alert("Error: " + err.message);
-            placeOrderBtn.disabled = false;
-            placeOrderBtn.innerText = "Place Order";
-        }
-    });
 });
