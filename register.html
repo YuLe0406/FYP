@@ -6,6 +6,8 @@
     <title>Register | CTRL+X</title>
     <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <header>
@@ -55,7 +57,6 @@
                     </div>
                 </div>
                 
-                
                 <div class="input-field">
                     <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
                     <input type="password" id="confirm_password" name="confirm_password" required>
@@ -75,6 +76,7 @@
                 <label for="security_answer">Security Answer</label>
                 <input type="text" id="security_answer" name="security_answer" required>
             </div>
+
             <!-- Additional Information -->
             <div class="input-group">
                 <div class="input-field">
@@ -107,65 +109,92 @@
         </form>
     </main>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Frontend Validation Script -->
     <script>
-        // 显示/隐藏密码
-document.getElementById('togglePassword').addEventListener('change', function () {
-    const pwd = document.getElementById('password');
-    pwd.type = this.checked ? 'text' : 'password';
-});
+        // Show/hide password
+        document.getElementById('togglePassword').addEventListener('change', function () {
+            const pwd = document.getElementById('password');
+            pwd.type = this.checked ? 'text' : 'password';
+        });
 
-// 密码强度检查
-document.getElementById('password').addEventListener('input', function () {
-    const pwd = this.value;
-    const strengthFill = document.getElementById('strength-fill');
+        // Password strength check
+        document.getElementById('password').addEventListener('input', function () {
+            const pwd = this.value;
+            const strengthFill = document.getElementById('strength-fill');
 
-    const criteria = [
-        pwd.length >= 8,
-        /[a-z]/.test(pwd),
-        /[A-Z]/.test(pwd),
-        /[0-9]/.test(pwd),
-        /[\W_]/.test(pwd)
-    ];
+            const criteria = [
+                pwd.length >= 8,
+                /[a-z]/.test(pwd),
+                /[A-Z]/.test(pwd),
+                /[0-9]/.test(pwd),
+                /[\W_]/.test(pwd)
+            ];
 
-    const strength = criteria.filter(Boolean).length;
-    const colors = ["#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#27ae60"];
-    strengthFill.style.width = (strength * 20) + "%";
-    strengthFill.style.background = colors[strength - 1] || "#e0e0e0";
-});
+            const strength = criteria.filter(Boolean).length;
+            const colors = ["#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#27ae60"];
+            strengthFill.style.width = (strength * 20) + "%";
+            strengthFill.style.background = colors[strength - 1] || "#e0e0e0";
+        });
 
-// 提交时验证密码强度
-document.querySelector('.auth-form').addEventListener('submit', function (e) {
-    const pwd = document.getElementById('password').value;
-    const confirmPwd = document.getElementById('confirm_password').value;
+        // Form submission validation
+        document.querySelector('.auth-form').addEventListener('submit', function (e) {
+            const pwd = document.getElementById('password').value;
+            const confirmPwd = document.getElementById('confirm_password').value;
 
-    if (pwd !== confirmPwd) {
-        e.preventDefault();
-        alert('Error: Passwords do not match!');
-        return;
-    }
-
-    const isValid = pwd.length >= 8 &&
-        /[a-z]/.test(pwd) &&
-        /[A-Z]/.test(pwd) &&
-        /[0-9]/.test(pwd) &&
-        /[\W_]/.test(pwd);
-
-    if (!isValid) {
-        e.preventDefault();
-        alert('Password does not meet the complexity requirements.');
-    }
-});
-
-        document.querySelector('.auth-form').addEventListener('submit', function(e) {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            
-            if (password !== confirmPassword) {
+            if (pwd !== confirmPwd) {
                 e.preventDefault();
-                alert('Error: Passwords do not match!');
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Passwords do not match!',
+                    icon: 'error',
+                    confirmButtonColor: '#4CAF50'
+                });
                 document.getElementById('confirm_password').focus();
+                return;
+            }
+
+            const isValid = pwd.length >= 8 &&
+                /[a-z]/.test(pwd) &&
+                /[A-Z]/.test(pwd) &&
+                /[0-9]/.test(pwd) &&
+                /[\W_]/.test(pwd);
+
+            if (!isValid) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Password does not meet the complexity requirements.',
+                    icon: 'error',
+                    confirmButtonColor: '#4CAF50'
+                });
+            }
+        });
+
+        // Check for success/error messages in URL parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+
+            if (success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: success,
+                    icon: 'success',
+                    confirmButtonColor: '#4CAF50'
+                });
+            }
+
+            if (error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: error,
+                    icon: 'error',
+                    confirmButtonColor: '#4CAF50'
+                });
             }
         });
     </script>
