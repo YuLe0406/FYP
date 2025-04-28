@@ -37,42 +37,39 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
             <h2>Billing Information</h2>
             <form id="checkout-form">
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" value="<?php echo htmlspecialchars($fullName); ?>" readonly>
+                <input type="text" id="fullname" value="<?php echo htmlspecialchars($_SESSION['user_name']); ?>" readonly>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" value="<?php echo htmlspecialchars($user['U_Email']); ?>" readonly>
+                <input type="email" id="email" value="<?php echo htmlspecialchars($_SESSION['user_email']); ?>" readonly>
 
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" value="<?php echo htmlspecialchars($user['U_PNumber']); ?>" readonly>
+                <input type="tel" id="phone" value="<?php echo htmlspecialchars($_SESSION['user_phone']); ?>" readonly>
 
-                <label for="address1">Saved Address</label>
-                <textarea id="address1" rows="3" readonly><?php echo htmlspecialchars($user['U_Address']); ?></textarea>
+                <label for="address1">Street Address</label>
+                <input type="text" id="address1" value="<?php echo htmlspecialchars($_SESSION['user_address']); ?>" readonly>
 
-                <!-- Payment Method -->
                 <label for="payment-method">Payment Method</label>
                 <select id="payment-method" required>
-                    <option value="cod">Cash on Delivery</option>
-                    <option value="credit_card">Credit/Debit Card</option>
-                    <option value="paypal">PayPal</option>
+                    <option value="credit_card" selected>Credit/Debit Card</option>
                 </select>
 
-                <!-- Card Details Section -->
-                <div id="card-details" style="display: none;">
+                <!-- Card Details -->
+                <div id="card-details">
                     <label for="card-number">Card Number</label>
-                    <input type="text" id="card-number">
+                    <input type="text" id="card-number" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" required>
 
                     <label for="card-name">Cardholder Name</label>
-                    <input type="text" id="card-name">
+                    <input type="text" id="card-name" placeholder="Name on Card" required>
 
                     <label for="expiry-date">Expiry Date</label>
-                    <input type="text" id="expiry-date">
+                    <input type="text" id="expiry-date" maxlength="5" placeholder="MM/YY" required>
 
                     <label for="cvv">CVV</label>
-                    <input type="text" id="cvv">
+                    <input type="text" id="cvv" maxlength="3" placeholder="CVV" required>
                 </div>
 
                 <p style="font-size:12px; color:red;">* To update your address, please go to <a href="profile.php">Profile</a> page.</p>
-
+                
             </form>
         </div>
 

@@ -134,3 +134,76 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadCartItems();
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const cardNumberInput = document.getElementById("card-number");
+    const expiryDateInput = document.getElementById("expiry-date");
+    const cvvInput = document.getElementById("cvv");
+    const placeOrderBtn = document.getElementById("place-order-btn");
+
+    // Format card number
+    cardNumberInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    // Format expiry date MM/YY
+    expiryDateInput.addEventListener("input", function () {
+        let input = this.value.replace(/\D/g, '');
+        if (input.length > 2) {
+            input = input.slice(0, 2) + "/" + input.slice(2, 4);
+        }
+        this.value = input;
+    });
+
+    placeOrderBtn.addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        const cardNumber = cardNumberInput.value.trim();
+        const cardName = document.getElementById("card-name").value.trim();
+        const expiryDate = expiryDateInput.value.trim();
+        const cvv = cvvInput.value.trim();
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        if (!cardNumber || !cardName || !expiryDate || !cvv) {
+            alert("Please fill in all card details.");
+            return;
+        }
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        const orderData = {
+            cart: cart,
+            cardNumber: cardNumber,
+            expiryDate: expiryDate,
+            cvv: cvv,
+            payment_method: 'Credit Card'
+        };
+
+        try {
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerText = "Placing Order...";
+
+            const response = await fetch("save_order.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                localStorage.removeItem("cart");
+                window.location.href = `order_success.php?order_id=${result.order_id}`;
+            } else {
+                throw new Error(result.message || "Failed to save order.");
+            }
+        } catch (err) {
+            alert("Error: " + err.message);
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.innerText = "Place Order";
+        }
+    });
+});
