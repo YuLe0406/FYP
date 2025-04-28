@@ -334,3 +334,52 @@ header {
     color: #27ae60;
   }
   
+  .input-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.password-input-container {
+    position: relative; /* Allows absolute positioning inside */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px; /* Adjust spacing from the right */
+    top: 50%;
+    transform: translateY(-50%); /* Centers vertically */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--secondary); /* Optional: Match your design */
+    padding: 0.5rem; /* Makes it easier to click */
+}
+
+/* Ensure the password input has padding to prevent text overlap */
+#password {
+    padding-right: 40px; /* Prevents text from going under the eye icon */
+    width: 100%; /* Ensures full width */
+}
+
+.error-message {
+    color: #e74c3c;
+    background-color: #fdecea;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #f5c6cb;
+}
+
+.error-message i {
+    font-size: 1.1em;
+}
