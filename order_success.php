@@ -21,7 +21,7 @@ $orderId = intval($_GET['order_id']);
 <head>
     <meta charset="UTF-8">
     <title>Order Successful | CTRL+X</title>
-    <link rel="stylesheet" href="checkout.css"> <!-- You can reuse your checkout CSS -->
+    <link rel="stylesheet" href="cart.css"> <!-- You can reuse your checkout CSS -->
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
     <style>
         .success-container {

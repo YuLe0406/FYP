@@ -28,6 +28,8 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
     <title>Checkout | CTRL+X</title>
     <link rel="stylesheet" href="checkout.css">
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 

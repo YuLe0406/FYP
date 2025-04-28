@@ -63,7 +63,7 @@ $stmt->close();
 $stmt = $conn->prepare("INSERT INTO ORDER_ITEMS (O_ID, P_ID, PV_ID, OI_Quantity, OI_Price) VALUES (?, ?, ?, ?, ?)");
 foreach ($cart as $item) {
     $pId = $item['id'];
-    $pvId = $item['variant_id'] ?? null;
+    $pvId = $item['variantId'] ?? null;
     $qty = $item['quantity'];
     $price = $item['price'];
 
