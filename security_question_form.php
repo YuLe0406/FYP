@@ -19,6 +19,10 @@ if ($result->num_rows === 0) {
 
 $user = $result->fetch_assoc();
 $stmt->close();
+
+// Check for error message from previous attempt
+$error = isset($_SESSION['security_answer_error']) ? $_SESSION['security_answer_error'] : null;
+unset($_SESSION['security_answer_error']); // Clear the error after displaying
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +32,22 @@ $stmt->close();
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .error-message {
+            color: #e74c3c;
+            background-color: #fdecea;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #f5c6cb;
+        }
+        .error-message i {
+            font-size: 1.1em;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -42,6 +62,11 @@ $stmt->close();
             <div class="form-header">
                 <h2 class="form-title">Security Question</h2>
                 <p class="form-subtitle">Answer your security question</p>
+                <?php if ($error): ?>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="input-group">
