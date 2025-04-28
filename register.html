@@ -6,8 +6,40 @@
     <title>Register | CTRL+X</title>
     <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s, fadeOut 0.5s 3.5s forwards;
+        }
+        
+        .notification.error {
+            background-color: #e74c3c;
+        }
+        
+        .notification i {
+            margin-right: 10px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,7 +50,7 @@
     </header>
 
     <main class="auth-container">
-        <form class="auth-form" action="register.php" method="POST">
+        <form id="registerForm" class="auth-form" method="POST">
             <div class="form-header">
                 <h2 class="form-title">Create Account</h2>
                 <p class="form-subtitle">Join the CTRL+X community</p>
@@ -76,7 +108,7 @@
                 <label for="security_answer">Security Answer</label>
                 <input type="text" id="security_answer" name="security_answer" required>
             </div>
-
+            
             <!-- Additional Information -->
             <div class="input-group">
                 <div class="input-field">
@@ -109,18 +141,15 @@
         </form>
     </main>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <!-- Frontend Validation Script -->
     <script>
-        // Show/hide password
+        // 显示/隐藏密码
         document.getElementById('togglePassword').addEventListener('change', function () {
             const pwd = document.getElementById('password');
             pwd.type = this.checked ? 'text' : 'password';
         });
 
-        // Password strength check
+        // 密码强度检查
         document.getElementById('password').addEventListener('input', function () {
             const pwd = this.value;
             const strengthFill = document.getElementById('strength-fill');
@@ -139,63 +168,65 @@
             strengthFill.style.background = colors[strength - 1] || "#e0e0e0";
         });
 
-        // Form submission validation
-        document.querySelector('.auth-form').addEventListener('submit', function (e) {
-            const pwd = document.getElementById('password').value;
-            const confirmPwd = document.getElementById('confirm_password').value;
+        // 显示通知
+        function showNotification(message, isError = false) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${isError ? 'error' : ''}`;
+            notification.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            // 5秒后自动移除通知
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
 
-            if (pwd !== confirmPwd) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Passwords do not match!',
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
+        // AJAX表单提交
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // 前端验证
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                showNotification('Error: Passwords do not match!', true);
                 document.getElementById('confirm_password').focus();
                 return;
             }
 
-            const isValid = pwd.length >= 8 &&
-                /[a-z]/.test(pwd) &&
-                /[A-Z]/.test(pwd) &&
-                /[0-9]/.test(pwd) &&
-                /[\W_]/.test(pwd);
+            const isValid = password.length >= 8 &&
+                /[a-z]/.test(password) &&
+                /[A-Z]/.test(password) &&
+                /[0-9]/.test(password) &&
+                /[\W_]/.test(password);
 
             if (!isValid) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Password does not meet the complexity requirements.',
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
-            }
-        });
-
-        // Check for success/error messages in URL parameters
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const success = urlParams.get('success');
-            const error = urlParams.get('error');
-
-            if (success) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: success,
-                    icon: 'success',
-                    confirmButtonColor: '#4CAF50'
-                });
+                showNotification('Password does not meet the complexity requirements.', true);
+                return;
             }
 
-            if (error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: error,
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
-            }
+            // 发送AJAX请求
+            fetch('register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message);
+                    form.reset(); // 清空表单
+                } else {
+                    showNotification(data.errors.join('<br>'), true);
+                }
+            })
+            .catch(error => {
+                showNotification('An error occurred. Please try again.', true);
+                console.error('Error:', error);
+            });
         });
     </script>
 </body>
