@@ -1,8 +1,8 @@
 /* Base Styles */
 :root {
-    --primary: #1a1a1a;
-    --secondary: #333;
-    --accent: #d4af37;
+    --primary: #000000;
+    --secondary: #666666;
+    --accent: #000000;
     --light: #f5f5f5;
     --white: #ffffff;
     --gray: #e0e0e0;
@@ -16,28 +16,29 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--light);
+    font-family: Arial, sans-serif;
+    background-color: var(--white);
     color: var(--primary);
     line-height: 1.6;
 }
 
 /* Header Styles */
 header {
-    background-color: var(--primary);
-    color: var(--white);
+    background-color: var(--white);
+    color: var(--primary);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--gray);
 }
 
 .logo {
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 1px;
-    color: var(--white);
+    color: var(--primary);
 }
 
 .nav-links {
@@ -46,7 +47,7 @@ header {
 }
 
 .nav-link {
-    color: var(--white);
+    color: var(--primary);
     text-decoration: none;
     font-weight: 500;
     display: flex;
@@ -56,7 +57,7 @@ header {
 }
 
 .nav-link:hover {
-    color: var(--accent);
+    color: var(--secondary);
 }
 
 .nav-link i {
@@ -65,16 +66,16 @@ header {
 
 /* Auth Container */
 .auth-container {
-    max-width: 600px;
+    max-width: 500px;
     margin: 3rem auto;
     padding: 0 1rem;
 }
 
 .auth-form {
     background-color: var(--white);
-    border-radius: 8px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+    padding: 2rem;
+    box-shadow: none;
 }
 
 .form-header {
@@ -83,71 +84,166 @@ header {
 }
 
 .form-title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: var(--primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .form-subtitle {
     color: var(--secondary);
-    font-size: 1rem;
-}
-
-/* Input Styles */
-.input-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    font-size: 0.9rem;
     margin-bottom: 1.5rem;
 }
 
-.input-group .input-field {
-    flex: 1 1 calc(50% - 0.75rem);
+/* Input Styles */
+
+
+.input-field {
+    flex: 1 1 100%;
     min-width: 200px;
 }
 
 .input-field {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .input-field label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-weight: bold;
     color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.input-field label i {
-    color: var(--accent);
     font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
 .input-field input,
 .input-field select {
     width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--gray);
-    border-radius: 6px;
+    padding: 0.8rem 0;
+    border: none;
+    border-bottom: 1px solid var(--gray);
     font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s;
+    background: transparent;
 }
 
 .input-field input:focus,
 .input-field select:focus {
-    border-color: var(--accent);
+    border-color: var(--primary);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
 
-/* Date Input Styling */
-.input-field input[type="date"] {
-    appearance: none;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a1a1a' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E") no-repeat 95% center;
-    background-size: 16px;
+.input-field input::placeholder {
+    color: var(--secondary);
+    opacity: 1;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Password Hint */
+.password-hint {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    margin: 0.5rem 0;
+    font-style: italic;
+}
+
+.dob-hint {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+    display: block;
+}
+
+/* Password Toggle */
+.password-toggle {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-toggle input {
+    width: auto;
+    margin: 0;
+}
+
+.password-toggle label {
+    margin: 0;
+    font-weight: normal;
+    text-transform: none;
+    font-size: 0.9rem;
+}
+
+/* Strength Bar */
+#strength-bar {
+    height: 4px;
+    width: 100%;
+    background: var(--gray);
+    margin-top: 6px;
+    border-radius: 2px;
+}
+
+#strength-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 0.3s, background 0.3s;
+}
+
+/* Gender Options */
+.gender-options {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.gender-options label {
+    font-weight: normal;
+    text-transform: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.gender-options input {
+    width: auto;
+    margin: 0;
+}
+
+/* Newsletter */
+.newsletter-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.newsletter-field label {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.newsletter-field input {
+    width: auto;
+    margin: 0;
+}
+
+.newsletter-field span {
+    font-size: 0.9rem;
+    text-transform: none;
+    font-weight: normal;
 }
 
 /* Button Styles */
@@ -157,24 +253,18 @@ header {
     background-color: var(--primary);
     color: var(--white);
     border: none;
-    border-radius: 6px;
+    border-radius: 0;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-top: 1rem;
 }
 
 .auth-submit-btn:hover {
     background-color: var(--secondary);
-}
-
-.auth-submit-btn i {
-    font-size: 1rem;
 }
 
 /* Form Footer */
@@ -189,23 +279,14 @@ header {
 }
 
 .auth-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: normal;
     transition: color 0.3s;
 }
 
 .auth-link:hover {
-    color: var(--primary);
-    text-decoration: underline;
-}
-
-/* Password Hint */
-.password-hint {
-    font-size: 0.8rem;
     color: var(--secondary);
-    margin-top: 0.25rem;
-    font-style: italic;
 }
 
 /* Responsive */
@@ -233,4 +314,72 @@ header {
     .input-group .input-field {
         flex: 1 1 100%;
     }
+}
+
+.password-strength {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--secondary);
+  }
+  
+  .password-strength.weak {
+    color: var(--error);
+  }
+  
+  .password-strength.medium {
+    color: #f39c12;
+  }
+  
+  .password-strength.strong {
+    color: #27ae60;
+  }
+  
+  .input-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.password-input-container {
+    position: relative; /* Allows absolute positioning inside */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px; /* Adjust spacing from the right */
+    top: 50%;
+    transform: translateY(-50%); /* Centers vertically */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--secondary); /* Optional: Match your design */
+    padding: 0.5rem; /* Makes it easier to click */
+}
+
+/* Ensure the password input has padding to prevent text overlap */
+#password {
+    padding-right: 40px; /* Prevents text from going under the eye icon */
+    width: 100%; /* Ensures full width */
+}
+
+.error-message {
+    color: #e74c3c;
+    background-color: #fdecea;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #f5c6cb;
+}
+
+.error-message i {
+    font-size: 1.1em;
 }

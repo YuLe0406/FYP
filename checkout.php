@@ -28,6 +28,8 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
     <title>Checkout | CTRL+X</title>
     <link rel="stylesheet" href="checkout.css">
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 
@@ -86,6 +88,36 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 
 <?php include 'footer.php'; ?>
 <script src="checkout.js"></script>
+
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        color: black;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        z-index: 999;
+        border-radius: 4px;
+    }
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+    .dropdown-menu a {
+        padding: 10px;
+        display: block;
+        text-decoration: none;
+        color: black;
+    }
+    .dropdown-menu a:hover {
+        background-color: #eee;
+    }
+</style>
 
 </body>
 </html>

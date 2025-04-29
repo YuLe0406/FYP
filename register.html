@@ -6,8 +6,6 @@
     <title>Register | CTRL+X</title>
     <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <header>
@@ -20,51 +18,65 @@
     <main class="auth-container">
         <form class="auth-form" action="register.php" method="POST">
             <div class="form-header">
-                <h2 class="form-title">Create Account</h2>
-                <p class="form-subtitle">Join the CTRL+X community</p>
+                <h2 class="form-title">CREATE AN ACCOUNT</h2>
+
             </div>
 
             <!-- Personal Information -->
-            <div class="input-group">
+            <div class="input-field">
                 <div class="input-field">
-                    <label for="first_name"><i class="fas fa-user"></i> First Name</label>
+                    <label for="first_name">FIRST NAME*</label>
                     <input type="text" id="first_name" name="first_name" required>
                 </div>
                 
                 <div class="input-field">
-                    <label for="last_name"><i class="fas fa-user"></i> Last Name</label>
+                    <label for="last_name">LAST NAME*</label>
                     <input type="text" id="last_name" name="last_name" required>
                 </div>
             </div>
 
             <!-- Account Credentials -->
-            <div class="input-group">
+            <div class="input-field">
                 <div class="input-field">
-                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="email">EMAIL ADDRESS*</label>
+                    <input type="email" id="email" name="email" placeholder="Enter a valid email" required>
                 </div>
                 
                 <div class="input-field">
-                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" name="password" minlength="8" required>
-                </div>
-
-                <div class="input-field">
-                    <small class="password-hint">Must be at least 8 characters with a number, a symbol, a lowercase and uppercase letter.</small>
-                    <input type="checkbox" id="togglePassword"> Show Password
-                    <div id="strength-bar" style="height: 6px; width: 100%; background: #e0e0e0; margin-top: 6px; border-radius: 4px;">
-                        <div id="strength-fill" style="height: 100%; width: 0%; background: #e74c3c; border-radius: 4px;"></div>
-                    </div>
-                </div>
-                
-                <div class="input-field">
-                    <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
+                    <label for="phone">PHONE NUMBER*</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" placeholder="12345678901" required>
                 </div>
             </div>
 
             <div class="input-field">
-                <label for="security_question">Security Question</label>
+                <div class="input-field password-field">
+                    <label for="password">PASSWORD*</label>
+                    <div class="password-input-container">
+                        <input type="password" id="password" name="password" minlength="8" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                    <div class="password-strength-meter">
+                        <div id="strength-bar">
+                            <div id="strength-fill"></div>
+                        </div>
+                        <div id="strength-text"></div>
+                    </div>
+                    <small class="password-hint">Password must be 8-20 letters and contain both letters and numbers. The following symbols can be used [#$%&(')'+,-/::<=>?@[|^_:{}]~</small>
+                   
+                </div>
+                
+                <div class="input-field">
+                    <label for="confirm_password">CONFIRM PASSWORD*</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+            </div>
+
+            <!-- Security Questions -->
+            <div class="input-field">
+                <label for="security_question">SECURITY QUESTION*</label>
                 <select id="security_question" name="security_question" required>
                     <option value="">-- Select a question --</option>
                     <option value="What city were you born in?">What city were you born in?</option>
@@ -73,34 +85,33 @@
                 </select>
             </div>
             <div class="input-field">
-                <label for="security_answer">Security Answer</label>
+                <label for="security_answer">SECURITY ANSWER*</label>
                 <input type="text" id="security_answer" name="security_answer" required>
             </div>
 
             <!-- Additional Information -->
-            <div class="input-group">
+            <div class="input-field">
                 <div class="input-field">
-                    <label for="dob"><i class="fas fa-calendar"></i> Date of Birth</label>
+                    <label for="address">ADDRESS*</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                
+                <div class="input-field">
+                    <label for="dob">DATE OF BIRTH*</label>
                     <input type="date" id="dob" name="dob" required>
                 </div>
-                
-                <div class="input-field">
-                    <label for="gender"><i class="fas fa-venus-mars"></i> Gender</label>
-                    <select id="gender" name="gender" required>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="input-field">
-                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
-                    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" placeholder="12345678901" required>
+            </div>
+            
+            <div class="input-field gender-field">
+                <label>GENDER*</label>
+                <div class="gender-options">
+                    <label><input type="radio" name="gender" value="male" required> Male</label>
+                    <label><input type="radio" name="gender" value="female"> Female</label>
                 </div>
             </div>
 
             <button type="submit" class="auth-submit-btn">
-                <i class="fas fa-user-plus"></i> Create Account
+                CREATE ACCOUNT
             </button>
 
             <div class="form-footer">
@@ -109,19 +120,70 @@
         </form>
     </main>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <!-- Frontend Validation Script -->
     <script>
-        // Show/hide password
-        document.getElementById('togglePassword').addEventListener('change', function () {
-            const pwd = document.getElementById('password');
-            pwd.type = this.checked ? 'text' : 'password';
+
+                // Password strength indicator
+                password.addEventListener('input', function() {
+            const strengthIndicator = document.querySelector('#passwordStrength');
+            const strength = checkPasswordStrength(this.value);
+            
+            strengthIndicator.textContent = strength.message;
+            strengthIndicator.className = 'password-strength ' + strength.class;
         });
 
+        function checkPasswordStrength(password) {
+            // Define strength criteria
+            const hasMinLength = password.length >= 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChars = /[@$!%*?&]/.test(password);
+            
+            // Calculate strength score
+            let score = 0;
+            if (hasMinLength) score++;
+            if (hasUpperCase) score++;
+            if (hasLowerCase) score++;
+            if (hasNumbers) score++;
+            if (hasSpecialChars) score++;
+            
+            // Determine strength level
+            if (password.length === 0) {
+                return { message: '', class: '' };
+            } else if (password.length < 8) {
+                return { message: 'Password too short (min 8 characters)', class: 'weak' };
+            } else if (score <= 2) {
+                return { message: 'Weak password', class: 'weak' };
+            } else if (score <= 3) {
+                return { message: 'Medium password', class: 'medium' };
+            } else if (score <= 4) {
+                return { message: 'Strong password', class: 'strong' };
+            } else {
+                return { message: 'Very strong password', class: 'strong' };
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm_password');
+            const toggleBtn = document.querySelector('.toggle-password i');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                confirmPassword.type = 'text';
+                toggleBtn.classList.remove('fa-eye');
+                toggleBtn.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                confirmPassword.type = 'password';
+                toggleBtn.classList.remove('fa-eye-slash');
+                toggleBtn.classList.add('fa-eye');
+            }
+        }
+
         // Password strength check
-        document.getElementById('password').addEventListener('input', function () {
+        document.getElementById('password').addEventListener('input', function() {
             const pwd = this.value;
             const strengthFill = document.getElementById('strength-fill');
 
@@ -130,7 +192,7 @@
                 /[a-z]/.test(pwd),
                 /[A-Z]/.test(pwd),
                 /[0-9]/.test(pwd),
-                /[\W_]/.test(pwd)
+                /[#$%&(')'+,\-/:;<=>?@[\\\]^_`{|}~]/.test(pwd)
             ];
 
             const strength = criteria.filter(Boolean).length;
@@ -140,61 +202,27 @@
         });
 
         // Form submission validation
-        document.querySelector('.auth-form').addEventListener('submit', function (e) {
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
             const pwd = document.getElementById('password').value;
             const confirmPwd = document.getElementById('confirm_password').value;
 
+            // Check if passwords match
             if (pwd !== confirmPwd) {
                 e.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Passwords do not match!',
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
+                alert('Error: Passwords do not match!');
                 document.getElementById('confirm_password').focus();
                 return;
             }
 
-            const isValid = pwd.length >= 8 &&
-                /[a-z]/.test(pwd) &&
-                /[A-Z]/.test(pwd) &&
-                /[0-9]/.test(pwd) &&
-                /[\W_]/.test(pwd);
+            // Check password requirements
+            const isValid = pwd.length >= 8 && 
+                           pwd.length <= 20 &&
+                           /[a-zA-Z]/.test(pwd) && 
+                           /[0-9]/.test(pwd);
 
             if (!isValid) {
                 e.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Password does not meet the complexity requirements.',
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
-            }
-        });
-
-        // Check for success/error messages in URL parameters
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const success = urlParams.get('success');
-            const error = urlParams.get('error');
-
-            if (success) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: success,
-                    icon: 'success',
-                    confirmButtonColor: '#4CAF50'
-                });
-            }
-
-            if (error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: error,
-                    icon: 'error',
-                    confirmButtonColor: '#4CAF50'
-                });
+                alert('Password must be 8-20 characters and contain both letters and numbers. Allowed symbols: [#$%&(\')\'+,-/::<=>?@[|^_:{}]~');
             }
         });
     </script>

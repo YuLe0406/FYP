@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const placeOrderBtn = document.getElementById("place-order-btn");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
-    const cardNumberInput = document.getElementById("card-number");
     const expiryDateInput = document.getElementById("expiry-date");
     const cvvInput = document.getElementById("cvv");
+    const cardNumberInput = document.getElementById("card-number");
 
-    // 🟡 Toggle card details
+    // 🟡 Toggle card details (if needed)
     paymentMethodSelect.addEventListener("change", function () {
         cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
     });
@@ -25,24 +25,71 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ Place order
     placeOrderBtn.addEventListener("click", async function (event) {
         event.preventDefault();
-
+    
         const fullName = document.getElementById("fullname")?.value.trim();
         const email = document.getElementById("email")?.value.trim();
         const phone = document.getElementById("phone")?.value.trim();
         const address1 = document.getElementById("address1")?.value.trim();
         const paymentMethod = document.getElementById("payment-method")?.value;
-
+    
+        const cardNumber = cardNumberInput?.value.trim() || '';
+        const cardName = document.getElementById("card-name")?.value.trim() || '';
+        const expiryDate = expiryDateInput?.value.trim() || '';
+        const cvv = cvvInput?.value.trim() || '';
+    
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
         if (!fullName || !email || !phone || !address1 || !paymentMethod) {
             alert("Please fill in all required fields.");
             return;
         }
-
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+        if (paymentMethod === 'credit_card') {
+            if (!cardNumber || !cardName || !expiryDate || !cvv) {
+                alert("Please fill in all card details.");
+                return;
+            }
+        }
+    
         if (cart.length === 0) {
             alert("Your cart is empty.");
             return;
         }
-
+    
+        // 🛑 Before Place Order: Fetch PV_ID for each cart item
+        for (let i = 0; i < cart.length; i++) {
+            const item = cart[i];
+            if (!item.variantId) {
+                // if no variantId, fetch from server
+                try {
+                    const response = await fetch('find_variant_id.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            P_ID: item.id,    // match capital letters
+                            P_Size: item.size // match capital letters
+                        })
+                    });
+    
+                    const result = await response.json();
+                    if (result.PV_ID) {
+                        cart[i].variantId = result.PV_ID; // Assign variantId into cart
+                    } else {
+                        throw new Error('Variant not found for item: ' + item.name);
+                    }
+                } catch (error) {
+                    alert(error.message);
+                    return;
+                }
+            }
+        }
+    
+        // Update cart in localStorage after fetch PV_ID
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+        // ✅ After all variantId fixed → continue place order
         const orderData = {
             fullname: fullName,
             email: email,
@@ -50,33 +97,45 @@ document.addEventListener("DOMContentLoaded", function () {
             address1: address1,
             payment_method: paymentMethod,
             cart: cart,
-            discount: 0, 
+            cardNumber: paymentMethod === 'credit_card' ? cardNumber : '',
+            expiryDate: paymentMethod === 'credit_card' ? expiryDate : '',
+            cvv: paymentMethod === 'credit_card' ? cvv : '',
+            discount: 0,
             total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
         };
-
+    
         try {
             placeOrderBtn.disabled = true;
             placeOrderBtn.innerText = "Placing Order...";
             loadingMessage.style.display = "block";
-
+    
             const response = await fetch("save_order.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(orderData)
             });
-
+    
             const result = await response.json();
-
+    
             if (result.success) {
                 localStorage.removeItem("cart");
                 loadingMessage.style.display = "none";
                 successMessage.style.display = "block";
-                setTimeout(() => {
-                    window.location.href = `order_success.php?order_id=${result.order_id}`;
-                }, 3000);
+            
+                // ✅ SweetAlert2 alert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank you for your order!',
+                    html: `Your Order ID is: <b>#${result.order_id}</b><br>We will process your order very soon!`,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = "index.php"; // 👉 Redirect after user click OK
+                });
+            
             } else {
                 throw new Error(result.message || "Order failed. Please try again.");
             }
+            
         } catch (error) {
             alert("Error: " + error.message);
             placeOrderBtn.disabled = false;
@@ -84,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loadingMessage.style.display = "none";
         }
     });
+    
 
     // 🛒 Load cart into checkout page
     function loadCartItems() {
@@ -137,70 +197,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadCartItems();
 
-
-    
-    // Format card number
+    // 💳 Format Card Number (XXXX XXXX XXXX XXXX)
     cardNumberInput.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+        let value = this.value.replace(/\D/g, "");
+        value = value.substring(0, 16);
+        let formatted = "";
+        for (let i = 0; i < value.length; i += 4) {
+            if (i > 0) formatted += " ";
+            formatted += value.substring(i, i + 4);
+        }
+        this.value = formatted;
     });
 
-    // Format expiry date MM/YY
+    // 🗓 Format Expiry Date (MM/YY)
     expiryDateInput.addEventListener("input", function () {
-        let input = this.value.replace(/\D/g, '');
-        if (input.length > 2) {
-            input = input.slice(0, 2) + "/" + input.slice(2, 4);
+        let value = this.value.replace(/\D/g, "");
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + "/" + value.substring(2, 4);
         }
-        this.value = input;
+        this.value = value.substring(0, 5);
     });
 
-    placeOrderBtn.addEventListener("click", async function (e) {
-        e.preventDefault();
-
-        const cardNumber = cardNumberInput.value.trim();
-        const cardName = document.getElementById("card-name").value.trim();
-        const expiryDate = expiryDateInput.value.trim();
-        const cvv = cvvInput.value.trim();
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        if (!cardNumber || !cardName || !expiryDate || !cvv) {
-            alert("Please fill in all card details.");
-            return;
-        }
-        if (cart.length === 0) {
-            alert("Your cart is empty.");
-            return;
-        }
-
-        const orderData = {
-            cart: cart,
-            cardNumber: cardNumber,
-            expiryDate: expiryDate,
-            cvv: cvv,
-            payment_method: 'Credit Card'
-        };
-
-        try {
-            placeOrderBtn.disabled = true;
-            placeOrderBtn.innerText = "Placing Order...";
-
-            const response = await fetch("save_order.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                localStorage.removeItem("cart");
-                window.location.href = `order_success.php?order_id=${result.order_id}`;
-            } else {
-                throw new Error(result.message || "Failed to save order.");
-            }
-        } catch (err) {
-            alert("Error: " + err.message);
-            placeOrderBtn.disabled = false;
-            placeOrderBtn.innerText = "Place Order";
-        }
-    });
 });

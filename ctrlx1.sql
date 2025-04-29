@@ -6,6 +6,7 @@ CREATE TABLE USER (
     U_Email VARCHAR(100) NOT NULL UNIQUE,
     U_Password VARCHAR(255) NOT NULL,
     U_PNumber VARCHAR(15) NOT NULL,
+    U_Address VARCHAR(255) DEFAULT NULL,
     U_DOB DATE NOT NULL,
     U_Gender ENUM('male','female','other') NOT NULL,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
