@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </html>';
             exit();
         } else {
-            $error = "Failed to update password";
+            $error = "Same with old password!";
         }
     }
 }

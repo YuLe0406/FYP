@@ -1,2 +1,37 @@
 [23-Apr-2025 02:41:48 Europe/Berlin] PHP Warning:  mysqli_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in C:\xampp\htdocs\xampp\FYP\superadmin\db.php on line 7
 [23-Apr-2025 02:42:44 Europe/Berlin] PHP Warning:  mysqli_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in C:\xampp\htdocs\xampp\FYP\superadmin\db.php on line 7
+[28-Apr-2025 19:05:51 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[28-Apr-2025 19:09:11 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[28-Apr-2025 19:09:11 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[28-Apr-2025 19:09:25 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[28-Apr-2025 19:09:48 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[29-Apr-2025 07:11:27 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
+[29-Apr-2025 07:11:33 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'C_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:64
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(64): mysqli_query(Object(mysqli), 'SELECT * FROM C...')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 64
