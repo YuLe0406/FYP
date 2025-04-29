@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Deactivate') 
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     } else {
-        $error = "Error Deactivateing user: " . $stmt->error;
+        $error = "Error Deactivating user: " . $stmt->error;
     }
     $stmt->close();
 }
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Activate') {
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     } else {
-        $error = "Error Activateing user: " . $stmt->error;
+        $error = "Error Activating user: " . $stmt->error;
     }
     $stmt->close();
 }
@@ -47,13 +47,13 @@ if (isset($_SESSION['Deactivate_success'])) {
     unset($_SESSION['Deactivate_success']);
 }
 if (isset($_SESSION['Activate_success'])) {
-    $success = "User Activateed successfully!";
+    $success = "User Activated successfully!";
     unset($_SESSION['Activate_success']);
 }
 
-// Fetch all users
+// Fetch all users with specific columns including U_Status
 $users = [];
-$query = "SELECT * FROM USER ORDER BY U_ID DESC";
+$query = "SELECT U_ID, U_FName, U_LName, U_Email, U_PNumber, U_Gender, U_Status FROM USER ORDER BY U_ID DESC";
 $result = $conn->query($query);
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -93,14 +93,14 @@ if ($result && $result->num_rows > 0) {
                         <span><?= htmlspecialchars($user['U_PNumber']); ?></span>
                         <span><?= htmlspecialchars($user['U_Gender']); ?></span>
                         <span>
-                            <?php if ($user['U_Status'] == 1): ?>
+                            <?php if ((int)$user['U_Status'] === 1): ?>
                                 <img src="https://img.icons8.com/ios-filled/24/cancel.png"/> Deactivated
                             <?php else: ?>
                                 <img src="https://img.icons8.com/ios-filled/24/checkmark.png"/> Active
                             <?php endif; ?>
                         </span>
                         <span>
-                            <?php if ($user['U_Status'] == 0): ?>
+                            <?php if ((int)$user['U_Status'] === 0): ?>
                                 <form method="POST" onsubmit="return confirmDeactivate(event, this);">
                                     <input type="hidden" name="action" value="Deactivate">
                                     <input type="hidden" name="userId" value="<?= $user['U_ID']; ?>">
