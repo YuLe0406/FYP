@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const cvvInput = document.getElementById("cvv");
     const cardNumberInput = document.getElementById("card-number");
 
-    // Show card fields always (only 1 payment method allowed)
-    cardDetails.style.display = "block";
+    paymentMethodSelect.addEventListener("change", function () {
+        cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
+    });
 
-    // 🇲🇾 Malaysia phone formatting
     phoneInput.addEventListener("input", function () {
         let val = this.value.replace(/\D/g, "");
         if (val.length >= 3) val = val.substring(0, 3) + "-" + val.substring(3);
@@ -20,25 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = val;
     });
 
-    // 💳 Card number formatting
-    cardNumberInput.addEventListener("input", function () {
-        let value = this.value.replace(/\D/g, "").substring(0, 16);
-        let formatted = "";
-        for (let i = 0; i < value.length; i += 4) {
-            if (i > 0) formatted += " ";
-            formatted += value.substring(i, i + 4);
-        }
-        this.value = formatted;
-    });
-
-    // 🗓 Expiry date formatting
-    expiryDateInput.addEventListener("input", function () {
-        let value = this.value.replace(/\D/g, "").substring(0, 4);
-        if (value.length >= 2) value = value.substring(0, 2) + "/" + value.substring(2);
-        this.value = value;
-    });
-
-    // ✅ Handle Place Order
     placeOrderBtn.addEventListener("click", async function (event) {
         event.preventDefault();
 
@@ -46,9 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById("email")?.value.trim();
         const phone = document.getElementById("phone")?.value.trim();
         const address1 = document.getElementById("address1")?.value.trim();
-        const paymentMethod = document.getElementById("payment-method")?.value;
+        const paymentMethod = paymentMethodSelect?.value;
 
-        const cardNumber = cardNumberInput?.value.trim() || '';
+        const cardNumber = cardNumberInput?.value.replace(/\s/g, "") || '';
         const cardName = document.getElementById("card-name")?.value.trim() || '';
         const expiryDate = expiryDateInput?.value.trim() || '';
         const cvv = cvvInput?.value.trim() || '';
@@ -61,8 +42,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (paymentMethod === 'credit_card') {
-            if (!cardNumber || !cardName || !expiryDate || !cvv) {
-                alert("Please fill in all card details.");
+            if (!cardNumber || cardNumber.length !== 16 || !cardName || !expiryDate || !cvv) {
+                alert("Please enter a valid 16-digit card number and complete card details.");
                 return;
             }
         }
@@ -72,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Fetch and assign PV_ID for each cart item
         for (let i = 0; i < cart.length; i++) {
             const item = cart[i];
             if (!item.variantId) {
@@ -80,36 +60,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     const response = await fetch('find_variant_id.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            P_ID: item.id,
-                            P_Size: item.size
-                        })
+                        body: JSON.stringify({ P_ID: item.id, P_Size: item.size })
                     });
+
                     const result = await response.json();
                     if (result.PV_ID) {
                         cart[i].variantId = result.PV_ID;
-                        cart[i].stock = result.stock; // Save stock info for later
                     } else {
-                        throw new Error(`Variant not found for ${item.name}`);
+                        throw new Error('Variant not found for item: ' + item.name);
                     }
-                } catch (err) {
-                    alert("Error: " + err.message);
+                } catch (error) {
+                    alert(error.message);
                     return;
                 }
             }
-        }
 
-        // 🔒 Final validation: check against stock
-        for (let item of cart) {
-            const quantity = parseInt(item.quantity);
-            const stock = parseInt(item.stock);
-            if (quantity > stock) {
-                alert(`Only ${stock} items available for size ${item.size}.`);
+            // Get max stock
+            const stockResponse = await fetch(`get_stock.php?pv_id=${cart[i].variantId}`);
+            const stockResult = await stockResponse.json();
+            const maxStock = stockResult.stock || 1;
+
+            if (cart[i].quantity > maxStock) {
+                alert(`Only ${maxStock} units available for size ${item.size}.`);
                 return;
             }
         }
 
-        localStorage.setItem("cart", JSON.stringify(cart)); // Update with PV_ID and stock
+        localStorage.setItem('cart', JSON.stringify(cart));
 
         const orderData = {
             fullname: fullName,
@@ -154,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 throw new Error(result.message || "Order failed. Please try again.");
             }
-
         } catch (error) {
             alert("Error: " + error.message);
             placeOrderBtn.disabled = false;
@@ -163,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 🛒 Load cart into checkout
     function loadCartItems() {
         const container = document.getElementById("cart-items");
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -171,7 +146,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         container.innerHTML = "";
 
-        cart.forEach((item, index) => {
+        cart.forEach(async (item, index) => {
+            let maxStock = 10;
+            if (item.variantId) {
+                const stockRes = await fetch(`get_stock.php?pv_id=${item.variantId}`);
+                const stockData = await stockRes.json();
+                maxStock = stockData.stock || 1;
+            }
+
             const div = document.createElement("div");
             div.classList.add("cart-item");
 
@@ -181,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p><strong>${item.name}</strong></p>
                     <p>Size: ${item.size}</p>
                     <p>Price: RM ${item.price.toFixed(2)}</p>
-                    <input type="number" min="1" value="${item.quantity}" data-index="${index}" class="checkout-qty">
+                    <input type="number" min="1" max="${maxStock}" value="${item.quantity}" data-index="${index}" class="checkout-qty">
                     <button onclick="removeFromCheckout(${index})">Remove</button>
                 </div>
             `;
@@ -194,47 +176,21 @@ document.addEventListener("DOMContentLoaded", function () {
         attachQtyEvents();
     }
 
-    // 🔁 Limit quantity input by stock
     function attachQtyEvents() {
         document.querySelectorAll(".checkout-qty").forEach(input => {
-            input.addEventListener("change", async function () {
-                const index = this.getAttribute("data-index");
+            input.addEventListener("input", function () {
+                const index = parseInt(this.getAttribute("data-index"));
+                const max = parseInt(this.max) || 1;
+                const newQty = Math.min(parseInt(this.value) || 1, max);
                 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                const item = cart[index];
-
-                try {
-                    const response = await fetch("find_variant_id.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            P_ID: item.id,
-                            P_Size: item.size
-                        })
-                    });
-
-                    const result = await response.json();
-                    const stock = parseInt(result.stock || 1);
-
-                    let newQty = parseInt(this.value) || 1;
-                    if (newQty > stock) {
-                        newQty = stock;
-                        this.value = stock;
-                        alert(`Only ${stock} items available for size ${item.size}.`);
-                    }
-
-                    cart[index].quantity = newQty;
-                    localStorage.setItem("cart", JSON.stringify(cart));
-                    loadCartItems();
-
-                } catch (error) {
-                    console.error("Stock check error:", error);
-                    alert("Failed to check stock.");
-                }
+                cart[index].quantity = newQty;
+                this.value = newQty;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                loadCartItems();
             });
         });
     }
 
-    // ❌ Remove from cart
     window.removeFromCheckout = function (index) {
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
         cart.splice(index, 1);
@@ -243,4 +199,25 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     loadCartItems();
+
+    // 💳 Format Card Number (XXXX XXXX XXXX XXXX)
+    cardNumberInput.addEventListener("input", function () {
+        let value = this.value.replace(/\D/g, "");
+        value = value.substring(0, 16);
+        let formatted = "";
+        for (let i = 0; i < value.length; i += 4) {
+            if (i > 0) formatted += " ";
+            formatted += value.substring(i, i + 4);
+        }
+        this.value = formatted;
+    });
+
+    // 🗓 Format Expiry Date (MM/YY)
+    expiryDateInput.addEventListener("input", function () {
+        let value = this.value.replace(/\D/g, "");
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + "/" + value.substring(2, 4);
+        }
+        this.value = value.substring(0, 5);
+    });
 });
