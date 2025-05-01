@@ -204,28 +204,20 @@ function addToCart() {
 
     let selectedSize = sizeDropdown.value;
     let selectedQuantity = parseInt(quantityInput.value);
-    let selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
-    let availableStock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
 
     if (!selectedSize) {
         alert("Please select a size!");
         return;
     }
 
-    if (selectedQuantity > availableStock) {
-        alert(`Only ${availableStock} items available for size ${selectedSize}.`);
+    if (isNaN(selectedQuantity) || selectedQuantity < 1) {
+        alert("Please enter a valid quantity!");
         return;
     }
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
-    let totalQuantity = existingItem ? existingItem.quantity + selectedQuantity : selectedQuantity;
-
-    if (totalQuantity > availableStock) {
-        alert(`Only ${availableStock} items available for size ${selectedSize}.`);
-        return;
-    }
 
     if (existingItem) {
         existingItem.quantity += selectedQuantity;
@@ -243,7 +235,6 @@ function addToCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
     alert("Added to Cart!");
 }
-
 
 function addToWishlist(id, name, image, price) {
     let sizeDropdown = document.getElementById("size-select");
