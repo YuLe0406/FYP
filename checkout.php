@@ -9,7 +9,7 @@ include 'db.php';
 
 $user_id = $_SESSION['user_id'];
 
-// 🛠️ Fetch user information from USER table
+// Fetch user information
 $stmt = $conn->prepare("SELECT * FROM USER WHERE U_ID = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -17,7 +17,13 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// Prepare full name
+// Fetch user addresses
+$stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ? ORDER BY UA_IsDefault DESC, UA_Type ASC");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$addresses = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 ?>
 
@@ -29,7 +35,6 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
     <link rel="stylesheet" href="checkout.css">
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </head>
 <body>
 
@@ -49,13 +54,47 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" value="<?php echo htmlspecialchars($user['U_PNumber']); ?>" readonly>
 
-                <label for="address1">Saved Address</label>
-                <textarea id="address1" rows="3" readonly><?php echo htmlspecialchars($user['U_Address']); ?></textarea>
+                <label for="address">Shipping Address</label>
+                <select id="address" name="address" required>
+                    <option value="">-- Select Address --</option>
+                    <?php foreach ($addresses as $address): ?>
+                        <option value="<?php echo $address['UA_ID']; ?>" 
+                                <?php echo $address['UA_IsDefault'] ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars(
+                                $address['UA_Type'] . ': ' . 
+                                $address['UA_Address1'] . ', ' . 
+                                ($address['UA_Address2'] ? $address['UA_Address2'] . ', ' : '') . 
+                                $address['UA_Postcode'] . ' ' . 
+                                $address['UA_City'] . ', ' . 
+                                $address['UA_State']
+                            ); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                
+                <div id="address-details">
+                    <?php if (!empty($addresses)): ?>
+                        <?php $defaultAddress = array_filter($addresses, function($a) { return $a['UA_IsDefault']; }); ?>
+                        <?php $displayAddress = !empty($defaultAddress) ? reset($defaultAddress) : $addresses[0]; ?>
+                        <p>
+                            <?php echo htmlspecialchars($displayAddress['UA_Address1']); ?><br>
+                            <?php if ($displayAddress['UA_Address2']): ?>
+                                <?php echo htmlspecialchars($displayAddress['UA_Address2']); ?><br>
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars(
+                                $displayAddress['UA_Postcode'] . ' ' . 
+                                $displayAddress['UA_City'] . ', ' . 
+                                $displayAddress['UA_State']
+                            ); ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
 
                 <label for="payment-method">Payment Method</label>
                 <select id="payment-method" name="payment-method" required>
                     <option value="">-- Select Payment Method --</option>
-                    <option value="credit_card">Credit/Debit Card</option> <!-- Only credit card allowed -->
+                    <option value="Credit Card">Credit/Debit Card</option>
+                    <option value="PayPal">PayPal</option>
                 </select>
 
                 <div id="card-details" style="display: none;">
@@ -88,6 +127,18 @@ $fullName = $user['U_FName'] . ' ' . $user['U_LName'];
 
 <?php include 'footer.php'; ?>
 <script src="checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const addressSelect = document.getElementById("address");
+    const addressDetails = document.getElementById("address-details");
+    
+    addressSelect.addEventListener("change", function() {
+        const selectedOption = this.options[this.selectedIndex];
+        addressDetails.innerHTML = `<p>${selectedOption.text}</p>`;
+    });
+});
+</script>
 
 <style>
     .dropdown {

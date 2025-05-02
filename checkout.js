@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cardNumberInput = document.getElementById("card-number");
 
     paymentMethodSelect.addEventListener("change", function () {
-        cardDetails.style.display = this.value === "credit_card" ? "block" : "none";
+        cardDetails.style.display = this.value === "Credit Card" ? "block" : "none";
     });
 
     phoneInput.addEventListener("input", function () {
@@ -74,18 +74,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // 原有订单提交逻辑保持不变
         localStorage.setItem('cart', JSON.stringify(cart));
         const orderData = {
-            fullname: fullName,
-            email: email,
-            phone: phone,
-            address1: address1,
-            payment_method: paymentMethod,
-            cart: cart,
-            cardNumber: cardNumber,
-            expiryDate: expiryDate,
-            cvv: cvv,
-            discount: 0,
-            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        };
+        fullname: fullName,
+        email: email,
+        phone: phone,
+        address_id: document.getElementById("address").value, // Add this line
+        payment_method: paymentMethod,
+        cart: cart,
+        cardNumber: cardNumber,
+        expiryDate: expiryDate,
+        cvv: cvv,
+        discount: 0,
+        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    };
 
         try {
             placeOrderBtn.disabled = true;
