@@ -209,7 +209,7 @@ $userId = $_SESSION['user_id'];
             if ($orders->num_rows === 0) {
                 echo '<div class="no-orders">
                         <p>You haven\'t placed any orders yet.</p>
-                        <a href="products.php" class="btn">Start Shopping</a>
+                        <a href="shop.php" class="btn">Start Shopping</a>
                       </div>';
             } else {
                 while ($order = $orders->fetch_assoc()) {

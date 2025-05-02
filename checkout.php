@@ -137,6 +137,25 @@ document.addEventListener("DOMContentLoaded", function() {
         const selectedOption = this.options[this.selectedIndex];
         addressDetails.innerHTML = `<p>${selectedOption.text}</p>`;
     });
+
+    // Check if there are no addresses and show alert
+    <?php if (empty($addresses)): ?>
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Shipping Address',
+            html: 'You need to add a shipping address before you can checkout.<br><br>You will be redirected to your profile to add one.',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'profile.php';
+            }
+        });
+        
+        // Disable the place order button
+        document.getElementById('place-order-btn').disabled = true;
+    <?php endif; ?>
 });
 </script>
 
