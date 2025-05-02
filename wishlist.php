@@ -12,6 +12,7 @@ include 'header.php';      // Header file
     <link rel="stylesheet" href="wishlist.css">
     <script src="wishlist.js"></script>
     <script src="https://kit.fontawesome.com/b5e0bce514.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 

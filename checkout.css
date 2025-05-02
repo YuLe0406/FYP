@@ -531,3 +531,15 @@ input[type="tel"] {
       transform: scale(0.9);
     }
   }
+
+  .stock-warning {
+    color: #d32f2f;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.stock-error {
+    color: #ff9800;
+    font-size: 0.8em;
+    margin-top: 5px;
+}

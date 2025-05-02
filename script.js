@@ -183,83 +183,195 @@ window.onload = () => {
     }
 };
 
-// Add to cart function
-function addToCart() {
-    let urlParams = new URLSearchParams(window.location.search);
-    let productId = urlParams.get("id");
-
-    let product = products.find(p => p.id == productId);
-    if (!product) {
-        alert("Product not found!");
-        return;
-    }
-
-    let sizeDropdown = document.getElementById("size-select");
-    let quantityInput = document.getElementById("quantity");
-
+/**
+ * Add to Cart with Stock Validation (SweetAlert2)
+ */
+async function addToCart() {
+    // 1. Get DOM elements
+    const sizeDropdown = document.getElementById("size-select");
+    const quantityInput = document.getElementById("quantity");
+    
+    // 2. Basic validation
     if (!sizeDropdown || !quantityInput) {
-        alert("Size or quantity input not found!");
+        await showErrorAlert("System Error", "Could not find size or quantity inputs");
         return;
     }
 
-    let selectedSize = sizeDropdown.value;
-    let selectedQuantity = parseInt(quantityInput.value);
+    const selectedSize = sizeDropdown.value;
+    const selectedQuantity = parseInt(quantityInput.value) || 1;
+    const selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
+    const availableStock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
+    const variantId = selectedOption.getAttribute("data-variant-id");
 
+    // 3. Validate size selection
     if (!selectedSize) {
-        alert("Please select a size!");
+        await showErrorAlert("Size Required", "Please select a size first");
         return;
     }
 
-    if (isNaN(selectedQuantity) || selectedQuantity < 1) {
-        alert("Please enter a valid quantity!");
+    // 4. Validate stock
+    if (selectedQuantity > availableStock) {
+        await showStockAlert(availableStock, selectedSize);
+        quantityInput.value = availableStock;
         return;
     }
 
+    // 5. Get current cart
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const productId = product.id;
+    const productData = {
+        id: productId,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        size: selectedSize,
+        quantity: selectedQuantity,
+        variantId: variantId
+    };
 
-    let existingItem = cart.find(item => item.id == product.id && item.size === selectedSize);
+    // 6. Check for existing item
+    const existingItemIndex = cart.findIndex(item => 
+        item.id === productId && item.size === selectedSize
+    );
 
-    if (existingItem) {
-        existingItem.quantity += selectedQuantity;
+    // 7. Update or add item
+    if (existingItemIndex >= 0) {
+        const newQuantity = cart[existingItemIndex].quantity + selectedQuantity;
+        
+        if (newQuantity > availableStock) {
+            await showStockAlert(availableStock, selectedSize);
+            cart[existingItemIndex].quantity = availableStock;
+        } else {
+            cart[existingItemIndex].quantity = newQuantity;
+            await showSuccessAlert("Cart Updated", `${product.name} quantity increased`);
+        }
     } else {
-        cart.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: "images/" + product.image,
-            size: selectedSize,
-            quantity: selectedQuantity
-        });
+        cart.push(productData);
+        await showSuccessAlert("Added to Cart", `${product.name} was added to your cart`);
     }
 
+    // 8. Save and update UI
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Added to Cart!");
+    updateCartCounter();
 }
 
-function addToWishlist(id, name, image, price) {
-    let sizeDropdown = document.getElementById("size-select");
-
-    if (!sizeDropdown) {
-        alert("Size selection dropdown not found!");
-        return;
-    }
-
-    let selectedSize = sizeDropdown.value;
+/**
+ * Add to Wishlist with Stock Validation (SweetAlert2)
+ */
+async function addToWishlist(id, name, image, price) {
+    // 1. Get DOM elements
+    const sizeDropdown = document.getElementById("size-select");
     
-    if (!selectedSize) {
-        alert("Please select a size!");
+    // 2. Basic validation
+    if (!sizeDropdown) {
+        await showErrorAlert("System Error", "Could not find size selection");
         return;
     }
 
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const selectedSize = sizeDropdown.value;
+    const selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
+    const availableStock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
+    const variantId = selectedOption.getAttribute("data-variant-id");
 
-    // Check if the item is already in the wishlist with same size
-    let exists = wishlist.some(item => item.id === id && item.size === selectedSize);
-    if (!exists) {
-        wishlist.push({ id, name, image, price, size: selectedSize });
-        localStorage.setItem("wishlist", JSON.stringify(wishlist));
-        alert("Added to Wishlist!");
+    // 3. Validate size selection
+    if (!selectedSize) {
+        await showErrorAlert("Size Required", "Please select a size first");
+        return;
+    }
+
+    // 4. Validate stock
+    if (availableStock <= 0) {
+        await showErrorAlert("Out of Stock", "This item is currently unavailable");
+        return;
+    }
+
+    // 5. Get current wishlist
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const productData = {
+        id,
+        name,
+        image,
+        price,
+        size: selectedSize,
+        variantId
+    };
+
+    // 6. Check for existing item
+    const exists = wishlist.some(item => 
+        item.id === id && item.size === selectedSize
+    );
+
+    // 7. Add or notify
+    if (exists) {
+        await showInfoAlert("Already in Wishlist", `${name} (${selectedSize}) is already in your wishlist`);
     } else {
-        alert("This item is already in your Wishlist!");
+        wishlist.push(productData);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        await showSuccessAlert("Added to Wishlist", `${name} was added to your wishlist`);
+        updateWishlistCounter();
+    }
+}
+
+/************************
+ * Helper Functions (SweetAlert2)
+ ************************/
+
+async function showErrorAlert(title, text) {
+    return Swal.fire({
+        icon: 'error',
+        title: title,
+        text: text,
+        confirmButtonColor: '#3085d6',
+        background: '#fff',
+        backdrop: `rgba(255, 0, 0, 0.1)`
+    });
+}
+
+async function showSuccessAlert(title, text) {
+    return Swal.fire({
+        icon: 'success',
+        title: title,
+        text: text,
+        confirmButtonColor: '#4CAF50',
+        background: '#fff',
+        timer: 1500,
+        showConfirmButton: false
+    });
+}
+
+async function showInfoAlert(title, text) {
+    return Swal.fire({
+        icon: 'info',
+        title: title,
+        text: text,
+        confirmButtonColor: '#2196F3',
+        background: '#fff'
+    });
+}
+
+async function showStockAlert(stock, size) {
+    return Swal.fire({
+        icon: 'warning',
+        title: 'Insufficient Stock',
+        html: `Only <b style="color:#d32f2f">${stock}</b> available for size <b>${size}</b>`,
+        confirmButtonColor: '#FF9800',
+        background: '#fff',
+        width: '400px'
+    });
+}
+
+function updateCartCounter() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const counter = document.getElementById("cart-counter");
+    if (counter) {
+        counter.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+}
+
+function updateWishlistCounter() {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const counter = document.getElementById("wishlist-counter");
+    if (counter) {
+        counter.textContent = wishlist.length;
     }
 }
