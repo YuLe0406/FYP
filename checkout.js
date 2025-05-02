@@ -23,11 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
     placeOrderBtn.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        // 原有验证逻辑保持不变
         const fullName = document.getElementById("fullname")?.value.trim();
         const email = document.getElementById("email")?.value.trim();
         const phone = document.getElementById("phone")?.value.trim();
-        const address1 = document.getElementById("address1")?.value.trim();
         const paymentMethod = paymentMethodSelect?.value;
 
         const cardNumber = cardNumberInput?.value.replace(/\s/g, "") || '';
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        // 新增：在提交订单前再次验证库存
+        // Stock validation before submission
         for (let i = 0; i < cart.length; i++) {
             const item = cart[i];
             if (!item.variantId) {
@@ -51,41 +49,56 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (result.PV_ID) {
                         cart[i].variantId = result.PV_ID;
                     } else {
-                        throw new Error('Variant not found for item: ' + item.name);
+                        await Swal.fire({
+                            icon: 'error',
+                            title: 'Variant Not Found',
+                            text: `Variant not found for item: ${item.name}`,
+                            confirmButtonText: 'OK'
+                        });
+                        return;
                     }
                 } catch (error) {
-                    alert(error.message);
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message,
+                        confirmButtonText: 'OK'
+                    });
                     return;
                 }
             }
 
-            // 获取最新库存
+            // Get latest stock
             const stockResponse = await fetch(`get_stock.php?pv_id=${cart[i].variantId}`);
             const stockResult = await stockResponse.json();
             const maxStock = stockResult.stock || 1;
 
             if (cart[i].quantity > maxStock) {
-                alert(`Only ${maxStock} units available for ${item.name} (Size: ${item.size}). Please update your cart.`);
-                loadCartItems(); // 刷新购物车显示
+                await Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock Limit',
+                    html: `Only <b>${maxStock}</b> units available for ${item.name} (Size: ${item.size}).<br>Please update your cart.`,
+                    confirmButtonText: 'OK'
+                });
+                loadCartItems();
                 return;
             }
         }
 
-        // 原有订单提交逻辑保持不变
         localStorage.setItem('cart', JSON.stringify(cart));
         const orderData = {
-        fullname: fullName,
-        email: email,
-        phone: phone,
-        address_id: document.getElementById("address").value, // Add this line
-        payment_method: paymentMethod,
-        cart: cart,
-        cardNumber: cardNumber,
-        expiryDate: expiryDate,
-        cvv: cvv,
-        discount: 0,
-        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    };
+            fullname: fullName,
+            email: email,
+            phone: phone,
+            address_id: document.getElementById("address").value,
+            payment_method: paymentMethod,
+            cart: cart,
+            cardNumber: cardNumber,
+            expiryDate: expiryDate,
+            cvv: cvv,
+            discount: 0,
+            total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+        };
 
         try {
             placeOrderBtn.disabled = true;
@@ -103,26 +116,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.removeItem("cart");
                 loadingMessage.style.display = "none";
                 successMessage.style.display = "block";
-                Swal.fire({
+                await Swal.fire({
                     icon: 'success',
                     title: 'Thank you for your order!',
                     html: `Your Order ID is: <b>#${result.order_id}</b><br>We will process your order very soon!`,
                     confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = "index.php";
                 });
+                window.location.href = "index.php";
             } else {
                 throw new Error(result.message || "Order failed. Please try again.");
             }
         } catch (error) {
-            alert("Error: " + error.message);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Order Error',
+                text: error.message,
+                confirmButtonText: 'OK'
+            });
             placeOrderBtn.disabled = false;
             placeOrderBtn.innerText = "Place Order";
             loadingMessage.style.display = "none";
         }
     });
 
-    // 修改后的 loadCartItems 函数
     async function loadCartItems() {
         const container = document.getElementById("cart-items");
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -130,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
         container.innerHTML = cart.length === 0 ? "<p>Your cart is empty.</p>" : "";
     
-        // 使用 Promise.all 并行获取所有库存
         const stockPromises = cart.map(async (item, index) => {
             if (!item.variantId) {
                 try {
@@ -172,13 +187,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
         const stockResults = await Promise.all(stockPromises);
     
-        // 渲染购物车项
         cart.forEach((item, index) => {
             const stockInfo = stockResults.find(r => r.index === index);
             const maxStock = stockInfo?.stock || 0;
             const currentQty = Math.min(item.quantity, maxStock);
     
-            // 如果实际库存小于购物车数量，更新购物车
             if (item.quantity > maxStock) {
                 item.quantity = currentQty;
             }
@@ -206,13 +219,11 @@ document.addEventListener("DOMContentLoaded", function () {
             total += item.price * currentQty;
         });
     
-        // 更新本地存储中的数量
         localStorage.setItem("cart", JSON.stringify(cart));
         document.getElementById("cart-total").innerText = `RM ${total.toFixed(2)}`;
         attachQtyEvents();
     }
 
-    // 修改后的 attachQtyEvents 函数
     function attachQtyEvents() {
         document.querySelectorAll(".checkout-qty").forEach(input => {
             input.addEventListener("change", async function () {
@@ -220,7 +231,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 let cart = JSON.parse(localStorage.getItem("cart")) || [];
                 const item = cart[index];
 
-                // 获取最新库存
                 let maxStock = 20;
                 if (item.variantId) {
                     const stockRes = await fetch(`get_stock.php?pv_id=${item.variantId}`);
@@ -229,31 +239,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 let newQty = parseInt(this.value) || 1;
-                newQty = Math.max(1, Math.min(newQty, maxStock)); // 确保数量在 1 和 maxStock 之间
+                newQty = Math.max(1, Math.min(newQty, maxStock));
 
                 if (newQty !== parseInt(this.value)) {
-                    alert(`Only ${maxStock} units available for ${item.name} (Size: ${item.size}).`);
+                    await Swal.fire({
+                        icon: 'warning',
+                        title: 'Stock Limit',
+                        html: `Only <b>${maxStock}</b> units available for ${item.name} (Size: ${item.size}).`,
+                        confirmButtonText: 'OK'
+                    });
                     this.value = newQty;
                 }
 
                 cart[index].quantity = newQty;
                 localStorage.setItem("cart", JSON.stringify(cart));
-                loadCartItems(); // 刷新显示
+                loadCartItems();
             });
         });
     }
 
     window.removeFromCheckout = function (index) {
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        cart.splice(index, 1);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        loadCartItems();
+        const item = cart[index];
+        
+        Swal.fire({
+            title: 'Remove Item',
+            html: `Are you sure you want to remove <b>${item.name}</b> from your cart?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cart.splice(index, 1);
+                localStorage.setItem("cart", JSON.stringify(cart));
+                loadCartItems();
+                Swal.fire(
+                    'Removed!',
+                    'The item has been removed from your cart.',
+                    'success'
+                );
+            }
+        });
     };
 
-    // 初始化加载购物车
     loadCartItems();
 
-    // 信用卡输入格式化（保持不变）
     cardNumberInput.addEventListener("input", function () {
         let value = this.value.replace(/\D/g, "");
         value = value.substring(0, 16);
@@ -265,7 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = formatted;
     });
 
-    // 有效期输入格式化（保持不变）
     expiryDateInput.addEventListener("input", function () {
         let value = this.value.replace(/\D/g, "");
         if (value.length >= 2) {

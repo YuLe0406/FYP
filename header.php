@@ -23,6 +23,7 @@ $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
                 </a>
                 <div class="dropdown-menu">
                     <a href="profile.php">Account Settings</a>
+                    <a href="order.php">My Orders</a>
                     <a href="logout.php">Logout</a>
                 </div>
             </div>
