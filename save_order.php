@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 
 session_start();
 require 'db.php';
+require 'send_order_email.php'; // 包含邮件发送函数
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
@@ -23,7 +24,7 @@ if (!$data || !isset($data['cart']) || !is_array($data['cart'])) {
 $userId = $_SESSION['user_id'];
 $cart = $data['cart'];
 
-// Validate payment method
+// 验证支付方式
 $validMethods = ['Credit Card', 'PayPal'];
 $paymentMethod = $data['payment_method'] ?? 'Credit Card';
 if (!in_array($paymentMethod, $validMethods)) {
@@ -32,7 +33,7 @@ if (!in_array($paymentMethod, $validMethods)) {
     exit;
 }
 
-// Validate address
+// 验证地址
 $addressId = $data['address_id'] ?? null;
 if (empty($addressId)) {
     http_response_code(400);
@@ -40,7 +41,7 @@ if (empty($addressId)) {
     exit;
 }
 
-// Verify the address belongs to the user
+// 验证地址是否属于该用户
 $stmt = $conn->prepare("SELECT 1 FROM USER_ADDRESS WHERE UA_ID = ? AND U_ID = ?");
 $stmt->bind_param("ii", $addressId, $userId);
 $stmt->execute();
@@ -51,7 +52,7 @@ if (!$stmt->get_result()->fetch_assoc()) {
 }
 $stmt->close();
 
-// Handle payment details based on payment method
+// 处理支付详情
 if ($paymentMethod === 'Credit Card') {
     $cardNumber = $data['cardNumber'] ?? '';
     $expiryDate = $data['expiryDate'] ?? '';
@@ -63,7 +64,6 @@ if ($paymentMethod === 'Credit Card') {
         exit;
     }
     
-    // Basic card number validation
     $cardNumber = preg_replace('/\s+/', '', $cardNumber);
     if (!preg_match('/^[0-9]{12,19}$/', $cardNumber)) {
         http_response_code(400);
@@ -71,27 +71,24 @@ if ($paymentMethod === 'Credit Card') {
         exit;
     }
     
-    // Basic expiry date validation (MM/YY format)
     if (!preg_match('/^(0[1-9]|1[0-2])\/?([0-9]{2})$/', $expiryDate)) {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid expiry date (MM/YY format required)']);
         exit;
     }
     
-    // Basic CVV validation
     if (!preg_match('/^[0-9]{3,4}$/', $cvv)) {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid CVV (3 or 4 digits required)']);
         exit;
     }
 } else {
-    // PayPal payment - no card details needed
     $cardNumber = 'N/A';
     $expiryDate = 'N/A';
     $cvv = 'N/A';
 }
 
-// Calculate total
+// 计算总金额
 $total = 0;
 foreach ($cart as $item) {
     if (!isset($item['price']) || !isset($item['quantity'])) {
@@ -102,12 +99,12 @@ foreach ($cart as $item) {
     $total += $item['price'] * $item['quantity'];
 }
 
-// Start transaction
+// 开始事务
 $conn->begin_transaction();
 
 try {
-    // Step 1: Save order with address reference
-    $orderStatus = 1; // Pending
+    // 步骤1: 保存订单
+    $orderStatus = 1; // 待处理
     $stmt = $conn->prepare("INSERT INTO ORDERS (U_ID, UA_ID, OS_ID, O_TotalAmount) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("iiid", $userId, $addressId, $orderStatus, $total);
     if (!$stmt->execute()) {
@@ -116,7 +113,7 @@ try {
     $orderId = $stmt->insert_id;
     $stmt->close();
 
-    // Step 2: Save payment
+    // 步骤2: 保存支付信息
     $stmt = $conn->prepare("INSERT INTO PAYMENT (O_ID, Pay_Method, Pay_Amount, Pay_CardNumber, Pay_ExpiryDate, Pay_CVV) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isdsss", $orderId, $paymentMethod, $total, $cardNumber, $expiryDate, $cvv);
     if (!$stmt->execute()) {
@@ -124,7 +121,7 @@ try {
     }
     $stmt->close();
 
-    // Step 3: Save order items & deduct stock
+    // 步骤3: 保存订单商品并减少库存
     $stmt = $conn->prepare("INSERT INTO ORDER_ITEMS (O_ID, P_ID, PV_ID, OI_Quantity, OI_Price) VALUES (?, ?, ?, ?, ?)");
     $updateStock = $conn->prepare("UPDATE PRODUCT_VARIANTS SET P_Quantity = P_Quantity - ? WHERE PV_ID = ?");
     
@@ -134,13 +131,11 @@ try {
         $qty = $item['quantity'];
         $price = $item['price'];
 
-        // Save order item
         $stmt->bind_param("iiiid", $orderId, $pId, $pvId, $qty, $price);
         if (!$stmt->execute()) {
             throw new Exception('Failed to save order item');
         }
 
-        // Decrease stock if variant exists
         if ($pvId) {
             $updateStock->bind_param("ii", $qty, $pvId);
             if (!$updateStock->execute()) {
@@ -152,13 +147,36 @@ try {
     $stmt->close();
     $updateStock->close();
     
-    // Commit transaction if all operations succeeded
+    // 提交事务
     $conn->commit();
+    
+    // 发送确认邮件
+    $email = $data['email'] ?? '';
+    $fullName = $data['fullname'] ?? '';
+    
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        try {
+            $emailSent = sendOrderConfirmationEmail(
+                $email,
+                $orderId,
+                $total,
+                $cart,
+                $paymentMethod,
+                $fullName
+            );
+            
+            if (!$emailSent) {
+                error_log("Failed to send order confirmation email for order #$orderId");
+            }
+        } catch (Exception $e) {
+            error_log("Email sending error: " . $e->getMessage());
+        }
+    }
     
     echo json_encode(['success' => true, 'order_id' => $orderId]);
     
 } catch (Exception $e) {
-    // Rollback transaction on error
+    // 回滚事务
     $conn->rollback();
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
