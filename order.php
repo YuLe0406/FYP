@@ -108,8 +108,8 @@ $userId = $_SESSION['user_id'];
         }
         
         .status-delivered {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background-color:rgb(190, 241, 203);
+            color:rgb(15, 162, 23);
         }
         
         .status-cancelled {
