@@ -195,6 +195,113 @@
     animation: pulse 1.5s infinite;
 }
 
+.admin-container {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.view-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.view-selector h3 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.view-dropdown {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #dcdde1;
+    background: #f9f9f9;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.admin-header {
+    display: grid;
+    grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1fr 100px;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 14px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.admin-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-item {
+    display: grid;
+    grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1fr 100px;
+    padding: 12px 15px;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    align-items: center;
+    background: #ffffff;
+}
+
+.admin-item:hover {
+    background: #f8f9fa;
+}
+
+.action-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.activate {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.activate:hover {
+    background-color: #27ae60;
+}
+
+.deactivate {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.deactivate:hover {
+    background-color: #c0392b;
+}
+
+.current-user {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.no-admins {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
