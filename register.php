@@ -8,7 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $phone = $_POST['phone'] ?? '';
-    $address = $_POST['address'] ?? '';
     $dob = $_POST['dob'] ?? '';
     $gender = $_POST['gender'] ?? '';
     $securityQuestion = $_POST['security_question'] ?? '';
@@ -23,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($password))) $errors[] = "Password is required";
     if ($password !== $confirmPassword) $errors[] = "Passwords do not match";
     if (empty(trim($phone))) $errors[] = "Phone number is required";
-    if (empty(trim($address))) $errors[] = "Address is required";
     if (empty(trim($dob))) $errors[] = "Date of birth is required";
     if (empty(trim($gender))) $errors[] = "Gender is required";
     if (empty(trim($securityQuestion))) $errors[] = "Security question is required";
@@ -38,8 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Updated SQL with new column names
     $stmt = $conn->prepare("
         INSERT INTO USER 
-        (U_FName, U_LName, U_Email, U_Password, U_PNumber, U_Address ,U_DOB, U_Gender, U_SecurityQuestion, U_SecurityAnswer)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (U_FName, U_LName, U_Email, U_Password, U_PNumber, U_DOB, U_Gender, U_SecurityQuestion, U_SecurityAnswer)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     if (!$stmt) {
@@ -47,13 +45,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->bind_param(
-        "ssssssssss", // 10 strings
+        "sssssssss", // 10 strings
         $firstName,
         $lastName,
         $email,
         $passwordHash,
         $phone,
-        $address,
         $dob,
         $gender,
         $securityQuestion,
