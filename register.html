@@ -90,11 +90,12 @@
             </div>
 
                 
-                <div class="input-field">
-                    <label for="dob">DATE OF BIRTH*</label>
-                    <input type="date" id="dob" name="dob" required>
-                </div>
+            <div class="input-field">
+                <label for="dob">DATE OF BIRTH* (Must be 18 years or older)</label>
+                <input type="date" id="dob" name="dob" required onchange="validateAge()">
+                <small id="ageError" class="error-message" style="color: red; display: none;">You must be at least 18 years old to register.</small>
             </div>
+            
             
             <div class="input-field gender-field">
                 <label>GENDER*</label>

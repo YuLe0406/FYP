@@ -16,24 +16,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validation checks
     $errors = [];
 
+    // Basic field validation
     if (empty(trim($firstName))) $errors[] = "First name is required";
     if (empty(trim($lastName))) $errors[] = "Last name is required";
     if (empty(trim($email))) $errors[] = "Email is required";
     if (empty(trim($password))) $errors[] = "Password is required";
     if ($password !== $confirmPassword) $errors[] = "Passwords do not match";
     if (empty(trim($phone))) $errors[] = "Phone number is required";
-    if (empty(trim($dob))) $errors[] = "Date of birth is required";
     if (empty(trim($gender))) $errors[] = "Gender is required";
     if (empty(trim($securityQuestion))) $errors[] = "Security question is required";
     if (empty(trim($securityAnswer))) $errors[] = "Security answer is required";
 
+    // Date of birth validation
+    if (empty(trim($dob))) {
+        $errors[] = "Date of birth is required";
+    } else {
+        try {
+            $dobDate = new DateTime($dob);
+            $today = new DateTime();
+            
+            // Check if date is in the future
+            if ($dobDate > $today) {
+                $errors[] = "Date of birth cannot be in the future";
+            } else {
+                // Calculate age
+                $age = $today->diff($dobDate)->y;
+                
+                // Check if user is at least 18 years old
+                if ($age < 18) {
+                    $errors[] = "You must be at least 18 years old to register";
+                }
+            }
+        } catch (Exception $e) {
+            $errors[] = "Invalid date format";
+        }
+    }
+
+    // If there are errors, display them and stop execution
     if (!empty($errors)) {
         die("Registration failed:<br>" . implode("<br>", $errors));
     }
 
-    $passwordHash = $password; // (Use password_hash later for better security)
+    // Hash the password (consider using password_hash() for better security)
+    $passwordHash = $password; // Replace with password_hash($password, PASSWORD_DEFAULT) in production
 
-    // Updated SQL with new column names
+    // Prepare SQL statement with new column names
     $stmt = $conn->prepare("
         INSERT INTO USER 
         (U_FName, U_LName, U_Email, U_Password, U_PNumber, U_DOB, U_Gender, U_SecurityQuestion, U_SecurityAnswer)
@@ -44,8 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Registration failed: " . $conn->error);
     }
 
+    // Bind parameters
     $stmt->bind_param(
-        "sssssssss", // 10 strings
+        "sssssssss",
         $firstName,
         $lastName,
         $email,
@@ -57,6 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $securityAnswer
     );
 
+    // Execute the statement
     if (!$stmt->execute()) {
         if ($conn->errno == 1062) {
             die("Registration failed: Email already exists");
@@ -66,8 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Close statement and redirect
     $stmt->close();
-
     header("Location: login.html?registration=success");
     exit();
 }
