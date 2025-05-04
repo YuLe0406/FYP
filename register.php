@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($password))) $errors[] = "Password is required";
     if ($password !== $confirmPassword) $errors[] = "Passwords do not match";
     if (empty(trim($phone))) $errors[] = "Phone number is required";
+    if (!preg_match('/^[0-9]{10,11}$/', $phone)) $errors[] = "Phone number must be 10 or 11 digits";
     if (empty(trim($gender))) $errors[] = "Gender is required";
     if (empty(trim($securityQuestion))) $errors[] = "Security question is required";
     if (empty(trim($securityAnswer))) $errors[] = "Security answer is required";

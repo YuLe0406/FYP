@@ -8,12 +8,12 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch user data
-$stmt = $conn->prepare("SELECT U_FName, U_LName, U_Email, U_PNumber, U_Gender FROM USER WHERE U_ID = ?");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+// Fetch user data for display
+$user_stmt = $conn->prepare("SELECT U_FName, U_LName, U_PNumber FROM USER WHERE U_ID = ?");
+$user_stmt->bind_param("i", $_SESSION['user_id']);
+$user_stmt->execute();
+$user_result = $user_stmt->get_result();
+$user = $user_result->fetch_assoc();
 
 // Fetch user addresses
 $address_stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ? ORDER BY UA_IsDefault DESC, UA_Type");
@@ -21,49 +21,8 @@ $address_stmt->bind_param("i", $_SESSION['user_id']);
 $address_stmt->execute();
 $addresses = $address_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Handle profile form submission
+// Handle address operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['update_profile'])) {
-        $firstName = $_POST['first_name'] ?? '';
-        $lastName = $_POST['last_name'] ?? '';
-        $email = strtolower($_POST['email'] ?? '');
-        $phone = $_POST['phone'] ?? '';
-        $gender = $_POST['gender'] ?? '';
-        
-        // Basic validation
-        $errors = [];
-        if (empty(trim($firstName))) $errors[] = "First name is required";
-        if (empty(trim($lastName))) $errors[] = "Last name is required";
-        if (empty(trim($email))) $errors[] = "Email is required";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format";
-        if (empty(trim($phone))) $errors[] = "Phone number is required";
-        if (!preg_match('/^[0-9]{10,11}$/', $phone)) $errors[] = "Phone number must be 10 or 11 digits";
-        if (empty(trim($gender))) $errors[] = "Gender is required";
-        
-        if (empty($errors)) {
-            // Update user data
-            $update_stmt = $conn->prepare("UPDATE USER SET U_FName = ?, U_LName = ?, U_Email = ?, U_PNumber = ?, U_Gender = ? WHERE U_ID = ?");
-            $update_stmt->bind_param("sssssi", $firstName, $lastName, $email, $phone, $gender, $_SESSION['user_id']);
-            
-            if ($update_stmt->execute()) {
-                $success = "Profile updated successfully!";
-                // Refresh user data
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $user = $result->fetch_assoc();
-            } else {
-                if ($conn->errno == 1062) {
-                    $error = "This email is already registered to another account";
-                } else {
-                    $error = "Failed to update profile: " . $conn->error;
-                }
-            }
-        } else {
-            $error = implode("<br>", $errors);
-        }
-    }
-    
-    // Handle address operations
     if (isset($_POST['add_address'])) {
         $address1 = $_POST['address1'] ?? '';
         $address2 = $_POST['address2'] ?? '';
@@ -145,9 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile | CTRL+X</title>
+    <title>My Addresses | CTRL+X</title>
     <link rel="stylesheet" href="auth.css">
-    <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -189,66 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             flex: 1;
             padding: 30px;
         }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 20px;
-            border: 3px solid #3498db;
-        }
-        .profile-info h2 {
-            margin: 0;
-            color: #2c3e50;
-        }
-        .profile-info p {
-            margin: 5px 0 0;
-            color: #7f8c8d;
-        }
         .section-title {
             color: #2c3e50;
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
             margin-bottom: 20px;
-        }
-        .profile-form {
-            max-width: 600px;
-            margin-bottom: 40px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .form-group input, 
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-actions {
-            margin-top: 20px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: none;
-            margin-right: 10px;
-        }
-        .btn-primary {
-            background: #3498db;
-            color: white;
         }
         .address-card {
             border: 1px solid #ddd;
@@ -319,14 +222,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .address-form.active {
             display: block;
         }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-actions {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
         <div class="sidebar">
-            <a href="profile.php" class="active"><i class="fas fa-user"></i> My Profile</a>
-            <a href="addresses.php"><i class="fas fa-map-marker-alt"></i> My Addresses</a>
+            <a href="profile.php"><i class="fas fa-user"></i> My Profile</a>
+            <a href="addresses.php" class="active"><i class="fas fa-map-marker-alt"></i> My Addresses</a>
             <a href="change_password.php"><i class="fas fa-key"></i> Change Password</a>
             <a href="cart.php"><i class="fas fa-shopping-bag"></i> My Orders</a>
             <a href="#"><i class="fas fa-tag"></i> My Coupons</a>
@@ -335,55 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- Main Content Area -->
         <div class="main-content">
-            <div class="profile-header">
-                <img src="https://ui-avatars.com/api/?name=<?= urlencode($user['U_FName'].'+'.$user['U_LName']) ?>&background=3498db&color=fff" 
-                     alt="Profile" class="profile-avatar">
-                <div class="profile-info">
-                    <h2><?= htmlspecialchars($user['U_FName'] . ' ' . $user['U_LName']) ?></h2>
-                </div>
-            </div>
-
-            <!-- Profile Information Form -->
-            <h2 class="section-title">PERSONAL INFORMATION</h2>
-            <form method="POST" class="profile-form">
-                <input type="hidden" name="update_profile" value="1">
-                
-                <div class="form-group">
-                    <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" value="<?= htmlspecialchars($user['U_FName']) ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="last_name">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" value="<?= htmlspecialchars($user['U_LName']) ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['U_Email']) ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($user['U_PNumber']) ?>" pattern="[0-9]{10,11}" required>
-                    <small>Format: 10 or 11 digits (e.g. 0123456789)</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender" required>
-                        <option value="male" <?= $user['U_Gender'] == 'male' ? 'selected' : '' ?>>Male</option>
-                        <option value="female" <?= $user['U_Gender'] == 'female' ? 'selected' : '' ?>>Female</option>
-                        <option value="other" <?= $user['U_Gender'] == 'other' ? 'selected' : '' ?>>Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                </div>
-            </form>
-
-            <h2 class="section-title">ADDRESSES</h2>
+            <h2 class="section-title">MY ADDRESSES</h2>
 
             <button id="toggleAddressForm" class="add-address-btn">
                 <i class="fas fa-plus"></i> Add New Address

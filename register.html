@@ -19,7 +19,6 @@
         <form class="auth-form" action="register.php" method="POST">
             <div class="form-header">
                 <h2 class="form-title">CREATE AN ACCOUNT</h2>
-
             </div>
 
             <!-- Personal Information -->
@@ -44,7 +43,7 @@
                 
                 <div class="input-field">
                     <label for="phone">PHONE NUMBER*</label>
-                    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" placeholder="12345678901" required>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{10,11}" placeholder="1234567890 or 12345678901" required>
                 </div>
             </div>
 
@@ -65,7 +64,6 @@
                         <div id="strength-text"></div>
                     </div>
                     <small class="password-hint">Password must be 8-20 letters and contain both letters and numbers. The following symbols can be used [#$%&(')'+,-/::<=>?@[|^_:{}]~</small>
-                   
                 </div>
                 
                 <div class="input-field">
@@ -89,13 +87,11 @@
                 <input type="text" id="security_answer" name="security_answer" required>
             </div>
 
-                
             <div class="input-field">
                 <label for="dob">DATE OF BIRTH* (Must be 18 years or older)</label>
                 <input type="date" id="dob" name="dob" required onchange="validateAge()">
                 <small id="ageError" class="error-message" style="color: red; display: none;">You must be at least 18 years old to register.</small>
             </div>
-            
             
             <div class="input-field gender-field">
                 <label>GENDER*</label>
@@ -117,9 +113,8 @@
 
     <!-- Frontend Validation Script -->
     <script>
-
-                // Password strength indicator
-                password.addEventListener('input', function() {
+        // Password strength indicator
+        password.addEventListener('input', function() {
             const strengthIndicator = document.querySelector('#passwordStrength');
             const strength = checkPasswordStrength(this.value);
             
