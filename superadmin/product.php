@@ -18,6 +18,7 @@ if (isset($_GET['toggle_status'])) {
         
         $productId = (int)$_GET['toggle_status'];
         $newStatus = (int)$_GET['new_status'];
+        $view = isset($_GET['view']) ? $_GET['view'] : 'active';
         
         // Verify product exists
         $check_query = "SELECT P_ID FROM PRODUCT WHERE P_ID = ?";
@@ -41,10 +42,7 @@ if (isset($_GET['toggle_status'])) {
             'message' => $update_result ? 'Status updated successfully' : mysqli_error($conn),
             'productId' => $productId,
             'newStatus' => $newStatus,
-            'debug' => [
-                'query' => $update_query,
-                'params' => [$newStatus, $productId]
-            ]
+            'redirect' => "product.php?view=" . ($newStatus ? 'inactive' : 'active')
         ]);
     } catch (Exception $e) {
         echo json_encode([
@@ -59,17 +57,21 @@ if (isset($_GET['toggle_status'])) {
 // Only proceed with HTML for non-AJAX requests
 include 'sidebar.php';
 
+// Determine which products to show
+$view = isset($_GET['view']) ? $_GET['view'] : 'active';
+$status = ($view === 'inactive') ? 1 : 0;
+
 // Fetch active categories
 $category_query = "SELECT * FROM CATEGORIES WHERE C_Status = 0";
 $category_result = mysqli_query($conn, $category_query);
 
-// Fetch all products
+// Fetch products based on view
 $product_query = "
     SELECT p.*, c.C_Name, 
            (SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE P_ID = p.P_ID LIMIT 1) AS primary_image
     FROM PRODUCT p
     JOIN CATEGORIES c ON p.C_ID = c.C_ID
-    WHERE c.C_Status = 0
+    WHERE c.C_Status = 0 AND p.P_Status = $status
     ORDER BY p.P_ID DESC";
 $product_result = mysqli_query($conn, $product_query);
 
@@ -115,6 +117,31 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
             border-bottom: 2px solid #1abc9c;
             padding-bottom: 10px;
             margin-bottom: 20px;
+        }
+        
+        /* View Selector */
+        .view-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .view-selector h3 {
+            font-size: 22px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .view-dropdown {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            font-size: 14px;
+            cursor: pointer;
         }
         
         /* Form Styles */
@@ -311,6 +338,14 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
             font-size: 13px;
         }
         
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .action-buttons {
@@ -365,9 +400,19 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
             </form>
         </section>
 
-        <!-- Existing Products Table -->
-        <section class="existing-products">
-            <h2>Existing Products</h2>
+        <!-- Product View Selector -->
+        <section class="product-view">
+            <div class="view-selector">
+                <h3>
+                    <i class="fas <?= $view === 'active' ? 'fa-check-circle' : 'fa-times-circle' ?>"></i>
+                    <?= $view === 'active' ? 'Active Products' : 'Inactive Products' ?>
+                </h3>
+                <select class="view-dropdown" onchange="window.location.href='?view='+this.value">
+                    <option value="active" <?= $view === 'active' ? 'selected' : '' ?>>Active Products</option>
+                    <option value="inactive" <?= $view === 'inactive' ? 'selected' : '' ?>>Inactive Products</option>
+                </select>
+            </div>
+            
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -383,62 +428,70 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                     </tr>
                     </thead>
                     <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($product_result)): 
-                        $image_path = $row['primary_image'] ? '../' . ltrim($row['primary_image'], 'FYP/') : '';
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['P_ID']) ?></td>
-                            <td><?= htmlspecialchars($row['C_Name']) ?></td>
-                            <td><?= htmlspecialchars($row['P_Name']) ?></td>
-                            <td>RM<?= number_format($row['P_Price'], 2) ?></td>
-                            <td>
-                                <?php if ($image_path && file_exists($image_path)): ?>
-                                    <img src="<?= htmlspecialchars($image_path) ?>" alt="Product Image" width="50">
-                                <?php else: ?>
-                                    <span class="no-image">No Image</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <ul class="variant-list">
-                                    <?php
-                                    $variant_sql = "SELECT pv.P_Size, pv.P_Quantity, pc.COLOR_NAME 
-                                                   FROM PRODUCT_VARIANTS pv 
-                                                   JOIN PRODUCT_COLOR pc ON pv.PC_ID = pc.PC_ID 
-                                                   WHERE pv.P_ID = ".$row['P_ID'];
-                                    $variant_result = mysqli_query($conn, $variant_sql);
-                                    while ($variant = mysqli_fetch_assoc($variant_result)):
-                                    ?>
-                                        <li>
-                                            <strong>Color:</strong> <?= htmlspecialchars($variant['COLOR_NAME']) ?>, 
-                                            <strong>Size:</strong> <?= htmlspecialchars($variant['P_Size']) ?>, 
-                                            <strong>Qty:</strong> <?= htmlspecialchars($variant['P_Quantity']) ?>
-                                        </li>
-                                    <?php endwhile; ?>
-                                </ul>
-                            </td>
-                            <td>
-                                <span class="status-badge <?= $row['P_Status'] == 0 ? 'active' : 'inactive' ?>">
-                                    <?= $row['P_Status'] == 0 ? 'Active' : 'Inactive' ?>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="edit_product.php?productId=<?= $row['P_ID'] ?>" class="btn btn-edit">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <?php if ($row['P_Status'] == 0): ?>
-                                        <button class="btn btn-deactivate" onclick="toggleProductStatus(<?= $row['P_ID'] ?>, 1)">
-                                            <i class="fas fa-times-circle"></i> Deactivate
-                                        </button>
+                    <?php if (mysqli_num_rows($product_result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($product_result)): 
+                            $image_path = $row['primary_image'] ? '../' . ltrim($row['primary_image'], 'FYP/') : '';
+                        ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['P_ID']) ?></td>
+                                <td><?= htmlspecialchars($row['C_Name']) ?></td>
+                                <td><?= htmlspecialchars($row['P_Name']) ?></td>
+                                <td>RM<?= number_format($row['P_Price'], 2) ?></td>
+                                <td>
+                                    <?php if ($image_path && file_exists($image_path)): ?>
+                                        <img src="<?= htmlspecialchars($image_path) ?>" alt="Product Image" width="50">
                                     <?php else: ?>
-                                        <button class="btn btn-activate" onclick="toggleProductStatus(<?= $row['P_ID'] ?>, 0)">
-                                            <i class="fas fa-check-circle"></i> Activate
-                                        </button>
+                                        <span class="no-image">No Image</span>
                                     <?php endif; ?>
-                                </div>
+                                </td>
+                                <td>
+                                    <ul class="variant-list">
+                                        <?php
+                                        $variant_sql = "SELECT pv.P_Size, pv.P_Quantity, pc.COLOR_NAME 
+                                                       FROM PRODUCT_VARIANTS pv 
+                                                       JOIN PRODUCT_COLOR pc ON pv.PC_ID = pc.PC_ID 
+                                                       WHERE pv.P_ID = ".$row['P_ID'];
+                                        $variant_result = mysqli_query($conn, $variant_sql);
+                                        while ($variant = mysqli_fetch_assoc($variant_result)):
+                                        ?>
+                                            <li>
+                                                <strong>Color:</strong> <?= htmlspecialchars($variant['COLOR_NAME']) ?>, 
+                                                <strong>Size:</strong> <?= htmlspecialchars($variant['P_Size']) ?>, 
+                                                <strong>Qty:</strong> <?= htmlspecialchars($variant['P_Quantity']) ?>
+                                            </li>
+                                        <?php endwhile; ?>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <span class="status-badge <?= $row['P_Status'] == 0 ? 'active' : 'inactive' ?>">
+                                        <?= $row['P_Status'] == 0 ? 'Active' : 'Inactive' ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="edit_product.php?productId=<?= $row['P_ID'] ?>" class="btn btn-edit">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <?php if ($row['P_Status'] == 0): ?>
+                                            <button class="btn btn-deactivate" onclick="toggleProductStatus(<?= $row['P_ID'] ?>, 1, '<?= $view ?>')">
+                                                <i class="fas fa-times-circle"></i> Deactivate
+                                            </button>
+                                        <?php else: ?>
+                                            <button class="btn btn-activate" onclick="toggleProductStatus(<?= $row['P_ID'] ?>, 0, '<?= $view ?>')">
+                                                <i class="fas fa-check-circle"></i> Activate
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                No <?= $view === 'active' ? 'active' : 'inactive' ?> products found
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -449,7 +502,7 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Toggle Product Status
-    function toggleProductStatus(productId, newStatus) {
+    function toggleProductStatus(productId, newStatus, currentView) {
         const action = newStatus == 0 ? 'activate' : 'deactivate';
         
         Swal.fire({
@@ -471,7 +524,7 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                     didOpen: () => { Swal.showLoading(); }
                 });
                 
-                fetch(`product.php?toggle_status=${productId}&new_status=${newStatus}&t=${Date.now()}`, {
+                fetch(`product.php?toggle_status=${productId}&new_status=${newStatus}&view=${currentView}&t=${Date.now()}`, {
                     headers: { 'Accept': 'application/json' }
                 })
                 .then(response => {
@@ -492,7 +545,13 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                             text: data.message,
                             showConfirmButton: false,
                             timer: 1500
-                        }).then(() => location.reload());
+                        }).then(() => {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                location.reload();
+                            }
+                        });
                     } else {
                         throw new Error(data?.message || 'Unknown error');
                     }

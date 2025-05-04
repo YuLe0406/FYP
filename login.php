@@ -2,10 +2,6 @@
 session_start();
 require __DIR__ . '/db.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = strtolower($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -15,17 +11,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($password))) $errors[] = "Password is required";
 
     if (!empty($errors)) {
-        die("Login failed:<br>" . implode("<br>", $errors));
+        $_SESSION['login_error'] = implode("<br>", $errors);
+        header("Location: login.html");
+        exit();
     }
 
-    // Validate password format (client-side should catch this, but good to double-check)
-    if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $password)) {
-        die("Invalid password format. Password must contain at least 8 characters, including uppercase, lowercase, number and special character.");
+    // Validate password format (matches register requirements)
+    if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/', $password)) {
+        $_SESSION['login_error'] = "Invalid password format. Password must contain at least 8 characters with both letters and numbers.";
+        header("Location: login.html");
+        exit();
     }
 
     $stmt = $conn->prepare("SELECT * FROM USER WHERE U_Email = ?");
     if (!$stmt) {
-        die("Error: " . $conn->error);
+        $_SESSION['login_error'] = "System error. Please try later.";
+        header("Location: login.html");
+        exit();
     }
 
     $stmt->bind_param("s", $email);
@@ -43,10 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: index.php");
             exit();
         } else {
-            die("Invalid email or password!");
+            $_SESSION['login_error'] = "Invalid email or password!";
+            header("Location: login.html");
+            exit();
         }
     } else {
-        die("Invalid email or password!");
+        $_SESSION['login_error'] = "Invalid email or password!";
+        header("Location: login.html");
+        exit();
     }
 
     $stmt->close();

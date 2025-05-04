@@ -15,11 +15,11 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .order-list {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin-top: 20px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-top: 20px;
         }
 
         table {
@@ -160,19 +160,19 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
         .status-filter.Shipped { background-color: #17a2b8; color: white; }
         .status-filter.Delivered { background-color: #28a745; color: white; }
         .status-filter.Cancelled { background-color: #dc3545; color: white; }
-        
+
         .delivery-info {
             margin-top: 20px;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 5px;
         }
-        
+
         .delivery-info h3 {
             margin-top: 0;
             color: #1abc9c;
         }
-        
+
         .order-status-form {
             margin-top: 20px;
             padding: 15px;
