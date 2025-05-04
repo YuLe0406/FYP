@@ -15,128 +15,44 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Fetch user addresses
-$address_stmt = $conn->prepare("SELECT * FROM USER_ADDRESS WHERE U_ID = ? ORDER BY UA_IsDefault DESC, UA_Type");
-$address_stmt->bind_param("i", $_SESSION['user_id']);
-$address_stmt->execute();
-$addresses = $address_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
 // Handle profile form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['update_profile'])) {
-        $firstName = $_POST['first_name'] ?? '';
-        $lastName = $_POST['last_name'] ?? '';
-        $email = strtolower($_POST['email'] ?? '');
-        $phone = $_POST['phone'] ?? '';
-        $gender = $_POST['gender'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
+    $firstName = $_POST['first_name'] ?? '';
+    $lastName = $_POST['last_name'] ?? '';
+    $email = strtolower($_POST['email'] ?? '');
+    $phone = $_POST['phone'] ?? '';
+    $gender = $_POST['gender'] ?? '';
+    
+    // Basic validation
+    $errors = [];
+    if (empty(trim($firstName))) $errors[] = "First name is required";
+    if (empty(trim($lastName))) $errors[] = "Last name is required";
+    if (empty(trim($email))) $errors[] = "Email is required";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format";
+    if (empty(trim($phone))) $errors[] = "Phone number is required";
+    if (!preg_match('/^[0-9]{10,11}$/', $phone)) $errors[] = "Phone number must be 10 or 11 digits";
+    if (empty(trim($gender))) $errors[] = "Gender is required";
+    
+    if (empty($errors)) {
+        // Update user data
+        $update_stmt = $conn->prepare("UPDATE USER SET U_FName = ?, U_LName = ?, U_Email = ?, U_PNumber = ?, U_Gender = ? WHERE U_ID = ?");
+        $update_stmt->bind_param("sssssi", $firstName, $lastName, $email, $phone, $gender, $_SESSION['user_id']);
         
-        // Basic validation
-        $errors = [];
-        if (empty(trim($firstName))) $errors[] = "First name is required";
-        if (empty(trim($lastName))) $errors[] = "Last name is required";
-        if (empty(trim($email))) $errors[] = "Email is required";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format";
-        if (empty(trim($phone))) $errors[] = "Phone number is required";
-        if (!preg_match('/^[0-9]{10,11}$/', $phone)) $errors[] = "Phone number must be 10 or 11 digits";
-        if (empty(trim($gender))) $errors[] = "Gender is required";
-        
-        if (empty($errors)) {
-            // Update user data
-            $update_stmt = $conn->prepare("UPDATE USER SET U_FName = ?, U_LName = ?, U_Email = ?, U_PNumber = ?, U_Gender = ? WHERE U_ID = ?");
-            $update_stmt->bind_param("sssssi", $firstName, $lastName, $email, $phone, $gender, $_SESSION['user_id']);
-            
-            if ($update_stmt->execute()) {
-                $success = "Profile updated successfully!";
-                // Refresh user data
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $user = $result->fetch_assoc();
+        if ($update_stmt->execute()) {
+            $success = "Profile updated successfully!";
+            // Refresh user data
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+        } else {
+            if ($conn->errno == 1062) {
+                $error = "This email is already registered to another account";
             } else {
-                if ($conn->errno == 1062) {
-                    $error = "This email is already registered to another account";
-                } else {
-                    $error = "Failed to update profile: " . $conn->error;
-                }
+                $error = "Failed to update profile: " . $conn->error;
             }
-        } else {
-            $error = implode("<br>", $errors);
         }
-    }
-    
-    // Handle address operations
-    if (isset($_POST['add_address'])) {
-        $address1 = $_POST['address1'] ?? '';
-        $address2 = $_POST['address2'] ?? '';
-        $postcode = $_POST['postcode'] ?? '';
-        $city = $_POST['city'] ?? '';
-        $state = $_POST['state'] ?? '';
-        $type = $_POST['type'] ?? 'home';
-        $is_default = isset($_POST['is_default']) ? 1 : 0;
-        
-        // Validation
-        $errors = [];
-        if (empty(trim($address1))) $errors[] = "Address Line 1 is required";
-        if (empty(trim($postcode))) $errors[] = "Postcode is required";
-        if (empty(trim($city))) $errors[] = "City is required";
-        if (empty(trim($state))) $errors[] = "State is required";
-        
-        if (empty($errors)) {
-            // If setting as default, first unset any existing default
-            if ($is_default) {
-                $conn->query("UPDATE USER_ADDRESS SET UA_IsDefault = 0 WHERE U_ID = {$_SESSION['user_id']}");
-            }
-            
-            $add_stmt = $conn->prepare("INSERT INTO USER_ADDRESS (U_ID, UA_Type, UA_Address1, UA_Address2, UA_Postcode, UA_City, UA_State, UA_IsDefault) 
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $add_stmt->bind_param("issssssi", $_SESSION['user_id'], $type, $address1, $address2, $postcode, $city, $state, $is_default);
-            
-            if ($add_stmt->execute()) {
-                $success = "Address added successfully!";
-                // Refresh addresses
-                $address_stmt->execute();
-                $addresses = $address_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-            } else {
-                $error = "Failed to add address: " . $conn->error;
-            }
-        } else {
-            $error = implode("<br>", $errors);
-        }
-    }
-    
-    if (isset($_POST['delete_address'])) {
-        $ua_id = $_POST['ua_id'] ?? 0;
-        
-        $del_stmt = $conn->prepare("DELETE FROM USER_ADDRESS WHERE UA_ID = ? AND U_ID = ?");
-        $del_stmt->bind_param("ii", $ua_id, $_SESSION['user_id']);
-        
-        if ($del_stmt->execute()) {
-            $success = "Address deleted successfully!";
-            // Refresh addresses
-            $address_stmt->execute();
-            $addresses = $address_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        } else {
-            $error = "Failed to delete address: " . $conn->error;
-        }
-    }
-    
-    if (isset($_POST['set_default_address'])) {
-        $ua_id = $_POST['ua_id'] ?? 0;
-        
-        // First unset any existing default
-        $conn->query("UPDATE USER_ADDRESS SET UA_IsDefault = 0 WHERE U_ID = {$_SESSION['user_id']}");
-        
-        // Set the new default
-        $default_stmt = $conn->prepare("UPDATE USER_ADDRESS SET UA_IsDefault = 1 WHERE UA_ID = ? AND U_ID = ?");
-        $default_stmt->bind_param("ii", $ua_id, $_SESSION['user_id']);
-        
-        if ($default_stmt->execute()) {
-            $success = "Default address updated successfully!";
-            // Refresh addresses
-            $address_stmt->execute();
-            $addresses = $address_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        } else {
-            $error = "Failed to set default address: " . $conn->error;
-        }
+    } else {
+        $error = implode("<br>", $errors);
     }
 }
 ?>
@@ -147,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | CTRL+X</title>
     <link rel="stylesheet" href="auth.css">
-    <link rel="stylesheet" href="register.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -218,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         .profile-form {
             max-width: 600px;
-            margin-bottom: 40px;
         }
         .form-group {
             margin-bottom: 15px;
@@ -244,80 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 4px;
             cursor: pointer;
             border: none;
-            margin-right: 10px;
         }
         .btn-primary {
             background: #3498db;
             color: white;
         }
-        .address-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .address-card.default {
-            border-color: #3498db;
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-        .address-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .address-name {
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .address-default {
-            background: #3498db;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .address-contact {
+        small {
             color: #7f8c8d;
-            margin-bottom: 10px;
-        }
-        .address-details {
-            line-height: 1.6;
-        }
-        .address-actions {
-            margin-top: 15px;
-        }
-        .address-actions a {
-            color: #3498db;
-            margin-right: 15px;
-            text-decoration: none;
-        }
-        .address-actions a:hover {
-            text-decoration: underline;
-        }
-        .add-address-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .add-address-btn i {
-            margin-right: 8px;
-        }
-        .address-form {
-            display: none;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
-        .address-form.active {
-            display: block;
+            font-size: 0.8em;
         }
     </style>
 </head>
@@ -340,6 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                      alt="Profile" class="profile-avatar">
                 <div class="profile-info">
                     <h2><?= htmlspecialchars($user['U_FName'] . ' ' . $user['U_LName']) ?></h2>
+                    <p><?= htmlspecialchars($user['U_Email']) ?></p>
                 </div>
             </div>
 
@@ -382,104 +231,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                 </div>
             </form>
-
-            <h2 class="section-title">ADDRESSES</h2>
-
-            <button id="toggleAddressForm" class="add-address-btn">
-                <i class="fas fa-plus"></i> Add New Address
-            </button>
-
-            <!-- New Address Form -->
-            <form method="POST" id="newAddressForm" class="address-form">
-                <input type="hidden" name="add_address" value="1">
-                <div class="form-group">
-                    <label for="address1">Address Line 1</label>
-                    <input type="text" id="address1" name="address1" required placeholder="e.g. 74, JALAN 3/1, TAMAN SRI KLUANG">
-                </div>
-                <div class="form-group">
-                    <label for="address2">Address Line 2 (Optional)</label>
-                    <input type="text" id="address2" name="address2" placeholder="e.g. 86000 KLUANG, JOHOR">
-                </div>
-                <div class="form-group">
-                    <label for="postcode">Postcode</label>
-                    <input type="text" id="postcode" name="postcode" required placeholder="Postal code">
-                </div>
-                <div class="form-group">
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" required placeholder="City">
-                </div>
-                <div class="form-group">
-                    <label for="state">State</label>
-                    <select name="state" id="state" required>
-                        <option value="">Select State</option>
-                        <option value="Johor">Johor</option>
-                        <option value="Kedah">Kedah</option>
-                        <option value="Kelantan">Kelantan</option>
-                        <option value="Melaka">Melaka</option>
-                        <option value="Negeri Sembilan">Negeri Sembilan</option>
-                        <option value="Pahang">Pahang</option>
-                        <option value="Penang">Penang</option>
-                        <option value="Perak">Perak</option>
-                        <option value="Perlis">Perlis</option>
-                        <option value="Sabah">Sabah</option>
-                        <option value="Sarawak">Sarawak</option>
-                        <option value="Selangor">Selangor</option>
-                        <option value="Terengganu">Terengganu</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" name="is_default" id="is_default">
-                        Set as default shipping address
-                    </label>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Save Address</button>
-                    <button type="button" id="cancelAddressForm" class="btn btn-secondary">Cancel</button>
-                </div>
-            </form>
-
-            <!-- Address List -->
-            <?php if (empty($addresses)): ?>
-                <p>No addresses saved yet. Add your first address above.</p>
-            <?php else: ?>
-                <?php foreach ($addresses as $address): ?>
-                    <div class="address-card <?= $address['UA_IsDefault'] ? 'default' : '' ?>">
-                        <div class="address-header">
-                            <div class="address-name"><?= htmlspecialchars($user['U_FName'] . ' ' . $user['U_LName']) ?></div>
-                            <?php if ($address['UA_IsDefault']): ?>
-                                <div class="address-default">Default shipping</div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="address-contact"><?= htmlspecialchars($user['U_PNumber']) ?></div>
-                        <div class="address-details">
-                            <p><?= htmlspecialchars($address['UA_Address1']) ?></p>
-                            <?php if (!empty($address['UA_Address2'])): ?>
-                                <p><?= htmlspecialchars($address['UA_Address2']) ?></p>
-                            <?php endif; ?>
-                            <p><?= htmlspecialchars($address['UA_Postcode']) ?> <?= htmlspecialchars($address['UA_City']) ?></p>
-                            <p><?= htmlspecialchars($address['UA_State']) ?></p>
-                            <p>Malaysia</p>
-                        </div>
-                        <div class="address-actions">
-                            <?php if (!$address['UA_IsDefault']): ?>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="set_default_address" value="1">
-                                    <input type="hidden" name="ua_id" value="<?= $address['UA_ID'] ?>">
-                                    <a href="#" onclick="this.closest('form').submit(); return false;">Set as default</a>
-                                </form>
-                            <?php endif; ?>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="delete_address" value="1">
-                                <input type="hidden" name="ua_id" value="<?= $address['UA_ID'] ?>">
-                                <a href="#" onclick="if(confirm('Are you sure you want to delete this address?')) { this.closest('form').submit(); } return false;">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
         </div>
     </div>
 
@@ -504,18 +255,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
         </script>
     <?php endif; ?>
-    
-    <script>
-        // Toggle new address form visibility
-        document.getElementById('toggleAddressForm').addEventListener('click', function() {
-            document.getElementById('newAddressForm').classList.add('active');
-            this.style.display = 'none';
-        });
-
-        document.getElementById('cancelAddressForm').addEventListener('click', function() {
-            document.getElementById('newAddressForm').classList.remove('active');
-            document.getElementById('toggleAddressForm').style.display = 'flex';
-        });
-    </script>
 </body>
 </html>
