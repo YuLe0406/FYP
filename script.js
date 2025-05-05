@@ -280,3 +280,105 @@ function updateWishlistCounter() {
         counter.textContent = wishlist.length;
     }
 }
+
+/**
+ * Initialize image magnifier on hover
+ */
+function initMagnifier() {
+    const container = document.querySelector('.magnifier-container');
+    const mainImage = document.getElementById('mainImage');
+    const glass = document.querySelector('.magnifier-glass');
+    
+    // Exit if elements not found
+    if (!container || !mainImage || !glass) return;
+    
+    // Configuration (adjust these values as needed)
+    const config = {
+        zoomLevel: 2,          // How much to zoom (2 = 200%)
+        glassSize: 150,        // Diameter of magnifier in pixels
+        borderWidth: 3,        // Border thickness
+        borderColor: '#fff',   // Border color
+        shadow: '0 0 10px rgba(0,0,0,0.3)' // Box shadow
+    };
+    
+    // Set glass styles
+    glass.style.width = `${config.glassSize}px`;
+    glass.style.height = `${config.glassSize}px`;
+    glass.style.border = `${config.borderWidth}px solid ${config.borderColor}`;
+    glass.style.boxShadow = config.shadow;
+    
+    // When mouse moves on the image
+    container.addEventListener('mousemove', moveMagnifier);
+    
+    // When mouse leaves the image
+    container.addEventListener('mouseleave', () => {
+        glass.style.display = 'none';
+    });
+    
+    // When image loads or changes
+    mainImage.addEventListener('load', function() {
+        // Update glass background with current image
+        glass.style.backgroundImage = `url('${mainImage.src}')`;
+    });
+    
+    /**
+     * Handle magnifier movement
+     */
+    function moveMagnifier(e) {
+        // Show the magnifier glass
+        glass.style.display = 'block';
+        
+        // Get mouse position relative to image
+        const pos = getCursorPos(e);
+        let x = pos.x;
+        let y = pos.y;
+        
+        // Prevent magnifier from being positioned outside the image
+        const halfGlass = config.glassSize / 2;
+        x = Math.max(halfGlass, Math.min(x, container.offsetWidth - halfGlass));
+        y = Math.max(halfGlass, Math.min(y, container.offsetHeight - halfGlass));
+        
+        // Position the magnifier glass
+        glass.style.left = `${x - halfGlass}px`;
+        glass.style.top = `${y - halfGlass}px`;
+        
+        // Calculate zoomed image position
+        const bgPosX = -(x * config.zoomLevel - halfGlass);
+        const bgPosY = -(y * config.zoomLevel - halfGlass);
+        
+        // Set zoomed image
+        glass.style.backgroundSize = `${mainImage.width * config.zoomLevel}px ${mainImage.height * config.zoomLevel}px`;
+        glass.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+    }
+    
+    /**
+     * Get cursor position relative to image
+     */
+    function getCursorPos(e) {
+        const rect = container.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+}
+
+// Initialize magnifier when page loads
+document.addEventListener('DOMContentLoaded', initMagnifier);
+
+function changeImage(thumbnail, newSrc) {
+    const mainImage = document.getElementById('mainImage');
+    mainImage.src = newSrc;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(img => {
+        img.classList.remove('active');
+    });
+    thumbnail.classList.add('active');
+    
+    // Refresh magnifier with new image
+    const glass = document.querySelector('.magnifier-glass');
+    if (glass) {
+        glass.style.backgroundImage = `url('${newSrc}')`;
+    }
+}

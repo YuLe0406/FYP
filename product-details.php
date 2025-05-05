@@ -80,14 +80,37 @@ $conn->close();
             flex-direction: column;
             gap: 15px;
         }
+
+        .magnifier-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 500px;
+        }
         
         .main-image {
             width: 100%;
-            height: 500px;
+            height: 100%;
             object-fit: contain;
             background: #f8f8f8;
+            cursor: zoom-in;
+            transition: transform 0.1s;
         }
         
+        .magnifier-glass {
+            position: absolute;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            cursor: none;
+            width: 150px;
+            height: 150px;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+        }
+
         .thumbnail-container {
             display: flex;
             gap: 10px;
@@ -306,13 +329,16 @@ $conn->close();
     </div>
     
     <div class="product-details">
-        <div class="product-gallery">
-            <img id="mainImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="<?php echo $product['P_Name']; ?>" class="main-image">
+            <div class="product-gallery">
+            <div class="magnifier-container">
+                <img id="mainImage" src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" 
+                    alt="<?php echo $product['P_Name']; ?>" class="main-image">
+                <div class="magnifier-glass"></div>
+            </div>
             
             <?php if (!empty($additional_images)): ?>
-            <div class="thumbnail-container">
-                <img src="<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>" alt="Main view" class="thumbnail active" onclick="changeImage(this, '<?php echo 'http://localhost/FYP/' . $product['P_Picture']; ?>')">
-                <?php foreach (array_slice($additional_images, 0, 4) as $image): ?>
+            <div class="thumbnail-container"> 
+                <?php foreach (array_slice($additional_images, 0, 5) as $image): ?>
                     <img src="<?php echo 'http://localhost/FYP/' . $image; ?>" alt="Additional view" class="thumbnail" onclick="changeImage(this, '<?php echo 'http://localhost/FYP/' . $image; ?>')">
                 <?php endforeach; ?>
             </div>
