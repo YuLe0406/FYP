@@ -140,7 +140,7 @@ $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
     }
     
     .discount-label {
-        background-color: #ff0000;
+        background-color:#ff4d4d;
         color: white;
         padding: 20px 0;
         overflow: hidden;

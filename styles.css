@@ -137,7 +137,7 @@ body, html {
 
 }
 
-.add-to-cart, .add-to-wishlist {
+.add-to-cart {
   background: black;
   color: white;
   padding: 10px;
@@ -185,59 +185,6 @@ details {
   color: black;
 }
 
-/* Add to Bag Button */
-.product-info button {
-  width: 100%; /* Full width */
-  background-color: #A00000; /* Deep red color */
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s;
-}
-
-.product-info button:hover {
-  background-color: #800000; /* Darker red on hover */
-}
-
-/* Add to Wishlist Button */
-.product-info .wishlist-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.product-info .wishlist-container i {
-  font-size: 18px;
-  color: gray; /* Default heart icon color */
-  margin-right: 5px;
-  transition: 0.3s;
-}
-
-.product-info .wishlist-container a {
-  text-decoration: none;
-  color: black;
-  font-size: 13px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.product-info .wishlist-container i:hover {
-  color: #A00000; /* Red heart on hover */
-}
-
-.product-info .wishlist-container a:hover {
-  color: #A00000; /* Red text on hover */
-}
-
-.product-grid p{
-  font-size: 18px;
-}
 
 
 /*YAW SHI HAO*/

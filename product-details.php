@@ -71,7 +71,7 @@ $conn->close();
             gap: 40px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 60px;
         }
         
         .product-gallery {
@@ -86,7 +86,6 @@ $conn->close();
             height: 500px;
             object-fit: contain;
             background: #f8f8f8;
-            cursor: zoom-in;
         }
         
         .thumbnail-container {
@@ -207,6 +206,7 @@ $conn->close();
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 8px;
+            font-weight: bold:
         }
         
         .add-to-cart:hover {
@@ -215,22 +215,17 @@ $conn->close();
         
         .add-to-wishlist {
             width: 100%;
-            padding: 12px;
             background-color: transparent;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             transition: all 0.3s;
-        }
-        
-        .add-to-wishlist:hover {
-            border-color: #000;
-            background-color: #f8f8f8;
+            border-color: transparent;
         }
         
         .add-to-wishlist i {
@@ -289,6 +284,16 @@ $conn->close();
                 height: 350px;
             }
         }
+
+        .back-to-shop {
+            text-decoration: none;
+            color: black;
+            font-size: 18px;
+            justify-content: right;
+            width: 100%;
+            margin-left: 20px;
+            font-weight:bold;
+        }
     </style>
 </head>
 <body>
@@ -296,8 +301,8 @@ $conn->close();
 <?php include 'header.php'; ?>
 
 <main>
-    <div class="breadcrumb">
-        <a href="shop.php">← Continue Shopping</a>
+    <div>
+    <a href="shop.php" class="back-to-shop">← Continue Shopping</a>
     </div>
     
     <div class="product-details">

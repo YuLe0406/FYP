@@ -75,10 +75,6 @@ function viewProduct(id) {
 }
 
 
-// Filtering & Sorting
-document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));
-document.getElementById("sortPrice").addEventListener("change", (e) => loadProducts("all", e.target.value));
-
 window.onload = () => {
     if (document.getElementById("product-list")) {
         loadProducts();
@@ -88,74 +84,81 @@ window.onload = () => {
 /**
  * Add to Cart with Stock Validation (SweetAlert2)
  */
-async function addToCart() {
-    // 1. Get DOM elements
-    const sizeDropdown = document.getElementById("size-select");
-    const quantityInput = document.getElementById("quantity");
-    
-    // 2. Basic validation
-    if (!sizeDropdown || !quantityInput) {
-        await showErrorAlert("System Error", "Could not find size or quantity inputs");
-        return;
-    }
-
-    const selectedSize = sizeDropdown.value;
-    const selectedQuantity = parseInt(quantityInput.value) || 1;
-    const selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
-    const availableStock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
-    const variantId = selectedOption.getAttribute("data-variant-id");
-
-    // 3. Validate size selection
-    if (!selectedSize) {
-        await showErrorAlert("Size Required", "Please select a size first");
-        return;
-    }
-
-    // 4. Validate stock
-    if (selectedQuantity > availableStock) {
-        await showStockAlert(availableStock, selectedSize);
-        quantityInput.value = availableStock;
-        return;
-    }
-
-    // 5. Get current cart
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const productId = product.id;
-    const productData = {
-        id: productId,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        size: selectedSize,
-        quantity: selectedQuantity,
-        variantId: variantId
-    };
-
-    // 6. Check for existing item
-    const existingItemIndex = cart.findIndex(item => 
-        item.id === productId && item.size === selectedSize
-    );
-
-    // 7. Update or add item
-    if (existingItemIndex >= 0) {
-        const newQuantity = cart[existingItemIndex].quantity + selectedQuantity;
-        
-        if (newQuantity > availableStock) {
-            await showStockAlert(availableStock, selectedSize);
-            cart[existingItemIndex].quantity = availableStock;
-        } else {
-            cart[existingItemIndex].quantity = newQuantity;
-            await showSuccessAlert("Cart Updated", `${product.name} quantity increased`);
+async function addToCart(productId) {
+    try {
+        // 1. Get selected size and quantity
+        const selectedSizeElement = document.querySelector('.size-option.selected');
+        if (!selectedSizeElement) {
+            await showErrorAlert("Size Required", "Please select a size first");
+            return;
         }
-    } else {
-        cart.push(productData);
-        await showSuccessAlert("Added to Cart", `${product.name} was added to your cart`);
-    }
 
-    // 8. Save and update UI
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCounter();
+        const selectedSize = selectedSizeElement.getAttribute('data-size');
+        const selectedQuantity = parseInt(document.getElementById('quantity').value) || 1;
+        const availableStock = parseInt(selectedSizeElement.getAttribute('data-stock')) || 0;
+        const variantId = selectedSizeElement.getAttribute('data-variant-id');
+
+        // 2. Validate stock
+        if (selectedQuantity > availableStock) {
+            await showStockAlert(availableStock, selectedSize);
+            document.getElementById('quantity').value = availableStock;
+            return;
+        }
+
+        // 3. Get current cart
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        
+        const productData = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            size: selectedSize,
+            quantity: selectedQuantity,
+            variantId: variantId
+        };
+
+        // 4. Check for existing item
+        const existingItemIndex = cart.findIndex(item => 
+            item.id === product.id && item.size === selectedSize
+        );
+
+        // 5. Update or add item
+        if (existingItemIndex >= 0) {
+            const newQuantity = cart[existingItemIndex].quantity + selectedQuantity;
+            
+            if (newQuantity > availableStock) {
+                await showStockAlert(availableStock, selectedSize);
+                cart[existingItemIndex].quantity = availableStock;
+            } else {
+                cart[existingItemIndex].quantity = newQuantity;
+                await showSuccessAlert("Cart Updated", `${product.name} quantity increased`);
+            }
+        } else {
+            cart.push(productData);
+            await showSuccessAlert("Added to Cart", `${product.name} was added to your cart`);
+        }
+
+        // 6. Save and update UI
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCounter();
+    } catch (error) {
+        console.error("Error in addToCart:", error);
+        await showErrorAlert("Error", "An error occurred while adding to cart");
+    }
 }
+
+// Update the window.onload section to include initialization
+window.onload = () => {
+    if (document.getElementById("product-list")) {
+        loadProducts();
+    }
+    
+    // Initialize any product detail page specific functionality
+    if (document.querySelector('.product-details')) {
+        // Any initialization needed for product details page
+    }
+};
 
 /**
  * Add to Wishlist with Stock Validation (SweetAlert2)
