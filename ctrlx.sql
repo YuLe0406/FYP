@@ -14,10 +14,9 @@ CREATE TABLE USER (
     U_ResetTokenExpiry DATETIME DEFAULT NULL,
     U_AccountCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     U_LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    U_Status INT(1) DEFAULT 0,  -- 1 = blocked, 0 = active
     INDEX idx_user_email (U_Email),
     INDEX idx_reset_token (U_ResetToken)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE USER_ADDRESS (
     UA_ID INT AUTO_INCREMENT PRIMARY KEY,
