@@ -23,6 +23,29 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
+// Handle profile update (name and contact only)
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_profile'])) {
+    $name = trim($_POST['name']);
+    $contact = trim($_POST['contact']);
+
+    if (empty($name)) {
+        $error_msg = "Name is required!";
+    } elseif (empty($contact)) {
+        $error_msg = "Contact number is required!";
+    } else {
+        $update_stmt = $conn->prepare("UPDATE ADMIN SET A_Name = ?, A_CN = ? WHERE A_ID = ?");
+        $update_stmt->bind_param("ssi", $name, $contact, $admin_id);
+        if ($update_stmt->execute()) {
+            $admin_details['A_Name'] = $name;
+            $admin_details['A_CN'] = $contact;
+            $success_msg = "Profile updated successfully!";
+        } else {
+            $error_msg = "Error updating profile.";
+        }
+        $update_stmt->close();
+    }
+}
+
 // Handle password change
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_password'])) {
     $current_password = $_POST['current_password'];
@@ -97,10 +120,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['upload_picture']) && 
     <meta charset="UTF-8">
     <title>Admin Profile | CTRL-X</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background-color: #f5f7fa;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .main-content {
             margin: 40px auto;
@@ -109,19 +133,91 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['upload_picture']) && 
         .profile-container {
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
-        .profile-header h2 {
-            margin: 0 0 20px;
+        .profile-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .profile-picture {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            cursor: pointer;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .profile-picture:hover img {
+            opacity: 0.7;
+        }
+        .profile-picture .edit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .profile-picture:hover .edit-overlay {
+            opacity: 1;
         }
         .profile-section {
             margin-bottom: 30px;
-        }
-        .profile-picture img {
-            width: 150px;
+            padding: 20px;
             border-radius: 10px;
-            object-fit: cover;
+            background: #f9f9f9;
+        }
+        .profile-section h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #34495e;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-success {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+        }
+        .no-image {
+            display: inline-block;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #ecf0f1;
+            text-align: center;
+            line-height: 150px;
+            color: #7f8c8d;
+        }
+        .readonly-email {
+            background-color: #e9ecef;
+            opacity: 1;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -129,66 +225,127 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['upload_picture']) && 
 
 <div class="main-content">
     <div class="profile-container">
-        <div class="profile-header d-flex justify-content-between align-items-center">
-            <h2><i class="fas fa-user-cog me-2"></i>Admin Profile</h2>
-            <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-        </div>
-
-        <?php if ($error_msg): ?>
-            <div class="alert alert-danger"><?php echo $error_msg; ?></div>
-        <?php elseif ($success_msg): ?>
-            <div class="alert alert-success"><?php echo $success_msg; ?></div>
-        <?php endif; ?>
-
-        <div class="profile-section">
-            <h4>Profile Information</h4>
-            <div class="row">
-                <div class="col-md-4"><strong>Name:</strong><br><?php echo htmlspecialchars($admin_details['A_Name']); ?></div>
-                <div class="col-md-4"><strong>Email:</strong><br><?php echo htmlspecialchars($admin_details['A_Email']); ?></div>
-                <div class="col-md-4"><strong>Contact:</strong><br><?php echo htmlspecialchars($admin_details['A_CN']); ?></div>
-            </div>
-        </div>
-
-        <div class="profile-section">
-            <h4>Profile Picture</h4>
-            <div class="profile-picture mb-3">
+        <div class="profile-header">
+            <!-- Profile Picture with Edit Overlay -->
+            <div class="profile-picture" data-bs-toggle="modal" data-bs-target="#pictureModal">
                 <?php if (!empty($admin_details['A_Picture'])): ?>
                     <img src="<?php echo htmlspecialchars($admin_details['A_Picture']); ?>" alt="Admin Picture">
                 <?php else: ?>
-                    <p>No picture uploaded.</p>
+                    <div class="no-image">
+                        <i class="fas fa-user fa-3x"></i>
+                    </div>
                 <?php endif; ?>
+                <div class="edit-overlay">
+                    <i class="fas fa-camera me-2"></i> Edit
+                </div>
             </div>
-            <form method="POST" enctype="multipart/form-data">
-                <input type="file" name="profile_picture" class="form-control mb-2" required accept=".jpg,.jpeg,.png">
-                <button type="submit" name="upload_picture" class="btn btn-primary">Upload New Picture</button>
+            
+            <h2 class="mb-1"><?php echo htmlspecialchars($admin_details['A_Name']); ?></h2>
+            <p class="text-muted"><?php echo htmlspecialchars($admin_details['A_Email']); ?></p>
+            <a href="dashboard.php" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+
+        <?php if ($error_msg): ?>
+            <div class="alert alert-danger alert-dismissible fade show">
+                <?php echo $error_msg; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php elseif ($success_msg): ?>
+            <div class="alert alert-success alert-dismissible fade show">
+                <?php echo $success_msg; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
+        <div class="profile-section">
+            <h4><i class="fas fa-user-edit me-2"></i>Profile Information</h4>
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="<?php echo htmlspecialchars($admin_details['A_Name']); ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control readonly-email" id="email" 
+                           value="<?php echo htmlspecialchars($admin_details['A_Email']); ?>" readonly>
+                    <small class="text-muted">Email address cannot be changed</small>
+                </div>
+                <div class="mb-3">
+                    <label for="contact" class="form-label">Contact Number</label>
+                    <input type="text" class="form-control" id="contact" name="contact" 
+                           value="<?php echo htmlspecialchars($admin_details['A_CN']); ?>" required>
+                </div>
+                <button type="submit" name="update_profile" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
             </form>
         </div>
 
         <div class="profile-section">
-            <h4>Change Password</h4>
+            <h4><i class="fas fa-key me-2"></i>Change Password</h4>
             <form method="POST">
                 <div class="mb-3">
                     <label for="current_password" class="form-label">Current Password</label>
-                    <input type="password" name="current_password" class="form-control" required>
+                    <input type="password" class="form-control" id="current_password" name="current_password" required>
                 </div>
                 <div class="mb-3">
                     <label for="new_password" class="form-label">New Password</label>
-                    <input type="password" name="new_password" class="form-control" required>
-                    <small class="text-muted">Min 8 characters, include uppercase & number</small>
+                    <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    <small class="text-muted">Minimum 8 characters with at least one uppercase letter and one number</small>
                 </div>
                 <div class="mb-3">
                     <label for="confirm_password" class="form-label">Confirm New Password</label>
-                    <input type="password" name="confirm_password" class="form-control" required>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                 </div>
-                <button type="submit" name="update_password" class="btn btn-success">Update Password</button>
+                <button type="submit" name="update_password" class="btn btn-success">
+                    <i class="fas fa-lock me-2"></i>Update Password
+                </button>
             </form>
         </div>
     </div>
 </div>
 
-<!-- FontAwesome + Bootstrap JS -->
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Picture Upload Modal -->
+<div class="modal fade" id="pictureModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Profile Picture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" id="pictureForm">
+                    <div class="mb-3">
+                        <label for="profile_picture" class="form-label">Select Image</label>
+                        <input class="form-control" type="file" id="profile_picture" name="profile_picture" 
+                               accept=".jpg,.jpeg,.png" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="pictureForm" name="upload_picture" class="btn btn-primary">
+                    Upload Picture
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Show success/error messages with animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.add('show');
+            }, 100);
+        });
+    });
+</script>
 </body>
 </html>
