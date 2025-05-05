@@ -19,6 +19,26 @@ CREATE TABLE USER (
     INDEX idx_reset_token (U_ResetToken)
 ) ENGINE=InnoDB;
 
+CREATE TABLE USER_ADDRESS (
+    UA_ID INT AUTO_INCREMENT PRIMARY KEY,
+    U_ID INT NOT NULL,
+    UA_Type ENUM('home', 'work', 'other') NOT NULL DEFAULT 'home',
+    UA_Address1 VARCHAR(255) NOT NULL,
+    UA_Address2 VARCHAR(255),
+    UA_Postcode VARCHAR(10) NOT NULL,
+    UA_City VARCHAR(100) NOT NULL,
+    UA_State ENUM(
+        'Johor', 'Kedah', 'Kelantan', 'Melaka', 
+        'Negeri Sembilan', 'Pahang', 'Penang', 'Perak', 'Perlis', 
+        'Sabah', 'Sarawak', 'Selangor', 'Terengganu'
+    ) NOT NULL,
+    UA_IsDefault BOOLEAN NOT NULL DEFAULT FALSE,
+    UA_Created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UA_Updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
+    INDEX idx_user_address (U_ID)
+) ENGINE=InnoDB;
+
 -- ADMIN Table
 CREATE TABLE ADMIN (
     A_ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,27 +93,6 @@ CREATE TABLE PRODUCT_VARIANTS (
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
 
--- ADDRESS Table
-CREATE TABLE USER_ADDRESS (
-    UA_ID INT AUTO_INCREMENT PRIMARY KEY,
-    U_ID INT NOT NULL,
-    UA_Type ENUM('home', 'work', 'other') NOT NULL DEFAULT 'home',
-    UA_Address1 VARCHAR(255) NOT NULL,
-    UA_Address2 VARCHAR(255),
-    UA_Postcode VARCHAR(10) NOT NULL,
-    UA_City VARCHAR(100) NOT NULL,
-    UA_State ENUM(
-        'Johor', 'Kedah', 'Kelantan', 'Melaka', 
-        'Negeri Sembilan', 'Pahang', 'Penang', 'Perak', 'Perlis', 
-        'Sabah', 'Sarawak', 'Selangor', 'Terengganu'
-    ) NOT NULL,
-    UA_IsDefault BOOLEAN NOT NULL DEFAULT FALSE,
-    UA_Created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UA_Updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
-    INDEX idx_user_address (U_ID)
-) ENGINE=InnoDB;
-
 -- Simplified WISHLIST
 CREATE TABLE WISHLIST (
     W_ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -123,13 +122,13 @@ CREATE TABLE ORDER_STATUS (
 CREATE TABLE ORDERS (
     O_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
-    AD_ID INT NOT NULL,
-    OS_ID INT NOT NULL,  -- This was missing in your original schema
+    UA_ID INT NOT NULL,  -- Changed from AD_ID to UA_ID
+    OS_ID INT NOT NULL,
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     O_TotalAmount DECIMAL(10,2) NOT NULL,
     O_DC DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
-    FOREIGN KEY (AD_ID) REFERENCES ADDRESS(AD_ID),
+    FOREIGN KEY (UA_ID) REFERENCES USER_ADDRESS(UA_ID),
     FOREIGN KEY (OS_ID) REFERENCES ORDER_STATUS(OS_ID)
 );
 
@@ -167,7 +166,7 @@ CREATE TABLE DELIVERY_STATUS (
 CREATE TABLE DELIVERY (
     D_ID INT AUTO_INCREMENT PRIMARY KEY,
     O_ID INT NOT NULL,
-    D_Carrier VARCHAR(100) NOT NULL,          -- e.g., "FedEx", "DHL"
+    DC_ID INT NOT NULL,
     D_TrackingNumber VARCHAR(255),            -- Carrier's tracking ID
     D_StartDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
@@ -175,6 +174,11 @@ CREATE TABLE DELIVERY (
     DS_ID INT NOT NULL,
     FOREIGN KEY (DS_ID) REFERENCES DELIVERY_STATUS(DS_ID),
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE DELIVERY_CARRIER (
+    DC_ID INT AUTO_INCREMENT PRIMARY KEY,
+    DC_Name VARCHAR(100) NOT NULL UNIQUE     -- e.g., "FedEx", "DHL", "UPS"
 );
 
 -- Simplified BANNER
@@ -425,6 +429,11 @@ INSERT INTO DELIVERY_STATUS (D_Status) VALUES
 ('Delivered'),
 ('Failed Delivery');
 
+INSERT INTO DELIVERY_CARRIER (DC_Name) VALUES 
+('FedEx'),
+('DHL'),
+('Ninja Van');
+
 -- Insert some vouchers
 INSERT INTO VOUCHER (V_Code, V_Discount, V_ExpiryDate, V_UsageLimit) VALUES
 ('WELCOME10', 10.00, '2025-12-31', 100),
@@ -440,49 +449,3 @@ INSERT INTO ORDER_STATUS (O_Status) VALUES
 ('Shipped'),
 ('Delivered'),
 ('Cancelled');
-
--- Insert DELIVERY_STATUS data (must come first as it's referenced by DELIVERY)
-INSERT INTO DELIVERY_STATUS (D_Status) VALUES 
-('Preparing'),
-('Shipped'),
-('In Transit'),
-('Out for Delivery'),
-('Delivered'),
-('Failed Delivery');
-
-INSERT INTO USER (U_FName, U_LName, U_Email, U_Password, U_PNumber, U_DOB, U_Gender, U_SecurityQuestion, U_SecurityAnswer)
-VALUES
-('John', 'Doe', 'john@example.com', 'password123', '0123456789', '1990-01-01', 'male', 'First pet?', 'Fluffy'),
-('Jane', 'Smith', 'jane@example.com', 'password456', '0123456790', '1992-02-02', 'female', 'Mother’s maiden name?', 'Johnson'),
-('Mike', 'Brown', 'mike@example.com', 'password789', '0123456791', '1995-03-03', 'male', 'Favorite color?', 'Blue'),
-('Alice', 'Green', 'alice@example.com', 'password321', '0123456792', '1993-04-04', 'female', 'First school?', 'Greenwood'),
-('Robert', 'White', 'robert@example.com', 'password654', '0123456793', '1988-05-05', 'male', 'Dream job?', 'Pilot');
-
-INSERT INTO ADDRESS (U_ID, AD_Details, AD_City, AD_State, AD_ZipCode)
-VALUES
-(1, '123 Main St', 'CityA', 'StateA', '12345'),
-(1, '456 Elm St', 'CityA', 'StateA', '12345'),
-(2, '789 Oak St', 'CityB', 'StateB', '23456'),
-(3, '101 Pine St', 'CityC', 'StateC', '34567'),
-(4, '202 Maple St', 'CityD', 'StateD', '45678'),
-(5, '303 Birch St', 'CityE', 'StateE', '56789');
-
-INSERT INTO ORDERS (U_ID, AD_ID, OS_ID, O_TotalAmount, O_DC, O_Date)
-VALUES
--- Order 1: Pending order from user 1
-(1, 1, 1, 159.80, 0.00, '2023-07-15 10:15:00'),
-
--- Order 2: Shipped order from user 1 with FREESHIP discount
-(1, 2, 3, 249.70, 15.00, '2023-07-16 14:30:00'),
-
--- Order 3: Delivered order from user 2
-(2, 3, 4, 169.90, 0.00, '2023-07-10 09:00:00'),
-
--- Order 4: Processing order from user 3 with NEWUSER25 discount
-(3, 4, 2, 319.60, 25.00, '2023-07-18 16:05:00'),
-
--- Order 5: Pending order from user 4
-(4, 5, 1, 89.90, 0.00, '2023-07-19 11:05:00'),
-
--- Order 6: Delivered order from user 5 with SUMMER20 discount
-(5, 6, 4, 509.70, 20.00, '2023-07-12 13:10:00');
