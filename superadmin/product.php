@@ -356,7 +356,7 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                 width: 100%;
             }
         }
-    </style>
+        </style>
 </head>
 <body>
 <div class="container">
@@ -385,6 +385,10 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                 <div class="form-group">
                     <label for="productPrice">Product Price:</label>
                     <input type="number" id="productPrice" name="productPrice" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Product Description:</label>
+                    <textarea id="productDescription" name="productDescription" required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Product Images:</label>

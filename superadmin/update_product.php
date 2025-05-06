@@ -1,26 +1,26 @@
 <?php
 include 'db.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $productId = intval($_POST['productId']);
-    $categoryID = intval($_POST['productCategory']);
-    $productName = trim($_POST['productName']);
-    $productPrice = floatval($_POST['productPrice']);
-
-    if ($productPrice < 0) {
-        die("Error: Price cannot be negative.");
-    }
-
-    $stmt = $conn->prepare("UPDATE PRODUCT SET C_ID = ?, P_Name = ?, P_Price = ? WHERE P_ID = ?");
-    $stmt->bind_param("isdi", $categoryID, $productName, $productPrice, $productId);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productId = $_POST['productId'];
+    $categoryId = $_POST['productCategory'];
+    $productName = $_POST['productName'];
+    $productPrice = $_POST['productPrice'];
     
-    if ($stmt->execute()) {
-        header("Location: edit_product.php?productId=" . $productId . "&updated=1");
+    try {
+        $stmt = $conn->prepare("UPDATE PRODUCT SET C_ID = ?, P_Name = ?, P_Price = ? WHERE P_ID = ?");
+        $stmt->bind_param("isdi", $categoryId, $productName, $productPrice, $productId);
+        $stmt->execute();
+        $stmt->close();
+        
+        header("Location: edit_product.php?productId=$productId&success=1");
         exit();
-    } else {
-        echo "Update failed: " . $stmt->error;
+    } catch (Exception $e) {
+        header("Location: edit_product.php?productId=$productId&error=" . urlencode($e->getMessage()));
+        exit();
     }
-
-    $stmt->close();
+} else {
+    header("Location: product.php");
+    exit();
 }
 ?>
