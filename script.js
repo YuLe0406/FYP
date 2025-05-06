@@ -8,105 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sizeDropdown = document.getElementById("size-select");
     const quantityInput = document.getElementById("quantity");
 
-    let index = 1; // Start at cloned first image
-    let autoSlide;
 
-    // Clone first & last images
-    const firstClone = images[0].cloneNode(true);
-    const lastClone = images[totalImages - 1].cloneNode(true);
-
-    // Append clones
-    banner.appendChild(firstClone);
-    banner.insertBefore(lastClone, banner.firstChild);
-
-    const updatedImages = document.querySelectorAll(".banner img");
-    const newTotalImages = updatedImages.length;
-
-    // Adjust banner width
-    banner.style.width = `calc(100vw * ${newTotalImages})`;
-
-    // Move to cloned first image
-    banner.style.transform = `translateX(-100vw)`;
-
-    function slideBanner() {
-        index++;
-        updateSlide();
-    }
-
-    function updateSlide() {
-        banner.style.transition = "transform 1s linear";
-        banner.style.transform = `translateX(-${index * 100}vw)`;
-
-        // If at last cloned image, reset to real first image
-        if (index === newTotalImages - 1) {
-            setTimeout(() => {
-                banner.style.transition = "none";
-                index = 1;
-                banner.style.transform = `translateX(-100vw)`;
-            }, 1000);
-        }
-
-        // If at first cloned image, reset to real last image
-        if (index === 0) {
-            setTimeout(() => {
-                banner.style.transition = "none";
-                index = newTotalImages - 2;
-                banner.style.transform = `translateX(-${index * 100}vw)`;
-            }, 1000);
-        }
-
-        updateDots();
-    }
-
-    function moveToSlide(slideIndex) {
-        index = slideIndex + 1;
-        updateSlide();
-        restartAutoSlide();
-    }
-
-    // **FIXED DOT INDICATORS**
-    dotsContainer.innerHTML = ""; // Clear old dots
-    for (let i = 0; i < totalImages; i++) {
-        const dot = document.createElement("div");
-        dot.classList.add("dot");
-        if (i === 0) dot.classList.add("active");
-        dot.addEventListener("click", () => moveToSlide(i));
-        dotsContainer.appendChild(dot);
-    }
-
-    const dots = document.querySelectorAll(".dot");
-
-    function updateDots() {
-        let dotIndex = index - 1;
-
-        // Fix dot index when reset happens
-        if (index === newTotalImages - 1) dotIndex = 0; // When looping back to start
-        if (index === 0) dotIndex = totalImages - 1; // When looping back to end
-
-        dots.forEach((dot, i) => {
-            dot.classList.toggle("active", i === dotIndex);
-        });
-    }
-
-    // Left & Right button controls
-    leftBtn.addEventListener("click", function () {
-        index--;
-        updateSlide();
-        restartAutoSlide();
-    });
-
-    rightBtn.addEventListener("click", function () {
-        index++;
-        updateSlide();
-        restartAutoSlide();
-    });
-
-    function restartAutoSlide() {
-        clearInterval(autoSlide);
-        autoSlide = setInterval(slideBanner, 4000);
-    }
-
-    restartAutoSlide();
 
 
     if (sizeDropdown) {
@@ -173,10 +75,6 @@ function viewProduct(id) {
 }
 
 
-// Filtering & Sorting
-document.getElementById("categoryFilter").addEventListener("change", (e) => loadProducts(e.target.value));
-document.getElementById("sortPrice").addEventListener("change", (e) => loadProducts("all", e.target.value));
-
 window.onload = () => {
     if (document.getElementById("product-list")) {
         loadProducts();
@@ -186,74 +84,81 @@ window.onload = () => {
 /**
  * Add to Cart with Stock Validation (SweetAlert2)
  */
-async function addToCart() {
-    // 1. Get DOM elements
-    const sizeDropdown = document.getElementById("size-select");
-    const quantityInput = document.getElementById("quantity");
-    
-    // 2. Basic validation
-    if (!sizeDropdown || !quantityInput) {
-        await showErrorAlert("System Error", "Could not find size or quantity inputs");
-        return;
-    }
-
-    const selectedSize = sizeDropdown.value;
-    const selectedQuantity = parseInt(quantityInput.value) || 1;
-    const selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
-    const availableStock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
-    const variantId = selectedOption.getAttribute("data-variant-id");
-
-    // 3. Validate size selection
-    if (!selectedSize) {
-        await showErrorAlert("Size Required", "Please select a size first");
-        return;
-    }
-
-    // 4. Validate stock
-    if (selectedQuantity > availableStock) {
-        await showStockAlert(availableStock, selectedSize);
-        quantityInput.value = availableStock;
-        return;
-    }
-
-    // 5. Get current cart
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const productId = product.id;
-    const productData = {
-        id: productId,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        size: selectedSize,
-        quantity: selectedQuantity,
-        variantId: variantId
-    };
-
-    // 6. Check for existing item
-    const existingItemIndex = cart.findIndex(item => 
-        item.id === productId && item.size === selectedSize
-    );
-
-    // 7. Update or add item
-    if (existingItemIndex >= 0) {
-        const newQuantity = cart[existingItemIndex].quantity + selectedQuantity;
-        
-        if (newQuantity > availableStock) {
-            await showStockAlert(availableStock, selectedSize);
-            cart[existingItemIndex].quantity = availableStock;
-        } else {
-            cart[existingItemIndex].quantity = newQuantity;
-            await showSuccessAlert("Cart Updated", `${product.name} quantity increased`);
+async function addToCart(productId) {
+    try {
+        // 1. Get selected size and quantity
+        const selectedSizeElement = document.querySelector('.size-option.selected');
+        if (!selectedSizeElement) {
+            await showErrorAlert("Size Required", "Please select a size first");
+            return;
         }
-    } else {
-        cart.push(productData);
-        await showSuccessAlert("Added to Cart", `${product.name} was added to your cart`);
-    }
 
-    // 8. Save and update UI
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCounter();
+        const selectedSize = selectedSizeElement.getAttribute('data-size');
+        const selectedQuantity = parseInt(document.getElementById('quantity').value) || 1;
+        const availableStock = parseInt(selectedSizeElement.getAttribute('data-stock')) || 0;
+        const variantId = selectedSizeElement.getAttribute('data-variant-id');
+
+        // 2. Validate stock
+        if (selectedQuantity > availableStock) {
+            await showStockAlert(availableStock, selectedSize);
+            document.getElementById('quantity').value = availableStock;
+            return;
+        }
+
+        // 3. Get current cart
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        
+        const productData = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            size: selectedSize,
+            quantity: selectedQuantity,
+            variantId: variantId
+        };
+
+        // 4. Check for existing item
+        const existingItemIndex = cart.findIndex(item => 
+            item.id === product.id && item.size === selectedSize
+        );
+
+        // 5. Update or add item
+        if (existingItemIndex >= 0) {
+            const newQuantity = cart[existingItemIndex].quantity + selectedQuantity;
+            
+            if (newQuantity > availableStock) {
+                await showStockAlert(availableStock, selectedSize);
+                cart[existingItemIndex].quantity = availableStock;
+            } else {
+                cart[existingItemIndex].quantity = newQuantity;
+                await showSuccessAlert("Cart Updated", `${product.name} quantity increased`);
+            }
+        } else {
+            cart.push(productData);
+            await showSuccessAlert("Added to Cart", `${product.name} was added to your cart`);
+        }
+
+        // 6. Save and update UI
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCounter();
+    } catch (error) {
+        console.error("Error in addToCart:", error);
+        await showErrorAlert("Error", "An error occurred while adding to cart");
+    }
 }
+
+// Update the window.onload section to include initialization
+window.onload = () => {
+    if (document.getElementById("product-list")) {
+        loadProducts();
+    }
+    
+    // Initialize any product detail page specific functionality
+    if (document.querySelector('.product-details')) {
+        // Any initialization needed for product details page
+    }
+};
 
 /**
  * Add to Wishlist with Stock Validation (SweetAlert2)
@@ -373,5 +278,107 @@ function updateWishlistCounter() {
     const counter = document.getElementById("wishlist-counter");
     if (counter) {
         counter.textContent = wishlist.length;
+    }
+}
+
+/**
+ * Initialize image magnifier on hover
+ */
+function initMagnifier() {
+    const container = document.querySelector('.magnifier-container');
+    const mainImage = document.getElementById('mainImage');
+    const glass = document.querySelector('.magnifier-glass');
+    
+    // Exit if elements not found
+    if (!container || !mainImage || !glass) return;
+    
+    // Configuration (adjust these values as needed)
+    const config = {
+        zoomLevel: 2,          // How much to zoom (2 = 200%)
+        glassSize: 150,        // Diameter of magnifier in pixels
+        borderWidth: 3,        // Border thickness
+        borderColor: '#fff',   // Border color
+        shadow: '0 0 10px rgba(0,0,0,0.3)' // Box shadow
+    };
+    
+    // Set glass styles
+    glass.style.width = `${config.glassSize}px`;
+    glass.style.height = `${config.glassSize}px`;
+    glass.style.border = `${config.borderWidth}px solid ${config.borderColor}`;
+    glass.style.boxShadow = config.shadow;
+    
+    // When mouse moves on the image
+    container.addEventListener('mousemove', moveMagnifier);
+    
+    // When mouse leaves the image
+    container.addEventListener('mouseleave', () => {
+        glass.style.display = 'none';
+    });
+    
+    // When image loads or changes
+    mainImage.addEventListener('load', function() {
+        // Update glass background with current image
+        glass.style.backgroundImage = `url('${mainImage.src}')`;
+    });
+    
+    /**
+     * Handle magnifier movement
+     */
+    function moveMagnifier(e) {
+        // Show the magnifier glass
+        glass.style.display = 'block';
+        
+        // Get mouse position relative to image
+        const pos = getCursorPos(e);
+        let x = pos.x;
+        let y = pos.y;
+        
+        // Prevent magnifier from being positioned outside the image
+        const halfGlass = config.glassSize / 2;
+        x = Math.max(halfGlass, Math.min(x, container.offsetWidth - halfGlass));
+        y = Math.max(halfGlass, Math.min(y, container.offsetHeight - halfGlass));
+        
+        // Position the magnifier glass
+        glass.style.left = `${x - halfGlass}px`;
+        glass.style.top = `${y - halfGlass}px`;
+        
+        // Calculate zoomed image position
+        const bgPosX = -(x * config.zoomLevel - halfGlass);
+        const bgPosY = -(y * config.zoomLevel - halfGlass);
+        
+        // Set zoomed image
+        glass.style.backgroundSize = `${mainImage.width * config.zoomLevel}px ${mainImage.height * config.zoomLevel}px`;
+        glass.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+    }
+    
+    /**
+     * Get cursor position relative to image
+     */
+    function getCursorPos(e) {
+        const rect = container.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+}
+
+// Initialize magnifier when page loads
+document.addEventListener('DOMContentLoaded', initMagnifier);
+
+function changeImage(thumbnail, newSrc) {
+    const mainImage = document.getElementById('mainImage');
+    mainImage.src = newSrc;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(img => {
+        img.classList.remove('active');
+    });
+    thumbnail.classList.add('active');
+    
+    // Refresh magnifier with new image
+    const glass = document.querySelector('.magnifier-glass');
+    if (glass) {
+        glass.style.backgroundImage = `url('${newSrc}')`;
     }
 }

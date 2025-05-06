@@ -1,27 +1,41 @@
 <?php
 include 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['imageId'], $_POST['productId'])) {
-    $imageId = intval($_POST['imageId']);
-    $productId = intval($_POST['productId']);
-
-    $stmt = $conn->prepare("SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE PI_ID = ?");
-    $stmt->bind_param("i", $imageId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $img = $result->fetch_assoc();
-    $stmt->close();
-
-    if ($img && file_exists($img['PRODUCT_IMAGE'])) {
-        unlink($img['PRODUCT_IMAGE']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productId = $_POST['productId'];
+    $imageId = $_POST['imageId'];
+    
+    try {
+        // Get image path first
+        $stmt = $conn->prepare("SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE PI_ID = ? AND P_ID = ?");
+        $stmt->bind_param("ii", $imageId, $productId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $image = $result->fetch_assoc();
+        $stmt->close();
+        
+        if ($image) {
+            // Delete from filesystem
+            $filePath = '../' . ltrim($image['PRODUCT_IMAGE'], 'FYP/');
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            
+            // Delete from database
+            $stmt = $conn->prepare("DELETE FROM PRODUCT_IMAGES WHERE PI_ID = ?");
+            $stmt->bind_param("i", $imageId);
+            $stmt->execute();
+            $stmt->close();
+        }
+        
+        header("Location: edit_product.php?productId=$productId&success=1");
+        exit();
+    } catch (Exception $e) {
+        header("Location: edit_product.php?productId=$productId&error=" . urlencode($e->getMessage()));
+        exit();
     }
-
-    $delStmt = $conn->prepare("DELETE FROM PRODUCT_IMAGES WHERE PI_ID = ?");
-    $delStmt->bind_param("i", $imageId);
-    $delStmt->execute();
-    $delStmt->close();
-
-    header("Location: edit_product.php?productId=$productId");
-    exit;
+} else {
+    header("Location: product.php");
+    exit();
 }
 ?>

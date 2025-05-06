@@ -1,67 +1,53 @@
 <?php
 include 'db.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $categoryID = intval($_POST['productCategory']);
-    $productName = trim($_POST['productName']);
-    $productPrice = floatval($_POST['productPrice']);
-
-    // Validate inputs
-    if ($productPrice < 0) {
-        die("Error: Product price cannot be negative.");
-    }
-
-    if (empty($productName) || $categoryID <= 0) {
-        die("Error: Invalid product name or category.");
-    }
-
-    // Insert into PRODUCT table
-    $stmt = $conn->prepare("INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES (?, ?, ?)");
-    $stmt->bind_param("isd", $categoryID, $productName, $productPrice);
-
-    if ($stmt->execute()) {
-        $productID = $stmt->insert_id; // Get the new product ID
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $categoryId = $_POST['productCategory'];
+    $productName = $_POST['productName'];
+    $productPrice = $_POST['productPrice'];
+    $productDescription = $_POST['productDescription'];
+    
+    try {
+        // Start transaction
+        mysqli_begin_transaction($conn);
+        
+        // Insert product
+        $stmt = $conn->prepare("INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_DES) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("isds", $categoryId, $productName, $productPrice, $productDescription);
+        $stmt->execute();
+        $productId = $stmt->insert_id;
+        $stmt->close();
+        
         // Handle image uploads
-        if (isset($_FILES['productImages']) && count($_FILES['productImages']['name']) > 0) {
-            $uploadDir = "uploads/";
-
-            // Make sure upload directory exists
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-
-            foreach ($_FILES['productImages']['tmp_name'] as $index => $tmpName) {
-                $originalName = basename($_FILES['productImages']['name'][$index]);
-                $imageType = mime_content_type($tmpName);
-
-                // Check if file is an image
-                if (strpos($imageType, "image") === false) {
-                    continue; // Skip non-images
-                }
-
-                $fileExt = pathinfo($originalName, PATHINFO_EXTENSION);
-                $uniqueName = uniqid("img_", true) . "." . $fileExt;
-                $targetPath = $uploadDir . $uniqueName;
-
-                if (move_uploaded_file($tmpName, $targetPath)) {
-                    // Save image path in DB
+        if (!empty($_FILES['productImages']['name'][0])) {
+            $uploadDir = '../FYP/images/';
+            
+            foreach ($_FILES['productImages']['tmp_name'] as $key => $tmpName) {
+                $fileName = basename($_FILES['productImages']['name'][$key]);
+                $uploadPath = $uploadDir . uniqid() . '_' . $fileName;
+                
+                if (move_uploaded_file($tmpName, $uploadPath)) {
+                    $relativePath = 'FYP/' . str_replace('../FYP/', '', $uploadPath);
                     $imgStmt = $conn->prepare("INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES (?, ?)");
-                    $imgStmt->bind_param("is", $productID, $targetPath);
+                    $imgStmt->bind_param("is", $productId, $relativePath);
                     $imgStmt->execute();
                     $imgStmt->close();
                 }
             }
         }
-
-        // Success
+        
+        // Commit transaction
+        mysqli_commit($conn);
+        
         header("Location: product.php?success=1");
         exit();
-    } else {
-        die("Error inserting product: " . $stmt->error);
+    } catch (Exception $e) {
+        mysqli_rollback($conn);
+        header("Location: product.php?error=" . urlencode($e->getMessage()));
+        exit();
     }
-    $stmt->close();
 } else {
-    echo "Invalid request method.";
+    header("Location: product.php");
+    exit();
 }
 ?>

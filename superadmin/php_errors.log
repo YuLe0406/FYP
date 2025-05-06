@@ -1,0 +1,50 @@
+[06-May-2025 07:49:05 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:28 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:31 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:34 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:34 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:35 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:35 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:35 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:35 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[06-May-2025 08:00:36 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'p.P_Status' in 'where clause' in C:\xampp\htdocs\FYP\superadmin\product.php:76
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
