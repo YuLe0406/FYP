@@ -83,6 +83,7 @@ $userFirstName = $loggedIn ? explode(' ', $_SESSION['user_name'])[0] : '';
         font-weight: bold;
         font-size: 1.8rem;
         text-decoration: none;
+        letter-spacing: 1px;
     }
     
     .tabs {
