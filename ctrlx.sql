@@ -8,7 +8,6 @@ CREATE TABLE USER (
     U_PNumber VARCHAR(15) NOT NULL,
     U_DOB DATE NOT NULL,
     U_Gender ENUM('male','female','other') NOT NULL,
-    U_Status INT(1) NOT NULL DEFAULT 0, -- 1 = blocked, 0 = active,
     U_SecurityQuestion VARCHAR(255) NOT NULL,
     U_SecurityAnswer VARCHAR(255) NOT NULL,
     U_ResetToken VARCHAR(64) DEFAULT NULL,
@@ -44,15 +43,7 @@ CREATE TABLE USER_ADDRESS (
 -- CATEGORIES Table
 CREATE TABLE CATEGORIES (
     C_ID INT AUTO_INCREMENT PRIMARY KEY,
-    C_Name VARCHAR(255) NOT NULL,
-    C_Status INT(1) DEFAULT 0 -- 1 = blocked, 0 = active
-);
-
-CREATE TABLE PRODUCT_COLOR (
-    PC_ID INT AUTO_INCREMENT PRIMARY KEY,
-    COLOR_NAME VARCHAR(50) NOT NULL,
-    COLOR_HEX VARCHAR(7) NOT NULL,  -- Stores hex codes like #FF0000
-    COLOR_IMAGE VARCHAR(255)       -- Optional path to color swatch image
+    C_Name VARCHAR(255) NOT NULL
 );
 
 -- PRODUCT Table
@@ -81,8 +72,6 @@ CREATE TABLE PRODUCT_VARIANTS (
     P_ID INT NOT NULL,
     P_Size VARCHAR(50) NOT NULL,
     P_Quantity INT NOT NULL,
-    PC_ID INT NOT NULL,
-    FOREIGN KEY (PC_ID) REFERENCES PRODUCT_COLOR(PC_ID),
     FOREIGN KEY (P_ID) REFERENCES PRODUCT(P_ID) ON DELETE CASCADE
 );
 
@@ -246,18 +235,6 @@ INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level, A_Status) VALUES
 INSERT INTO CATEGORIES (C_NAME, C_Status) VALUES
 ('Men Top',0),
 ('Woman Top',0);
-
-INSERT INTO PRODUCT_COLOR (COLOR_NAME, COLOR_HEX) VALUES
-('White', '#FFFFFF'),
-('Black', '#000000'),
-('Red', '#FF0000'),
-('Clay', '#B66E41'),
-('Butter', '#FEEFB3'),
-('Grey', '#808080'),
-('Orchid', '#DA70D6'),
-('Charcoal', '#36454F'),
-('Green', '#228B22'),
-('Navy', '#000080');
 
 -- Men's T-Shirts
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
@@ -429,10 +406,7 @@ INSERT INTO ORDER_STATUS (O_Status) VALUES
 INSERT INTO DELIVERY_STATUS (D_Status) VALUES 
 ('Preparing'),
 ('Shipped'),
-('In Transit'),
-('Out for Delivery'),
 ('Delivered'),
-('Failed Delivery');
 
 INSERT INTO DELIVERY_CARRIER (DC_Name) VALUES 
 ('FedEx'),
@@ -449,8 +423,6 @@ INSERT INTO VOUCHER (V_Code, V_Discount, V_ExpiryDate, V_UsageLimit) VALUES
 -- Insert sample orders
 -- Insert ORDER_STATUS data (must come first as it's referenced by ORDERS)
 INSERT INTO ORDER_STATUS (O_Status) VALUES 
-('Pending'),
 ('Processing'),
 ('Shipped'),
 ('Delivered'),
-('Cancelled');
