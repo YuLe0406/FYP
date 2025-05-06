@@ -88,12 +88,17 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
             font-weight: bold;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
         }
         
         button {
@@ -173,6 +178,9 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 
             <label>Product Price:</label>
             <input type="number" name="productPrice" step="0.01" value="<?= $product['P_Price'] ?>" required>
+
+            <label>Product Description:</label>
+            <textarea name="productDescription" required><?= htmlspecialchars($product['P_DES']) ?></textarea>
 
             <button type="submit">Update Product</button>
         </form>
