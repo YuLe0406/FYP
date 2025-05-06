@@ -163,29 +163,6 @@ $userId = $_SESSION['user_id'];
             color: #333;
         }
         
-        /* Discount label styles */
-        .discount-label {
-            position: fixed;
-            width: 100%;
-            background: #ff4d4d;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            overflow: hidden;
-            white-space: nowrap;
-            z-index: 999;
-        }
-        
-        .discount-label p {
-            display: inline-block;
-            animation: scrollText 10s linear infinite;
-        }
-        
-        @keyframes scrollText {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
-        }
     </style>
 </head>
 <body>
