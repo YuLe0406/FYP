@@ -223,7 +223,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                     <select id="gender" name="gender" required>
                         <option value="male" <?= $user['U_Gender'] == 'male' ? 'selected' : '' ?>>Male</option>
                         <option value="female" <?= $user['U_Gender'] == 'female' ? 'selected' : '' ?>>Female</option>
-                        <option value="other" <?= $user['U_Gender'] == 'other' ? 'selected' : '' ?>>Other</option>
                     </select>
                 </div>
                 
