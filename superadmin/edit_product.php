@@ -14,23 +14,22 @@ $stmt->execute();
 $product = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// Fetch only active categories
-$category_result = mysqli_query($conn, "SELECT * FROM CATEGORIES WHERE C_Status = 0");
+// Fetch all categories
+$category_result = mysqli_query($conn, "SELECT * FROM CATEGORIES");
 
+// Fetch variants
 $variant_result = mysqli_query($conn, "
-    SELECT pv.PV_ID, pv.P_Size, pv.P_Quantity, pc.COLOR_NAME, pc.PC_ID
-    FROM PRODUCT_VARIANTS pv
-    JOIN PRODUCT_COLOR pc ON pv.PC_ID = pc.PC_ID
-    WHERE pv.P_ID = $productId
+    SELECT PV_ID, P_Size, P_Quantity
+    FROM PRODUCT_VARIANTS
+    WHERE P_ID = $productId
 ");
 
+// Fetch product images
 $img_stmt = $conn->prepare("SELECT * FROM PRODUCT_IMAGES WHERE P_ID = ?");
 $img_stmt->bind_param("i", $productId);
 $img_stmt->execute();
 $images_result = $img_stmt->get_result();
 $img_stmt->close();
-
-$colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 ?>
 
 <!DOCTYPE html>
@@ -39,6 +38,7 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
     <meta charset="UTF-8">
     <title>Edit Product</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,6 +58,7 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
         
         h1 {
             color: #333;
+            margin-bottom: 20px;
         }
         
         .btn-back {
@@ -103,16 +104,44 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
         
         button {
             padding: 8px 15px;
-            background: #2ecc71;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
+            transition: background 0.3s;
         }
         
-        button:hover {
+        .btn-primary {
+            background: #2ecc71;
+        }
+        
+        .btn-primary:hover {
             background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
         }
         
         ul {
@@ -135,25 +164,100 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
             gap: 5px;
         }
         
-        .variant-actions button {
-            margin: 0;
-        }
-        
         .variant-editing {
             background: #e3f2fd;
         }
         
-        img {
-            max-width: 100px;
-            height: auto;
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+        
+        .section-title {
+            margin: 20px 0 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #1abc9c;
+            padding-bottom: 5px;
+        }
+        
+        /* Image Management Styles */
+        .image-management {
+            margin-bottom: 30px;
+        }
+        
+        .image-section {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .image-section-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .image-card {
             border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .image-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .image-upload-form {
+            margin-top: 15px;
+        }
+        
+        .image-upload-form input[type="file"] {
+            margin-bottom: 10px;
+        }
+        
+        .no-image {
+            color: #777;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <main class="main-content">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1>Edit Product</h1>
             <a href="product.php" class="btn-back">
                 <i class="fas fa-arrow-left"></i> Back to Product List
@@ -166,7 +270,10 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
 
             <label>Category:</label>
             <select name="productCategory" required>
-                <?php while ($cat = mysqli_fetch_assoc($category_result)) { ?>
+                <?php 
+                // Reset pointer for categories
+                mysqli_data_seek($category_result, 0);
+                while ($cat = mysqli_fetch_assoc($category_result)) { ?>
                     <option value="<?= $cat['C_ID'] ?>" <?= $cat['C_ID'] == $product['C_ID'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($cat['C_Name']) ?>
                     </option>
@@ -177,117 +284,220 @@ $colors_result = mysqli_query($conn, "SELECT * FROM PRODUCT_COLOR");
             <input type="text" name="productName" value="<?= htmlspecialchars($product['P_Name']) ?>" required>
 
             <label>Product Price:</label>
-            <input type="number" name="productPrice" step="0.01" value="<?= $product['P_Price'] ?>" required>
+            <input type="number" name="productPrice" step="0.01" min="0.01" value="<?= $product['P_Price'] ?>" required>
 
             <label>Product Description:</label>
             <textarea name="productDescription" required><?= htmlspecialchars($product['P_DES']) ?></textarea>
 
-            <button type="submit">Update Product</button>
+            <button type="submit" class="btn-primary">Update Product</button>
         </form>
 
-        <hr>
-
-        <!-- Product Images -->
-        <h2>Product Images</h2>
-        <div style="display:flex; flex-wrap: wrap; gap: 15px;">
-            <?php while ($img = mysqli_fetch_assoc($images_result)) { 
-                // Fix image path - remove FYP/ if it exists and prepend ../
-                $image_path = $img['PRODUCT_IMAGE'];
-                if (strpos($image_path, 'FYP/') === 0) {
-                    $image_path = substr($image_path, 4); // Remove 'FYP/'
-                }
-                $image_path = '../' . $image_path; // Go up one level from superadmin
-            ?>
-                <div style="margin: 5px; text-align: center;">
-                    <?php if (file_exists($image_path)): ?>
-                        <img src="<?= htmlspecialchars($image_path) ?>" width="100" alt="Product Image">
+        <!-- Image Management Section -->
+        <div class="image-management">
+            <!-- Primary Image Section -->
+            <div class="image-section">
+                <h2 class="section-title">Primary Image</h2>
+                <div class="image-grid">
+                    <?php if (!empty($product['P_Picture'])): 
+                        $primaryImagePath = '../' . ltrim($product['P_Picture'], 'FYP/');
+                    ?>
+                        <div class="image-card">
+                            <div class="image-preview">
+                                <?php if (file_exists($primaryImagePath)): ?>
+                                    <img src="<?= htmlspecialchars($primaryImagePath) ?>" alt="Primary Image">
+                                <?php else: ?>
+                                    <span class="no-image">Image not found</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="image-actions">
+                                <form action="update_primary_image.php" method="POST" enctype="multipart/form-data" style="flex-grow:1;">
+                                    <input type="hidden" name="productId" value="<?= $productId ?>">
+                                    <input type="file" name="newPrimaryImage" accept="image/*" required>
+                                    <button type="submit" class="btn-primary" style="width:100%;">
+                                        <i class="fas fa-sync-alt"></i> Replace
+                                    </button>
+                                </form>
+                                <form action="delete_primary_image.php" method="POST" onsubmit="return confirmDeleteImage()" style="flex-grow:1;">
+                                    <input type="hidden" name="productId" value="<?= $productId ?>">
+                                    <button type="submit" class="btn-danger" style="width:100%;">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     <?php else: ?>
-                        <div style="width:100px; height:100px; background:#eee; display:flex; align-items:center; justify-content:center;">
-                            Image not found
+                        <div class="image-card">
+                            <div class="image-preview">
+                                <span class="no-image">No primary image set</span>
+                            </div>
+                            <form action="update_primary_image.php" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="productId" value="<?= $productId ?>">
+                                <input type="file" name="newPrimaryImage" accept="image/*" required>
+                                <button type="submit" class="btn-primary" style="width:100%;">
+                                    <i class="fas fa-upload"></i> Set Primary Image
+                                </button>
+                            </form>
                         </div>
                     <?php endif; ?>
-                    <form action="delete_image.php" method="POST" onsubmit="return confirm('Delete this image?')">
-                        <input type="hidden" name="productId" value="<?= $productId ?>">
-                        <input type="hidden" name="imageId" value="<?= $img['PI_ID'] ?>">
-                        <button type="submit" style="background:#e74c3c;">Delete</button>
-                    </form>
                 </div>
-            <?php } ?>
+            </div>
+
+            <!-- Additional Images Section -->
+            <div class="image-section">
+                <h2 class="section-title">Additional Images</h2>
+                <div class="image-grid">
+                    <?php 
+                    if ($images_result->num_rows > 0):
+                        while ($img = $images_result->fetch_assoc()): 
+                            $image_path = '../' . ltrim($img['PRODUCT_IMAGE'], 'FYP/');
+                    ?>
+                            <div class="image-card">
+                                <div class="image-preview">
+                                    <?php if (file_exists($image_path)): ?>
+                                        <img src="<?= htmlspecialchars($image_path) ?>" alt="Additional Image">
+                                    <?php else: ?>
+                                        <span class="no-image">Image not found</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="image-actions">
+                                    <form action="delete_image.php" method="POST" onsubmit="return confirmDeleteImage()" style="width:100%;">
+                                        <input type="hidden" name="productId" value="<?= $productId ?>">
+                                        <input type="hidden" name="imageId" value="<?= $img['PI_ID'] ?>">
+                                        <button type="submit" class="btn-danger" style="width:100%;">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <div class="image-card">
+                            <div class="image-preview">
+                                <span class="no-image">No additional images</span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <form action="update_product_images.php" method="POST" enctype="multipart/form-data" class="image-upload-form">
+                    <input type="hidden" name="productId" value="<?= $productId ?>">
+                    <label>Upload Additional Images:</label>
+                    <input type="file" name="newImages[]" multiple accept="image/*" required>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-upload"></i> Upload Images
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <form action="update_product_images.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="productId" value="<?= $productId ?>">
-            <label>Upload New Images:</label>
-            <input type="file" name="newImages[]" multiple accept="image/*">
-            <button type="submit">Upload Images</button>
-        </form>
+        <!-- Variants Management Section -->
+        <div class="variants-section">
+            <h2 class="section-title">Product Variants</h2>
+            <ul>
+                <?php 
+                if ($variant_result->num_rows > 0):
+                    while ($variant = $variant_result->fetch_assoc()): 
+                ?>
+                    <li class="<?= ($editVariantId == $variant['PV_ID']) ? 'variant-editing' : '' ?>">
+                        <?php if ($editVariantId == $variant['PV_ID']): ?>
+                            <form action="update_variant.php" method="POST" style="flex-grow:1;">
+                                <input type="hidden" name="variantId" value="<?= $variant['PV_ID'] ?>">
+                                <input type="hidden" name="productId" value="<?= $productId ?>">
 
-        <hr>
+                                <label>Size:</label>
+                                <input type="text" name="size" value="<?= htmlspecialchars($variant['P_Size']) ?>" required>
 
-        <!-- Product Variants -->
-        <h2>Variants</h2>
-        <ul>
-            <?php while ($variant = mysqli_fetch_assoc($variant_result)) { ?>
-                <li class="<?= ($editVariantId == $variant['PV_ID']) ? 'variant-editing' : '' ?>">
-                    <?php if ($editVariantId == $variant['PV_ID']) { ?>
-                        <form action="update_variant.php" method="POST" style="flex-grow:1;">
-                            <input type="hidden" name="variantId" value="<?= $variant['PV_ID'] ?>">
-                            <input type="hidden" name="productId" value="<?= $productId ?>">
+                                <label>Quantity:</label>
+                                <input type="number" name="quantity" min="0" value="<?= htmlspecialchars($variant['P_Quantity']) ?>" required>
 
-                            <label>Color:</label>
-                            <select name="colorId" required>
-                                <?php mysqli_data_seek($colors_result, 0); ?>
-                                <?php while ($color = mysqli_fetch_assoc($colors_result)) { ?>
-                                    <option value="<?= $color['PC_ID'] ?>" <?= $color['PC_ID'] == $variant['PC_ID'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($color['COLOR_NAME']) ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-
-                            <label>Size:</label>
-                            <input type="text" name="size" value="<?= htmlspecialchars($variant['P_Size']) ?>" required>
-
-                            <label>Quantity:</label>
-                            <input type="number" name="quantity" min="0" value="<?= htmlspecialchars($variant['P_Quantity']) ?>" required>
-
+                                <div class="variant-actions">
+                                    <button type="submit" class="btn-primary">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                    <a href="edit_product.php?productId=<?= $productId ?>">
+                                        <button type="button" class="btn-secondary">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </a>
+                                </div>
+                            </form>
+                        <?php else: ?>
+                            <span>
+                                <strong>Size:</strong> <?= htmlspecialchars($variant['P_Size']) ?>, 
+                                <strong>Quantity:</strong> <?= htmlspecialchars($variant['P_Quantity']) ?>
+                            </span>
                             <div class="variant-actions">
-                                <button type="submit">Save</button>
-                                <a href="edit_product.php?productId=<?= $productId ?>"><button type="button" style="background:#95a5a6;">Cancel</button></a>
+                                <a href="edit_product.php?productId=<?= $productId ?>&editVariantId=<?= $variant['PV_ID'] ?>">
+                                    <button type="button" class="btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </a>
                             </div>
-                        </form>
-                    <?php } else { ?>
-                        <span>Color: <?= htmlspecialchars($variant['COLOR_NAME']) ?>, Size: <?= htmlspecialchars($variant['P_Size']) ?>, Quantity: <?= htmlspecialchars($variant['P_Quantity']) ?></span>
-                        <div class="variant-actions">
-                            <a href="edit_product.php?productId=<?= $productId ?>&editVariantId=<?= $variant['PV_ID'] ?>">
-                                <button type="button" style="background:#f39c12;">Edit</button>
-                            </a>
-                        </div>
-                    <?php } ?>
-                </li>
-            <?php } ?>
-        </ul>
+                        <?php endif; ?>
+                    </li>
+                <?php 
+                    endwhile;
+                else: ?>
+                    <li>No variants found for this product</li>
+                <?php endif; ?>
+            </ul>
 
-        <!-- Add Variant Form -->
-        <form action="add_variant.php" method="POST">
-            <input type="hidden" name="productId" value="<?= $productId ?>">
+            <!-- Add Variant Form -->
+            <form action="add_variant.php" method="POST">
+                <input type="hidden" name="productId" value="<?= $productId ?>">
 
-            <label>Color:</label>
-            <select name="colorId" required>
-                <?php mysqli_data_seek($colors_result, 0); ?>
-                <?php while ($color = mysqli_fetch_assoc($colors_result)) { ?>
-                    <option value="<?= $color['PC_ID'] ?>"><?= htmlspecialchars($color['COLOR_NAME']) ?></option>
-                <?php } ?>
-            </select>
+                <label>Size:</label>
+                <input type="text" name="size" required>
 
-            <label>Size:</label>
-            <input type="text" name="size" required>
+                <label>Quantity:</label>
+                <input type="number" name="quantity" min="0" required>
 
-            <label>Quantity:</label>
-            <input type="number" name="quantity" min="0" required>
-
-            <button type="submit">Add Variant</button>
-        </form>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Variant
+                </button>
+            </form>
+        </div>
     </main>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDeleteImage() {
+        return Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            return result.isConfirmed;
+        });
+    }
+    
+    // Show success/error messages from URL parameters
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: urlParams.get('success'),
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        if (urlParams.has('error')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: urlParams.get('error'),
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+</script>
 </body>
 </html>

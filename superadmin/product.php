@@ -79,8 +79,7 @@ $total_pages = ceil($total_rows / $per_page);
 
 // Fetch products based on view with pagination
 $product_query = "
-    SELECT p.*, c.C_Name, 
-           (SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE P_ID = p.P_ID LIMIT 1) AS primary_image
+    SELECT p.*, c.C_Name, p.P_Picture AS primary_image
     FROM PRODUCT p
     JOIN CATEGORIES c ON p.C_ID = c.C_ID
     WHERE p.P_Status = $status
@@ -101,316 +100,7 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
     <title>Product Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <style>
-        /* Main Layout */
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background: #f5f7fa;
-        }
-        
-        section {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1, h2 {
-            color: #2c3e50;
-        }
-        
-        h2 {
-            border-bottom: 2px solid #1abc9c;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        
-        /* View Selector */
-        .view-selector {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .view-selector h3 {
-            font-size: 22px;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .view-dropdown {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
-        /* Form Styles */
-        .product-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 600px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .form-group label {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #1abc9c;
-            outline: none;
-            box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
-        }
-        
-        /* Buttons */
-        .submit-btn {
-            background: #1abc9c;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-            width: 200px;
-        }
-        
-        .submit-btn:hover {
-            background: #16a085;
-        }
-        
-        .add-more-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .add-more-btn:hover {
-            background: #2980b9;
-        }
-        
-        /* Table Styles */
-        .table-responsive {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        th {
-            background: #1abc9c;
-            color: white;
-            position: sticky;
-            top: 0;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-        
-        .btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-        }
-        
-        .btn-edit {
-            background: #f39c12;
-            color: white;
-        }
-        
-        .btn-edit:hover {
-            background: #e67e22;
-        }
-        
-        .btn-deactivate {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-deactivate:hover {
-            background: #c0392b;
-        }
-        
-        .btn-activate {
-            background: #2ecc71;
-            color: white;
-        }
-        
-        .btn-activate:hover {
-            background: #27ae60;
-        }
-        
-        /* Status Badges */
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .status-badge.active {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-badge.inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        /* Image Handling */
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .preview-item {
-            position: relative;
-            width: 80px;
-        }
-        
-        .preview-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        /* Variant List */
-        .variant-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-        
-        .variant-list li {
-            padding: 4px 0;
-            border-bottom: 1px dashed #eee;
-            font-size: 13px;
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        
-        /* Pagination Styles */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 5px;
-        }
-        
-        .pagination a, .pagination span {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s;
-        }
-        
-        .pagination a:hover {
-            background: #1abc9c;
-            color: white;
-            border-color: #1abc9c;
-        }
-        
-        .pagination .active {
-            background: #1abc9c;
-            color: white;
-            border-color: #1abc9c;
-            font-weight: bold;
-        }
-        
-        .pagination .disabled {
-            color: #aaa;
-            pointer-events: none;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .product-form {
-                width: 100%;
-            }
-            
-            .pagination {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="product.css">
 </head>
 <body>
 <div class="container">
@@ -445,14 +135,9 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                     <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Product Images:</label>
-                    <div id="imageInputs">
-                        <input type="file" name="productImages[]" accept="image/*" required>
-                    </div>
-                    <button type="button" class="add-more-btn" id="addMoreImages">
-                        <i class="fas fa-plus"></i> Add More Images
-                    </button>
-                    <div class="image-preview" id="imagePreview"></div>
+                    <label for="primaryImage">Primary Image (Required):</label>
+                    <input type="file" id="primaryImage" name="primaryImage" accept="image/*" required>
+                    <div class="image-preview" id="primaryImagePreview"></div>
                 </div>
                 <button type="submit" class="submit-btn">Add Product</button>
             </form>
@@ -688,17 +373,13 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
             return false;
         }
         
-        const imageInputs = document.querySelectorAll('input[name="productImages[]"]');
-        let hasImage = false;
-        imageInputs.forEach(input => {
-            if (input.files.length > 0) hasImage = true;
-        });
-        
-        if (!hasImage) {
+        // Check primary image is selected
+        const primaryImage = document.getElementById('primaryImage');
+        if (primaryImage.files.length === 0) {
             Swal.fire({
                 icon: 'error',
-                title: 'Missing Images',
-                text: 'Please upload at least one product image',
+                title: 'Missing Primary Image',
+                text: 'Please upload the primary product image',
             });
             return false;
         }
@@ -706,29 +387,13 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
         return true;
     }
 
-    // Image Upload Handling
-    document.getElementById('addMoreImages').addEventListener('click', () => {
-        const container = document.getElementById('imageInputs');
-        const newInput = document.createElement('input');
-        newInput.type = 'file';
-        newInput.name = 'productImages[]';
-        newInput.accept = 'image/*';
-        newInput.style.marginTop = '5px';
-        container.appendChild(newInput);
-    });
-
-    // Image Preview
-    document.getElementById('imageInputs').addEventListener('change', (e) => {
-        const previewContainer = document.getElementById('imagePreview');
+    // Image Preview for primary image only
+    document.getElementById('primaryImage').addEventListener('change', (e) => {
+        const previewContainer = document.getElementById('primaryImagePreview');
         previewContainer.innerHTML = '';
         
-        const fileInputs = document.querySelectorAll('input[name="productImages[]"]');
-        const files = [];
-        fileInputs.forEach(input => {
-            if (input.files.length > 0) files.push(...Array.from(input.files));
-        });
-        
-        files.forEach(file => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
             if (!file.type.match('image.*')) return;
             
             const reader = new FileReader();
@@ -736,13 +401,13 @@ while ($cat = mysqli_fetch_assoc($category_result)) {
                 const previewItem = document.createElement('div');
                 previewItem.className = 'preview-item';
                 previewItem.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
+                    <img src="${e.target.result}" alt="Preview" style="max-width: 200px;">
                     <span>${file.name}</span>
                 `;
                 previewContainer.appendChild(previewItem);
             };
             reader.readAsDataURL(file);
-        });
+        }
     });
 </script>
 </body>

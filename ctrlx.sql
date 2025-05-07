@@ -225,117 +225,87 @@ INSERT INTO CATEGORIES (C_NAME) VALUES
 ('Oversized T'),
 ('Hoodies');
 
--- Men's T-Shirts
-INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
-(1, 'Oversized White T-Shirt', 69.90),
-(1, 'Oversized Black T-Shirt', 89.90),
-(1, 'Oversized Red T-Shirt', 79.90),
-(1, 'Oversized Clay T-Shirt', 79.90),
-(1, 'Oversized Butter T-Shirt', 79.90),
-(1, 'Oversized Grey T-Shirt', 69.90),
-(1, 'Oversized Orchid T-Shirt', 79.90),
-
--- Women's Hoodies
-(2, 'White Hoodie', 169.90),
-(2, 'Grey Hoodie', 169.90),
-(2, 'Charcoal Hoodie', 169.90),
-(2, 'Black Hoodie', 169.90),
-(2, 'Red Hoodie', 169.90),
-(2, 'Green Hoodie', 169.90),
-(2, 'Navy Hoodie', 169.90);
-
 -- T-SHIRTS
+INSERT INTO PRODUCT (C_ID, P_Name, P_Picture, P_Price) VALUES
+(1, 'Oversized White T-Shirt', 'images/1Front.png', 69.90),
+(1, 'Oversized Black T-Shirt', 'images/2Front.png', 69.90),
+(1, 'Oversized Red T-Shirt', 'images/3Front.png', 69.90),
+(1, 'Oversized Clay T-Shirt', 'images/4Front.png', 69.90),
+(1, 'Oversized Butter T-Shirt', 'images/5Front.png', 69.90),
+(1, 'Oversized Grey T-Shirt', 'images/6Front.png', 69.90),
+(1, 'Oversized Orchid T-Shirt', 'images/7Front.png', 69.90),
 
--- P_ID 1: Oversized White T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(1, 'FYP/images/1Person Back.png'),
-(1, 'FYP/images/1Person Closeup.png'),
-(1, 'FYP/images/1Person Front.png'),
-(1, 'FYP/images/1Front.png'),
-(1, 'FYP/images/1Back.png');
+-- HOODIES
+(2, 'White Hoodie', 'images/1Front.jpeg', 169.90),
+(2, 'Grey Hoodie', 'images/2Front.jpeg', 169.90),
+(2, 'Charcoal Hoodie', 'images/3Front.jpeg', 169.90),
+(2, 'Black Hoodie', 'images/4Front.jpeg', 169.90),
+(2, 'Red Hoodie', 'images/5Front.jpeg', 169.90),
+(2, 'Green Hoodie', 'images/6Front.jpeg', 169.90),
+(2, 'Navy Hoodie', 'images/7Front.jpeg', 169.90);
 
--- P_ID 2: Oversized Black T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(2, 'FYP/images/2Person Back.png'),
-(2, 'FYP/images/2Person Closeup.png'),
-(2, 'FYP/images/2Person Front.png'),
-(2, 'FYP/images/2Front.png'),
-(2, 'FYP/images/2Back.png');
 
--- P_ID 3: Oversized Red T-Shirt
+-- PRODUCT_IMAGES for all P_IDs
 INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(3, 'FYP/images/3Person Back.png'),
-(3, 'FYP/images/3Person Closeup.png'),
-(3, 'FYP/images/3Person Front.png'),
-(3, 'FYP/images/3Front.png'),
-(3, 'FYP/images/3Back.png');
+-- P_ID 1
+(1, 'images/1Front.png'),
+(1, 'images/1Back.png'),
 
--- P_ID 4: Oversized Clay T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(4, 'FYP/images/4Person Back.png'),
-(4, 'FYP/images/4Person Closeup.png'),
-(4, 'FYP/images/4Person Front.png'),
-(4, 'FYP/images/4Front.png'),
-(4, 'FYP/images/4Back.png');
+-- P_ID 2
+(2, 'images/2Front.png'),
+(2, 'images/2Back.png'),
 
--- P_ID 5: Oversized Butter T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(5, 'FYP/images/5Back.png'),
-(5, 'FYP/images/5Front.png'),
-(5, 'FYP/images/5Person Back.png'),
-(5, 'FYP/images/5Person Closeup.png'),
-(5, 'FYP/images/5Person Front.png');
+-- P_ID 3
+(3, 'images/3Front.png'),
+(3, 'images/3Back.png'),
 
--- P_ID 6: Oversized Grey T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(6, 'FYP/images/6Person Back.png'),
-(6, 'FYP/images/6Person Closeup.png'),
-(6, 'FYP/images/6Person Front.png'),
-(6, 'FYP/images/6Front.png'),
-(6, 'FYP/images/6Back.png');
+-- P_ID 4
+(4, 'images/4Front.png'),
+(4, 'images/4Back.png'),
 
--- P_ID 7: Oversized Orchid T-Shirt
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(7, 'FYP/images/7Person Back.png'),
-(7, 'FYP/images/7Person Closeup.png'),
-(7, 'FYP/images/7Person Front.png'),
-(7, 'FYP/images/7Front.png'),
-(7, 'FYP/images/7Back.png');
+-- P_ID 5
+(5, 'images/5Back.png'),
+(5, 'images/5Front.png'),
+(5, 'images/5Person Back.png'),
+(5, 'images/5Person Closeup.png'),
+(5, 'images/5Person Front.png'),
 
--- P_ID 8: White Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(8, 'FYP/images/1Front.jpeg'),
-(8, 'FYP/images/1Back.jpeg');
+-- P_ID 6
+(6, 'images/6Front.png'),
+(6, 'images/6Back.png'),
 
--- P_ID 9: Grey Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(9, 'FYP/images/2Front.jpeg'),
-(9, 'FYP/images/2Back.jpeg');
+-- P_ID 7
+(7, 'images/7Front.png'),
+(7, 'images/7Back.png'),
 
--- P_ID 10: Charcoal Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(10, 'FYP/images/3Front.jpeg'),
-(10, 'FYP/images/3Back.jpeg');
+-- P_ID 8
+(8, 'images/1Front.jpeg'),
+(8, 'images/1Back.jpeg'),
 
--- P_ID 11: Black Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(11, 'FYP/images/4Front.jpeg'),
-(11, 'FYP/images/4Back.jpeg');
+-- P_ID 9
+(9, 'images/2Front.jpeg'),
+(9, 'images/2Back.jpeg'),
 
--- P_ID 12: Red Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(12, 'FYP/images/3Front.jpeg'),
-(12, 'FYP/images/3Back.jpeg');
+-- P_ID 10
+(10, 'images/3Front.jpeg'),
+(10, 'images/3Back.jpeg'),
 
--- P_ID 13: Green Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(13, 'FYP/images/6Front.jpeg'),
-(13, 'FYP/images/6Back.jpeg');
+-- P_ID 11
+(11, 'images/4Front.jpeg'),
+(11, 'images/4Back.jpeg'),
 
--- P_ID 14: Navy Hoodie
-INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
-(14, 'FYP/images/7Front.jpeg'),
-(14, 'FYP/images/7Back.jpeg');
+-- P_ID 12
+(12, 'images/5Front.jpeg'),
+(12, 'images/5Back.jpeg'),
+
+-- P_ID 13
+(13, 'images/6Front.jpeg'),
+(13, 'images/6Back.jpeg'),
+
+-- P_ID 14
+(14, 'images/7Front.jpeg'),
+(14, 'images/7Back.jpeg');
+
 
 
 -- Men's T-Shirt Variants

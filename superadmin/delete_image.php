@@ -2,35 +2,45 @@
 include 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $productId = $_POST['productId'];
-    $imageId = $_POST['imageId'];
-    
     try {
-        // Get image path first
-        $stmt = $conn->prepare("SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE PI_ID = ? AND P_ID = ?");
-        $stmt->bind_param("ii", $imageId, $productId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $image = $result->fetch_assoc();
-        $stmt->close();
+        $productId = intval($_POST['productId']);
+        $imageId = intval($_POST['imageId']);
         
-        if ($image) {
-            // Delete from filesystem
-            $filePath = '../' . ltrim($image['PRODUCT_IMAGE'], 'FYP/');
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-            
-            // Delete from database
-            $stmt = $conn->prepare("DELETE FROM PRODUCT_IMAGES WHERE PI_ID = ?");
-            $stmt->bind_param("i", $imageId);
-            $stmt->execute();
-            $stmt->close();
+        // Get image path before deleting
+        $getImageQuery = "SELECT PRODUCT_IMAGE FROM PRODUCT_IMAGES WHERE PI_ID = ? AND P_ID = ?";
+        $stmt = mysqli_prepare($conn, $getImageQuery);
+        mysqli_stmt_bind_param($stmt, "ii", $imageId, $productId);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $imagePath);
+        mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        
+        if (empty($imagePath)) {
+            throw new Exception("Image not found or doesn't belong to this product");
         }
         
-        header("Location: edit_product.php?productId=$productId&success=1");
+        // Delete from database
+        $deleteQuery = "DELETE FROM PRODUCT_IMAGES WHERE PI_ID = ? AND P_ID = ?";
+        $stmt = mysqli_prepare($conn, $deleteQuery);
+        mysqli_stmt_bind_param($stmt, "ii", $imageId, $productId);
+        $success = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        
+        if (!$success) {
+            throw new Exception("Failed to delete image from database");
+        }
+        
+        // Delete file if it exists
+        $fullPath = '../' . ltrim($imagePath, 'FYP/');
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+        
+        // Redirect with success message
+        header("Location: edit_product.php?productId=$productId&success=Image deleted successfully");
         exit();
     } catch (Exception $e) {
+        // Redirect with error message
         header("Location: edit_product.php?productId=$productId&error=" . urlencode($e->getMessage()));
         exit();
     }
@@ -38,4 +48,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: product.php");
     exit();
 }
-?>
