@@ -84,7 +84,6 @@ CREATE TABLE ORDERS (
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     O_Status ENUM('Processing','Shipped','Delivered') NOT NULL DEFAULT 'Processing', --------------- new line (yule need to update)
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
-    FOREIGN KEY (OS_ID) REFERENCES ORDER_STATUS(OS_ID),
     FOREIGN KEY (UA_ID) REFERENCES USER_ADDRESS(UA_ID)
 );
 
@@ -157,7 +156,6 @@ CREATE TABLE DELIVERY (
     D_EstimatedDelivery DATE NOT NULL,        -- Expected delivery date
     D_ActualDelivery DATETIME NULL,           -- When actually delivered
     D_Status ENUM('Preparing','Shipped','Delivered') NOT NULL DEFAULT 'Preparing',
-    FOREIGN KEY (DS_ID) REFERENCES DELIVERY_STATUS(DS_ID),
     FOREIGN KEY (O_ID) REFERENCES ORDERS(O_ID) ON DELETE CASCADE
 );
 
