@@ -82,7 +82,7 @@ CREATE TABLE ORDERS (
     OS_ID INT NOT NULL,
     O_TotalAmount DECIMAL(10,2) NOT NULL,
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    O_Status ENUM('Processing','Shipped','Delivered') NOT NULL DEFAULT 'Processing',
+    O_Status ENUM('Processing','Shipped','Delivered') NOT NULL DEFAULT 'Processing', --------------- new line (yule need to update)
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
     FOREIGN KEY (OS_ID) REFERENCES ORDER_STATUS(OS_ID),
     FOREIGN KEY (UA_ID) REFERENCES USER_ADDRESS(UA_ID)
@@ -224,8 +224,8 @@ INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level, A_Status) VALUES
 ('SHIHAO','shihao123','shihao@gmail.com','01234567891',0,0);
 
 INSERT INTO CATEGORIES (C_NAME, C_Status) VALUES
-('Men Top',0),
-('Woman Top',0);
+('Oversized T',0),
+('Hoodies',0);
 
 -- Men's T-Shirts
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
