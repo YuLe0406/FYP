@@ -221,9 +221,9 @@ INSERT INTO ADMIN (A_Name, A_Password, A_Email, A_CN, A_Level, A_Status) VALUES
 ('YULE','yule123','yule@gmail.com','0123456789',1,0),
 ('SHIHAO','shihao123','shihao@gmail.com','01234567891',0,0);
 
-INSERT INTO CATEGORIES (C_NAME, C_Status) VALUES
-('Oversized T',0),
-('Hoodies',0);
+INSERT INTO CATEGORIES (C_NAME) VALUES
+('Oversized T'),
+('Hoodies');
 
 -- Men's T-Shirts
 INSERT INTO PRODUCT (C_ID, P_Name, P_Price) VALUES
@@ -339,48 +339,48 @@ INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
 
 
 -- Men's T-Shirt Variants
-INSERT INTO PRODUCT_VARIANTS (P_ID, PC_ID, P_Size, P_Quantity) VALUES
--- White T-Shirt (P_ID=1, PC_ID=1)
-(1, 1, 'S', 10), (1, 1, 'M', 12), (1, 1, 'L', 8), (1, 1, 'XL', 6),
+INSERT INTO PRODUCT_VARIANTS (P_ID, P_Size, P_Quantity) VALUES
+-- White T-Shirt (P_ID=1)
+(1, 'S', 10), (1, 'M', 12), (1, 'L', 8), (1, 'XL', 6),
 
--- Black T-Shirt (P_ID=2, PC_ID=2)
-(2, 2, 'S', 10), (2, 2, 'M', 12), (2, 2, 'L', 8), (2, 2, 'XL', 6),
+-- Black T-Shirt (P_ID=2)
+(2, 'S', 10), (2, 'M', 12), (2, 'L', 8), (2, 'XL', 6),
 
--- Red T-Shirt (P_ID=3, PC_ID=3)
-(3, 3, 'S', 10), (3, 3, 'M', 12), (3, 3, 'L', 8), (3, 3, 'XL', 6),
+-- Red T-Shirt (P_ID=3)
+(3, 'S', 10), (3, 'M', 12), (3, 'L', 8), (3, 'XL', 6),
 
--- Clay T-Shirt (P_ID=4, PC_ID=4)
-(4, 4, 'S', 10), (4, 4, 'M', 12), (4, 4, 'L', 8), (4, 4, 'XL', 6),
+-- Clay T-Shirt (P_ID=4)
+(4, 'S', 10), (4, 'M', 12), (4, 'L', 8), (4, 'XL', 6),
 
--- Butter T-Shirt (P_ID=5, PC_ID=5)
-(5, 5, 'S', 10), (5, 5, 'M', 12), (5, 5, 'L', 8), (5, 5, 'XL', 6),
+-- Butter T-Shirt (P_ID=5)
+(5, 'S', 10), (5, 'M', 12), (5, 'L', 8), (5, 'XL', 6),
 
--- Grey T-Shirt (P_ID=6, PC_ID=6)
-(6, 6, 'S', 10), (6, 6, 'M', 12), (6, 6, 'L', 8), (6, 6, 'XL', 6),
+-- Grey T-Shirt (P_ID=6)
+(6, 'S', 10), (6, 'M', 12), (6, 'L', 8), (6, 'XL', 6),
 
--- Orchid T-Shirt (P_ID=7, PC_ID=7)
-(7, 7, 'S', 10), (7, 7, 'M', 12), (7, 7, 'L', 8), (7, 7, 'XL', 6),
+-- Orchid T-Shirt (P_ID=7)
+(7, 'S', 10), (7, 'M', 12), (7, 'L', 8), (7, 'XL', 6),
 
--- White Hoodie (P_ID=8, PC_ID=1)
-(8, 1, 'S', 5), (8, 1, 'M', 7), (8, 1, 'L', 4), (8, 1, 'XL', 3),
+-- White Hoodie (P_ID=8)
+(8, 'S', 5), (8, 'M', 7), (8, 'L', 4), (8, 'XL', 3),
 
--- Grey Hoodie (P_ID=9, PC_ID=6)
-(9, 6, 'S', 5), (9, 6, 'M', 7), (9, 6, 'L', 4), (9, 6, 'XL', 3),
+-- Grey Hoodie (P_ID=9)
+(9, 'S', 5), (9, 'M', 7), (9, 'L', 4), (9, 'XL', 3),
 
--- Charcoal Hoodie (P_ID=10, PC_ID=8)
-(10, 8, 'S', 5), (10, 8, 'M', 7), (10, 8, 'L', 4), (10, 8, 'XL', 3),
+-- Charcoal Hoodie (P_ID=10)
+(10, 'S', 5), (10, 'M', 7), (10, 'L', 4), (10, 'XL', 3),
 
--- Black Hoodie (P_ID=11, PC_ID=2)
-(11, 2, 'S', 5), (11, 2, 'M', 7), (11, 2, 'L', 4), (11, 2, 'XL', 3),
+-- Black Hoodie (P_ID=11)
+(11, 'S', 5), (11, 'M', 7), (11, 'L', 4), (11, 'XL', 3),
 
--- Red Hoodie (P_ID=12, PC_ID=3)
-(12, 3, 'S', 5), (12, 3, 'M', 7), (12, 3, 'L', 4), (12, 3, 'XL', 3),
+-- Red Hoodie (P_ID=12)
+(12, 'S', 5), (12, 'M', 7), (12, 'L', 4), (12, 'XL', 3),
 
--- Green Hoodie (P_ID=13, PC_ID=9)
-(13, 9, 'S', 5), (13, 9, 'M', 7), (13, 9, 'L', 4), (13, 9, 'XL', 3),
+-- Green Hoodie (P_ID=13)
+(13, 'S', 5), (13, 'M', 7), (13, 'L', 4), (13, 'XL', 3),
 
--- Navy Hoodie (P_ID=14, PC_ID=10)
-(14, 10, 'S', 5), (14, 10, 'M', 7), (14, 10, 'L', 4), (14, 10, 'XL', 3);
+-- Navy Hoodie (P_ID=14)
+(14, 'S', 5), (14, 'M', 7), (14, 'L', 4), (14, 'XL', 3);
 
 INSERT INTO DELIVERY_CARRIER (DC_Name) VALUES 
 ('FedEx'),
