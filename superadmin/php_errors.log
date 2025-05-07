@@ -48,3 +48,8 @@ Stack trace:
 #0 C:\xampp\htdocs\FYP\superadmin\product.php(76): mysqli_query(Object(mysqli), '\r\n    SELECT p....')
 #1 {main}
   thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 76
+[07-May-2025 09:19:14 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: mysqli_fetch_assoc(): Argument #1 ($result) must be of type mysqli_result, bool given in C:\xampp\htdocs\FYP\superadmin\product.php:79
+Stack trace:
+#0 C:\xampp\htdocs\FYP\superadmin\product.php(79): mysqli_fetch_assoc(false)
+#1 {main}
+  thrown in C:\xampp\htdocs\FYP\superadmin\product.php on line 79

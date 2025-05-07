@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bind_param("s", $name);
                 $stmt->execute();
                 $stmt->close();
-                header("Location: category.php?view=active");
+                header("Location: category.php");
                 exit();
             } else {
                 // Set error message to be shown in SweetAlert
@@ -32,40 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Toggle category status
-if (isset($_GET['toggle_status'])) {
-    $id = intval($_GET['toggle_status']);
-    $view = isset($_GET['view']) ? $_GET['view'] : 'active';
-    
-    // Get current status
-    $stmt = $conn->prepare("SELECT C_Status FROM CATEGORIES WHERE C_ID = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->bind_result($currentStatus);
-    $stmt->fetch();
-    $stmt->close();
-    
-    // Toggle status
-    $newStatus = $currentStatus ? 0 : 1;
-    
-    $updateStmt = $conn->prepare("UPDATE CATEGORIES SET C_Status = ? WHERE C_ID = ?");
-    $updateStmt->bind_param("ii", $newStatus, $id);
-    $updateStmt->execute();
-    $updateStmt->close();
-    
-    header("Location: category.php?view=" . ($newStatus ? 'inactive' : 'active'));
-    exit();
-}
-
-// Determine which categories to show
-$view = isset($_GET['view']) ? $_GET['view'] : 'active';
-$status = ($view === 'inactive') ? 1 : 0;
-
-// Fetch categories based on view
+// Fetch all categories
 $categories = [];
-$query = "SELECT * FROM CATEGORIES WHERE C_Status = ? ORDER BY C_ID DESC";
+$query = "SELECT * FROM CATEGORIES ORDER BY C_ID DESC";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("i", $status);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -82,10 +52,29 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <title>Category Management</title>
-    <link rel="stylesheet" href="category.css">
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
+        /* ===== Global Styles ===== */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f7fa;
+        }
+        
         /* ===== Category Management Styling ===== */
         .add-category {
             background: #ffffff;
@@ -101,12 +90,16 @@ $stmt->close();
             color: #2c3e50;
             border-bottom: 2px solid #ecf0f1;
             padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .category-form {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            max-width: 500px;
         }
 
         .form-group {
@@ -154,41 +147,23 @@ $stmt->close();
             transform: translateY(-1px);
         }
 
-        /* ===== Category View Selector ===== */
+        /* ===== Category Table ===== */
         .category-view {
             background: #ffffff;
             padding: 30px;
             border-radius: 12px;
-            margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
-
-        .view-selector {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .view-selector h3 {
+        
+        .category-view h3 {
             font-size: 22px;
             color: #2c3e50;
-            margin: 0;
+            margin: 0 0 20px 0;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .view-dropdown {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #dcdde1;
-            background: #f9f9f9;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* ===== Category Table ===== */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -212,51 +187,28 @@ $stmt->close();
             transition: background 0.2s ease;
         }
 
-        /* ===== Status Styling ===== */
-        .status-active {
-            color: #2ecc71;
-            font-weight: 600;
-        }
-
-        .status-inactive {
-            color: #e74c3c;
-            font-weight: 600;
-        }
-
         /* ===== Action Buttons ===== */
         .action-buttons {
             display: flex;
             gap: 10px;
         }
 
-        .activate-btn,
-        .deactivate-btn {
+        .edit-btn {
             font-size: 14px;
             padding: 8px 14px;
             border: none;
             border-radius: 6px;
+            background-color: #3498db;
             color: #fff;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s ease;
             text-decoration: none;
+            display: inline-block;
         }
 
-        .activate-btn {
-            background-color: #2ecc71;
-        }
-
-        .activate-btn:hover {
-            background-color: #27ae60;
-            transform: translateY(-1px);
-        }
-
-        .deactivate-btn {
-            background-color: #e74c3c;
-        }
-
-        .deactivate-btn:hover {
-            background-color: #c0392b;
+        .edit-btn:hover {
+            background-color: #2980b9;
             transform: translateY(-1px);
         }
 
@@ -270,6 +222,14 @@ $stmt->close();
 
         /* ===== Responsive Design ===== */
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
             table thead {
                 display: none;
             }
@@ -310,7 +270,7 @@ $stmt->close();
         <main class="main-content">
             <!-- Add Category -->
             <section class="add-category">
-                <h2>CATEGORY MANAGEMENT</h2>
+                <h2><img src="https://img.icons8.com/ios-filled/24/category.png" alt="Category Icon"/> CATEGORY MANAGEMENT</h2>
                 
                 <!-- Check for error and show SweetAlert -->
                 <?php if (isset($error)) { ?>
@@ -334,25 +294,18 @@ $stmt->close();
                 </form>
             </section>
 
-            <!-- Category View Selector -->
+            <!-- Category List -->
             <section class="category-view">
-                <div class="view-selector">
-                    <h3>
-                        <img src="<?= $view === 'active' ? 'https://img.icons8.com/ios-filled/24/checkmark.png' : 'https://img.icons8.com/ios-filled/24/cancel.png' ?>" alt="View Icon"/>
-                        <?= $view === 'active' ? 'Active Categories' : 'Inactive Categories' ?>
-                    </h3>
-                    <select class="view-dropdown" onchange="window.location.href='?view='+this.value">
-                        <option value="active" <?= $view === 'active' ? 'selected' : '' ?>>Active Categories</option>
-                        <option value="inactive" <?= $view === 'inactive' ? 'selected' : '' ?>>Inactive Categories</option>
-                    </select>
-                </div>
+                <h3>
+                    <img src="https://img.icons8.com/ios-filled/24/list.png" alt="List Icon"/>
+                    All Categories
+                </h3>
                 
                 <table>
                     <thead>
                         <tr>
                             <th>Category ID</th>
                             <th>Category Name</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -363,31 +316,16 @@ $stmt->close();
                                 <td><?= htmlspecialchars($category['C_ID']) ?></td>
                                 <td><?= htmlspecialchars($category['C_Name']) ?></td>
                                 <td>
-                                    <?php if ($category['C_Status'] == 0): ?>
-                                        <span class="status-active">Active</span>
-                                    <?php else: ?>
-                                        <span class="status-inactive">Inactive</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
                                     <div class="action-buttons">
-                                        <?php if ($category['C_Status'] == 0): ?>
-                                            <a href="javascript:void(0);" 
-                                               class="deactivate-btn" 
-                                               onclick="confirmDeactivate(<?= $category['C_ID'] ?>, '<?= $view ?>')">Deactivate</a>
-                                        <?php else: ?>
-                                            <a href="javascript:void(0);" 
-                                               class="activate-btn" 
-                                               onclick="confirmActivate(<?= $category['C_ID'] ?>, '<?= $view ?>')">Activate</a>
-                                        <?php endif; ?>
+                                        <a href="edit_category.php?id=<?= $category['C_ID'] ?>" class="edit-btn">Edit</a>
                                     </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" class="empty-state">
-                                    No <?= $view === 'active' ? 'active' : 'inactive' ?> categories found
+                                <td colspan="3" class="empty-state">
+                                    No categories found. Add your first category above.
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -399,41 +337,5 @@ $stmt->close();
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        // Function to handle category deactivation with SweetAlert confirmation
-        function confirmDeactivate(categoryId, currentView) {
-            Swal.fire({
-                title: 'Deactivate this category?',
-                text: "Products in this category won't be visible to customers!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#7f8c8d',
-                confirmButtonText: 'Deactivate'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `category.php?toggle_status=${categoryId}&view=${currentView}`;
-                }
-            });
-        }
-
-        // Function to handle category activation with SweetAlert confirmation
-        function confirmActivate(categoryId, currentView) {
-            Swal.fire({
-                title: 'Activate this category?',
-                text: "Products in this category will become visible to customers.",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#2ecc71',
-                cancelButtonColor: '#7f8c8d',
-                confirmButtonText: 'Activate'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `category.php?toggle_status=${categoryId}&view=${currentView}`;
-                }
-            });
-        }
-    </script>
 </body>
 </html>
