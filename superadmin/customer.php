@@ -8,66 +8,48 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-$error = '';
-$success = '';
+// Initialize variables
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$per_page = 10;
+$offset = ($page - 1) * $per_page;
 
-// Deactivate User
-if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Deactivate') {
-    $userId = (int)$_POST['userId'];
-    $stmt = $conn->prepare("UPDATE USER SET U_Status = 1 WHERE U_ID = ?");
-    $stmt->bind_param("i", $userId);
-    if ($stmt->execute()) {
-        $_SESSION['Deactivate_success'] = true;
-        header("Location: " . $_SERVER['PHP_SELF'] . "?view=inactive");
-        exit();
-    } else {
-        $error = "Error Deactivating user: " . $stmt->error;
-    }
-    $stmt->close();
+// Build base query
+$query = "SELECT U_ID, U_FName, U_LName, U_Email, U_PNumber, U_Gender FROM USER";
+$count_query = "SELECT COUNT(*) as total FROM USER";
+
+// Add search filter if provided
+if (!empty($search)) {
+    $search_term = "%$search%";
+    $query .= " WHERE U_FName LIKE ? OR U_LName LIKE ? OR U_Email LIKE ?";
+    $count_query .= " WHERE U_FName LIKE ? OR U_LName LIKE ? OR U_Email LIKE ?";
 }
 
-// Activate User
-if ($_SERVER["REQUEST_METHOD"] === "POST" && $_POST['action'] === 'Activate') {
-    $userId = (int)$_POST['userId'];
-    $stmt = $conn->prepare("UPDATE USER SET U_Status = 0 WHERE U_ID = ?");
-    $stmt->bind_param("i", $userId);
-    if ($stmt->execute()) {
-        $_SESSION['Activate_success'] = true;
-        header("Location: " . $_SERVER['PHP_SELF'] . "?view=active");
-        exit();
-    } else {
-        $error = "Error Activating user: " . $stmt->error;
-    }
-    $stmt->close();
-}
+// Add sorting (A-Z by last name)
+$query .= " ORDER BY U_LName ASC LIMIT ? OFFSET ?";
 
-// Show success messages
-if (isset($_SESSION['Deactivate_success'])) {
-    $success = "User Deactivated successfully!";
-    unset($_SESSION['Deactivate_success']);
+// Get total count of customers
+$stmt = $conn->prepare($count_query);
+if (!empty($search)) {
+    $stmt->bind_param("sss", $search_term, $search_term, $search_term);
 }
-if (isset($_SESSION['Activate_success'])) {
-    $success = "User Activated successfully!";
-    unset($_SESSION['Activate_success']);
-}
+$stmt->execute();
+$total_result = $stmt->get_result();
+$total_row = $total_result->fetch_assoc();
+$total_customers = $total_row['total'];
+$total_pages = ceil($total_customers / $per_page);
+$stmt->close();
 
-// Determine which users to show
-$view = isset($_GET['view']) ? $_GET['view'] : 'active';
-$status = ($view === 'inactive') ? 1 : 0;
-
-// Fetch users based on view
-$users = [];
-$query = "SELECT U_ID, U_FName, U_LName, U_Email, U_PNumber, U_Gender, U_Status FROM USER WHERE U_Status = ? ORDER BY U_ID DESC";
+// Get paginated customers
 $stmt = $conn->prepare($query);
-$stmt->bind_param("i", $status);
+if (!empty($search)) {
+    $stmt->bind_param("sssii", $search_term, $search_term, $search_term, $per_page, $offset);
+} else {
+    $stmt->bind_param("ii", $per_page, $offset);
+}
 $stmt->execute();
 $result = $stmt->get_result();
-
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
-    }
-}
+$customers = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
 
@@ -99,36 +81,37 @@ $stmt->close();
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
-        /* View Selector */
-        .view-selector {
+       /* Search and Filter */
+        .customer-controls {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-        
-        .view-selector h3 {
-            font-size: 22px;
-            margin: 0;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+
+        .search-box {
+            flex: 1;
+            min-width: 400px; /* Changed from 250px to 400px */
+            max-width: 600px; /* Added max-width */
+            position: relative;
         }
-        
-        .view-dropdown {
-            padding: 8px 12px;
-            border-radius: 6px;
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
             border: 1px solid #dcdde1;
-            background: #f9f9f9;
+            border-radius: 6px;
             font-size: 14px;
-            cursor: pointer;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%237f8c8d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
         }
         
         /* Customer Table */
         .customer-header {
             display: grid;
-            grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr 100px;
+            grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr;
             padding: 12px 15px;
             background: #f8f9fa;
             border-radius: 8px;
@@ -146,7 +129,7 @@ $stmt->close();
         
         .customer-item {
             display: grid;
-            grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr 100px;
+            grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr;
             padding: 12px 15px;
             border: 1px solid #ecf0f1;
             border-radius: 8px;
@@ -154,58 +137,68 @@ $stmt->close();
             font-size: 14px;
             align-items: center;
             background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
         .customer-item:hover {
             background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
-        /* Status Styling */
-        .status-active {
-            color: #2ecc71;
-            font-weight: 500;
+        /* Order Details Section */
+        .order-details {
+            display: none;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #eee;
         }
         
-        .status-inactive {
-            color: #e74c3c;
-            font-weight: 500;
+        .order-details.active {
+            display: block;
         }
         
-        /* Action Buttons */
-        .action-button {
-            padding: 6px 12px;
-            border: none;
+        .order-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .order-header {
+            font-weight: bold;
+            background: #f1f1f1;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
         }
         
-        .Deactivate {
-            background-color: #e74c3c;
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .pagination a:hover {
+            background: #f8f9fa;
+        }
+        
+        .pagination .current {
+            background: #3498db;
             color: white;
-        }
-        
-        .Deactivate:hover {
-            background-color: #c0392b;
-        }
-        
-        .Activate {
-            background-color: #2ecc71;
-            color: white;
-        }
-        
-        .Activate:hover {
-            background-color: #27ae60;
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-            grid-column: 1 / -1;
+            border-color: #3498db;
         }
         
         /* Responsive Design */
@@ -232,8 +225,9 @@ $stmt->close();
                 color: #2c3e50;
             }
             
-            .action-button {
-                width: 100%;
+            .order-item {
+                grid-template-columns: 1fr;
+                gap: 5px;
             }
         }
     </style>
@@ -243,15 +237,12 @@ $stmt->close();
     <?php include 'sidebar.php'; ?>
     <main class="main-content">
         <section class="customer-view">
-            <div class="view-selector">
-                <h3>
-                    <img src="<?= $view === 'active' ? 'https://img.icons8.com/ios-filled/24/checkmark.png' : 'https://img.icons8.com/ios-filled/24/cancel.png' ?>" alt="Status Icon"/>
-                    <?= $view === 'active' ? 'Active Customers' : 'Inactive Customers' ?>
-                </h3>
-                <select class="view-dropdown" onchange="window.location.href='?view='+this.value">
-                    <option value="active" <?= $view === 'active' ? 'selected' : '' ?>>Active Customers</option>
-                    <option value="inactive" <?= $view === 'inactive' ? 'selected' : '' ?>>Inactive Customers</option>
-                </select>
+            <div class="customer-controls">
+                <div class="search-box">
+                    <form method="GET" action="">
+                        <input type="text" name="search" placeholder="Search customers..." value="<?= htmlspecialchars($search) ?>">
+                    </form>
+                </div>
             </div>
             
             <div class="customer-header">
@@ -259,105 +250,112 @@ $stmt->close();
                 <span>Email</span>
                 <span>Phone</span>
                 <span>Gender</span>
-                <span>Status</span>
-                <span>Action</span>
+                <span>Details</span>
             </div>
             <ul class="customer-list">
-                <?php if (count($users) > 0): ?>
-                    <?php foreach ($users as $user): ?>
-                        <li class="customer-item">
-                            <span data-label="Name"><?= htmlspecialchars($user['U_FName'] . ' ' . $user['U_LName']); ?></span>
-                            <span data-label="Email"><?= htmlspecialchars($user['U_Email']); ?></span>
-                            <span data-label="Phone"><?= htmlspecialchars($user['U_PNumber']); ?></span>
-                            <span data-label="Gender"><?= htmlspecialchars($user['U_Gender']); ?></span>
-                            <span data-label="Status" class="<?= (int)$user['U_Status'] === 0 ? 'status-active' : 'status-inactive' ?>">
-                                <?= (int)$user['U_Status'] === 0 ? 'Active' : 'Inactive' ?>
-                            </span>
-                            <span data-label="Action">
-                                <?php if ((int)$user['U_Status'] === 0): ?>
-                                    <form method="POST" onsubmit="return confirmDeactivate(event, this);">
-                                        <input type="hidden" name="action" value="Deactivate">
-                                        <input type="hidden" name="userId" value="<?= $user['U_ID']; ?>">
-                                        <button type="submit" class="action-button Deactivate">Deactivate</button>
-                                    </form>
+                <?php if (count($customers) > 0): ?>
+                    <?php foreach ($customers as $customer): 
+                        // Get customer's orders
+                        $order_stmt = $conn->prepare("
+                            SELECT O_ID, O_Date, O_TotalAmount 
+                            FROM ORDERS 
+                            WHERE U_ID = ? 
+                            ORDER BY O_Date DESC
+                        ");
+                        $order_stmt->bind_param("i", $customer['U_ID']);
+                        $order_stmt->execute();
+                        $orders = $order_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                        $order_stmt->close();
+                    ?>
+                        <li class="customer-item" onclick="toggleOrders(this)">
+                            <span data-label="Name"><?= htmlspecialchars($customer['U_FName'] . ' ' . $customer['U_LName']) ?></span>
+                            <span data-label="Email"><?= htmlspecialchars($customer['U_Email']) ?></span>
+                            <span data-label="Phone"><?= htmlspecialchars($customer['U_PNumber']) ?></span>
+                            <span data-label="Gender"><?= htmlspecialchars($customer['U_Gender']) ?></span>
+                            <span data-label="Details"><?= count($orders) ?> order(s)</span>
+                            
+                            <div class="order-details">
+                                <?php if (count($orders) > 0): ?>
+                                    <div class="order-item order-header">
+                                        <span>Order ID</span>
+                                        <span>Date</span>
+                                        <span>Amount</span>
+                                        <span>Items</span>
+                                    </div>
+                                    <?php foreach ($orders as $order): 
+                                        // Get order items
+                                        $items_stmt = $conn->prepare("
+                                            SELECT p.P_Name, oi.OI_Quantity, oi.OI_Price 
+                                            FROM ORDER_ITEMS oi
+                                            JOIN PRODUCT p ON oi.P_ID = p.P_ID
+                                            WHERE oi.O_ID = ?
+                                        ");
+                                        $items_stmt->bind_param("i", $order['O_ID']);
+                                        $items_stmt->execute();
+                                        $items = $items_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                                        $items_stmt->close();
+                                    ?>
+                                        <div class="order-item">
+                                            <span>#<?= $order['O_ID'] ?></span>
+                                            <span><?= date('M d, Y', strtotime($order['O_Date'])) ?></span>
+                                            <span>RM<?= number_format($order['O_TotalAmount'], 2) ?></span>
+                                            <span>
+                                                <?php foreach ($items as $item): ?>
+                                                    <?= $item['OI_Quantity'] ?>x <?= htmlspecialchars($item['P_Name']) ?> (RM<?= number_format($item['OI_Price'], 2) ?>)<br>
+                                                <?php endforeach; ?>
+                                            </span>
+                                        </div>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
-                                    <form method="POST" onsubmit="return confirmActivate(event, this);">
-                                        <input type="hidden" name="action" value="Activate">
-                                        <input type="hidden" name="userId" value="<?= $user['U_ID']; ?>">
-                                        <button type="submit" class="action-button Activate">Activate</button>
-                                    </form>
+                                    <div class="empty-state">No orders found for this customer</div>
                                 <?php endif; ?>
-                            </span>
+                            </div>
                         </li>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <li class="customer-item">
-                        <span class="empty-state">No <?= $view === 'active' ? 'active' : 'inactive' ?> customers found</span>
+                        <span class="empty-state">No customers found<?= !empty($search) ? ' matching "' . htmlspecialchars($search) . '"' : '' ?></span>
                     </li>
                 <?php endif; ?>
             </ul>
+            
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>">&laquo; Prev</a>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <span class="current"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>">Next &raquo;</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </section>
     </main>
 </div>
 
 <script>
-function confirmDeactivate(event, form) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Deactivate this customer?',
-        text: "They won't be able to log in anymore!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e74c3c',
-        cancelButtonColor: '#7f8c8d',
-        confirmButtonText: 'Deactivate'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.submit();
-        }
-    });
-    return false;
+function toggleOrders(element) {
+    const details = element.querySelector('.order-details');
+    details.classList.toggle('active');
 }
 
-function confirmActivate(event, form) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Activate this customer?',
-        text: "They will regain access to their account.",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#2ecc71',
-        cancelButtonColor: '#7f8c8d',
-        confirmButtonText: 'Activate'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.submit();
-        }
-    });
-    return false;
-}
-
-<?php if ($success): ?>
-document.addEventListener('DOMContentLoaded', function() {
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: '<?= $success; ?>',
-        timer: 3000,
-        showConfirmButton: false
-    });
+// Auto-submit search form when typing stops
+let searchTimer;
+document.querySelector('.search-box input').addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+        this.form.submit();
+    }, 500);
 });
-<?php endif; ?>
-
-<?php if ($error): ?>
-document.addEventListener('DOMContentLoaded', function() {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: '<?= $error; ?>'
-    });
-});
-<?php endif; ?>
 </script>
 </body>
 </html>

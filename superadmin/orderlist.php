@@ -1,9 +1,15 @@
 <?php
+session_start();
 include 'db.php';
-include 'sidebar.php';
+
+// Redirect if not logged in as admin
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: admin_login.php");
+    exit();
+}
 
 // Define status order for display
-$statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+$statusOrder = ['Processing', 'Shipped', 'Delivered'];
 ?>
 
 <!DOCTYPE html>
@@ -14,12 +20,33 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f7fa;
+            margin-left: 250px; /* Adjusted for sidebar */
+        }
+        
+        .main-content {
+            width: 100%;
+            max-width: 1000px;
+            padding: 30px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        
         .order-list {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
 
         table {
@@ -55,11 +82,6 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
         .Processing { background-color: #6c757d; color: white; }
         .Shipped { background-color: #17a2b8; color: white; }
         .Delivered { background-color: #28a745; color: white; }
-        .Cancelled { background-color: #dc3545; color: white; }
-        .Preparing { background-color: #f0ad4e; color: white; }
-        .In-Transit { background-color: #6c757d; color: white; }
-        .Out-for-Delivery { background-color: #17a2b8; color: white; }
-        .Failed-Delivery { background-color: #dc3545; color: white; }
 
         /* Modal styles */
         .modal {
@@ -144,6 +166,7 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
+        
         .status-filter {
             padding: 8px 15px;
             border-radius: 4px;
@@ -151,15 +174,16 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
             background: #f1f1f1;
             border: 1px solid #ddd;
         }
+        
         .status-filter.active {
             background: #1abc9c;
             color: white;
             border-color: #1abc9c;
         }
+        
         .status-filter.Processing { background-color: #6c757d; color: white; }
         .status-filter.Shipped { background-color: #17a2b8; color: white; }
         .status-filter.Delivered { background-color: #28a745; color: white; }
-        .status-filter.Cancelled { background-color: #dc3545; color: white; }
 
         .delivery-info {
             margin-top: 20px;
@@ -179,12 +203,32 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
             background: #f8f9fa;
             border-radius: 5px;
         }
+        
+        /* Search box styles */
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
+    <?php include 'sidebar.php'; ?>
     <main class="main-content">
         <h1>Order Management</h1>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search orders...">
+        </div>
 
         <!-- Status Filters -->
         <div class="status-filters">
@@ -213,18 +257,16 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
                 <tbody>
                 <?php
                 $orderQuery = "
-                    SELECT O.O_ID, O.O_Date, O.O_TotalAmount, OS.O_Status, 
+                    SELECT O.O_ID, O.O_Date, O.O_TotalAmount, O.O_Status,
                            U.U_FName, U.U_LName
                     FROM ORDERS O
-                    JOIN ORDER_STATUS OS ON O.OS_ID = OS.OS_ID
                     JOIN USER U ON O.U_ID = U.U_ID
-                    WHERE OS.O_Status != 'Pending'
-                    ORDER BY FIELD(OS.O_Status, 'Processing', 'Shipped', 'Delivered', 'Cancelled'), 
+                    ORDER BY FIELD(O.O_Status, 'Processing', 'Shipped', 'Delivered'), 
                              O.O_Date DESC
                 ";
                 $orderResult = mysqli_query($conn, $orderQuery);
 
-                if ($orderResult) {
+                if ($orderResult && mysqli_num_rows($orderResult) > 0) {
                     while ($order = mysqli_fetch_assoc($orderResult)) {
                         $orderId = $order['O_ID'];
                         echo "<tr data-status='{$order['O_Status']}'>
@@ -252,11 +294,14 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
                         $orderStatus = $order['O_Status'];
                         echo "</ul></td>
                             <td><span class='status {$orderStatus}'>{$orderStatus}</span></td>
-                              <td>
-                                  <button class='view-btn' data-order-id='{$orderId}'>Details</button>
-                              </td>
+                            <td>
+                                <button class='view-btn' data-order-id='{$orderId}'>Details</button>
+                                <button class='update-status-btn' data-order-id='{$orderId}'>Update</button>
+                            </td>
                             </tr>";
                     }
+                } else {
+                    echo "<tr><td colspan='7' style='text-align:center;'>No orders found</td></tr>";
                 }
                 ?>
                 </tbody>
@@ -270,75 +315,50 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
                 <h2>Order Details</h2>
                 <div id="orderDetailsContent"></div>
                 
-                <!-- Order Status Update Section -->
-                <div class="order-status-form">
-                    <h3>Update Order Status</h3>
-                    <form id="orderStatusForm">
-                        <input type="hidden" name="order_id" id="orderStatusOrderId">
-                        <div class="form-group">
-                            <label for="orderStatus">Status:</label>
-                            <select id="orderStatus" name="status" class="form-control" required>
-                                <option value="Processing">Processing</option>
-                                <option value="Shipped">Shipped</option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="submit-btn">Update Order Status</button>
-                    </form>
-                </div>
-                
                 <!-- Delivery Information Section -->
-                <div class="delivery-info" id="deliveryInfoSection">
+                <div class="delivery-info">
                     <h3>Delivery Information</h3>
                     <div id="deliveryInfoContent"></div>
-                    <button id="editDeliveryBtn" class="update-status-btn">Edit Delivery</button>
                 </div>
             </div>
         </div>
 
-        <!-- Delivery Edit Modal -->
-        <div class="modal" id="deliveryEditModal">
+        <!-- Order Status Modal -->
+        <div class="modal" id="statusModal">
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
-                <h2>Edit Delivery Information</h2>
-                <form id="deliveryEditForm">
-                    <input type="hidden" name="order_id" id="editOrderId">
-                    <input type="hidden" name="delivery_id" id="editDeliveryId">
+                <h2>Update Order Status</h2>
+                <form id="statusForm">
+                    <input type="hidden" name="order_id" id="statusOrderId">
                     
                     <div class="form-group">
-                        <label for="editCarrier">Carrier:</label>
-                        <input type="text" id="editCarrier" name="carrier" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="editTrackingNumber">Tracking Number:</label>
-                        <input type="text" id="editTrackingNumber" name="tracking_number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="editStatus">Delivery Status:</label>
-                        <select id="editStatus" name="status" required>
-                            <option value="Preparing">Preparing</option>
+                        <label for="orderStatus">Status:</label>
+                        <select id="orderStatus" name="status" required>
+                            <option value="Processing">Processing</option>
                             <option value="Shipped">Shipped</option>
-                            <option value="In Transit">In Transit</option>
-                            <option value="Out for Delivery">Out for Delivery</option>
                             <option value="Delivered">Delivered</option>
-                            <option value="Failed Delivery">Failed Delivery</option>
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="editEstimatedDelivery">Estimated Delivery:</label>
-                        <input type="date" id="editEstimatedDelivery" name="estimated_delivery" required>
+                    <div class="form-group" id="deliveryFields">
+                        <label for="carrier">Carrier:</label>
+                        <select id="carrier" name="carrier">
+                            <?php
+                            $carriers = mysqli_query($conn, "SELECT * FROM DELIVERY_CARRIER");
+                            while ($carrier = mysqli_fetch_assoc($carriers)) {
+                                echo "<option value='{$carrier['DC_ID']}'>{$carrier['DC_Name']}</option>";
+                            }
+                            ?>
+                        </select>
+                        
+                        <label for="trackingNumber">Tracking Number:</label>
+                        <input type="text" id="trackingNumber" name="tracking_number">
+                        
+                        <label for="estimatedDelivery">Estimated Delivery:</label>
+                        <input type="date" id="estimatedDelivery" name="estimated_delivery">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="editActualDelivery">Actual Delivery (if completed):</label>
-                        <input type="datetime-local" id="editActualDelivery" name="actual_delivery">
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Save Changes</button>
+                    <button type="submit" class="submit-btn">Update Status</button>
                 </form>
             </div>
         </div>
@@ -349,6 +369,22 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
     // Status filter functionality
     const statusFilters = document.querySelectorAll('.status-filter');
     statusFilters.forEach(filter => {
@@ -371,79 +407,73 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Order details modal
-    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    // View order details
     const viewButtons = document.querySelectorAll('.view-btn');
-    
     viewButtons.forEach(button => {
         button.addEventListener('click', function() {
             const orderId = this.dataset.orderId;
             
-            // Fetch order details via AJAX
+            // Fetch order details
             fetch('get_order_details.php?order_id=' + orderId)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('orderDetailsContent').innerHTML = data;
-                    document.getElementById('orderStatusOrderId').value = orderId;
                     
-                    // Set current order status in the select
-                    const statusMatch = data.match(/<span class='status ([^']+)'>([^<]+)<\/span>/);
-                    if (statusMatch && statusMatch[2]) {
-                        document.getElementById('orderStatus').value = statusMatch[2];
-                    }
-                    
-                    // Fetch delivery info for this order
+                    // Fetch delivery info
                     fetch('get_delivery_info.php?order_id=' + orderId)
                         .then(response => response.text())
                         .then(deliveryData => {
                             document.getElementById('deliveryInfoContent').innerHTML = deliveryData;
-                            document.getElementById('editDeliveryBtn').dataset.orderId = orderId;
-                            
-                            // Check if delivery exists to show/hide edit button
-                            const deliveryExists = deliveryData.includes('Delivery ID');
-                            document.getElementById('editDeliveryBtn').style.display = deliveryExists ? 'inline-block' : 'none';
                         });
                     
-                    orderDetailsModal.style.display = 'flex';
+                    document.getElementById('orderDetailsModal').style.display = 'flex';
                 });
         });
     });
 
-    // Delivery edit button click
-    document.getElementById('editDeliveryBtn').addEventListener('click', function() {
-        const orderId = this.dataset.orderId;
-        const deliveryModal = document.getElementById('deliveryEditModal');
-        
-        // Fetch delivery info to populate form
-        fetch('get_delivery_info_json.php?order_id=' + orderId)
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    document.getElementById('editOrderId').value = orderId;
-                    document.getElementById('editDeliveryId').value = data.D_ID || '';
-                    document.getElementById('editCarrier').value = data.D_Carrier || '';
-                    document.getElementById('editTrackingNumber').value = data.D_TrackingNumber || '';
-                    document.getElementById('editStatus').value = data.D_Status.replace(' ', '-') || 'Preparing';
-                    document.getElementById('editEstimatedDelivery').value = data.D_EstimatedDelivery || '';
+    // Update status button
+    const updateButtons = document.querySelectorAll('.update-status-btn');
+    updateButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            document.getElementById('statusOrderId').value = orderId;
+            
+            // Fetch current status
+            fetch('get_order_status.php?order_id=' + orderId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('orderStatus').value = data.order_status;
                     
-                    if (data.D_ActualDelivery) {
-                        const actualDelivery = new Date(data.D_ActualDelivery);
-                        const formattedDate = actualDelivery.toISOString().slice(0, 16);
-                        document.getElementById('editActualDelivery').value = formattedDate;
-                    } else {
-                        document.getElementById('editActualDelivery').value = '';
+                    // Set delivery fields if they exist
+                    if (data.carrier_id) {
+                        document.getElementById('carrier').value = data.carrier_id;
+                        document.getElementById('trackingNumber').value = data.tracking_number || '';
+                        if (data.estimated_delivery) {
+                            document.getElementById('estimatedDelivery').value = data.estimated_delivery.split(' ')[0];
+                        }
                     }
                     
-                    deliveryModal.style.display = 'flex';
-                    orderDetailsModal.style.display = 'none';
-                }
-            });
+                    // Show/hide delivery fields based on order status
+                    toggleDeliveryFields(data.order_status);
+                    
+                    document.getElementById('statusModal').style.display = 'flex';
+                });
+        });
     });
 
+    // Toggle delivery fields based on order status
+    function toggleDeliveryFields(orderStatus) {
+        const deliveryFields = document.getElementById('deliveryFields');
+        if (orderStatus === 'Shipped') {
+            deliveryFields.style.display = 'block';
+        } else {
+            deliveryFields.style.display = 'none';
+        }
+    }
+
     // Order status form submission
-    document.getElementById('orderStatusForm').addEventListener('submit', function(e) {
+    document.getElementById('statusForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const formData = new FormData(this);
         
         fetch('update_order_status.php', {
@@ -460,23 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    // Update the status in the table
-                    const orderId = formData.get('order_id');
-                    const newStatus = formData.get('status');
-                    
-                    // Find the row and update the status
-                    const rows = document.querySelectorAll('tbody tr');
-                    rows.forEach(row => {
-                        if (row.querySelector('td:first-child').textContent === orderId) {
-                            row.setAttribute('data-status', newStatus);
-                            const statusCell = row.querySelector('td:nth-child(6) span');
-                            statusCell.textContent = newStatus;
-                            statusCell.className = 'status ' + newStatus;
-                        }
-                    });
-                    
-                    // Close the modal
-                    document.getElementById('orderDetailsModal').style.display = 'none';
+                    location.reload();
                 });
             } else {
                 Swal.fire({
@@ -485,62 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: data.error || 'Failed to update order status'
                 });
             }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating order status'
-            });
-        });
-    });
-
-    // Delivery edit form submission
-    document.getElementById('deliveryEditForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        fetch('update_delivery.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Delivery information updated successfully',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    // Close the modal and refresh the delivery info
-                    document.getElementById('deliveryEditModal').style.display = 'none';
-                    document.getElementById('orderDetailsModal').style.display = 'flex';
-                    
-                    // Refresh delivery info
-                    const orderId = formData.get('order_id');
-                    fetch('get_delivery_info.php?order_id=' + orderId)
-                        .then(response => response.text())
-                        .then(deliveryData => {
-                            document.getElementById('deliveryInfoContent').innerHTML = deliveryData;
-                        });
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: data.error || 'Failed to update delivery information'
-                });
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating delivery information'
-            });
         });
     });
 

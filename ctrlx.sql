@@ -248,62 +248,48 @@ INSERT INTO PRODUCT (C_ID, P_Name, P_Picture, P_Price) VALUES
 -- PRODUCT_IMAGES for all P_IDs
 INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
 -- P_ID 1
-(1, 'images/1Front.png'),
 (1, 'images/1Back.png'),
 
 -- P_ID 2
-(2, 'images/2Front.png'),
 (2, 'images/2Back.png'),
 
 -- P_ID 3
-(3, 'images/3Front.png'),
 (3, 'images/3Back.png'),
 
 -- P_ID 4
-(4, 'images/4Front.png'),
 (4, 'images/4Back.png'),
 
 -- P_ID 5
 (5, 'images/5Back.png'),
-(5, 'images/5Front.png'),
 (5, 'images/5Person Back.png'),
 (5, 'images/5Person Closeup.png'),
 (5, 'images/5Person Front.png'),
 
 -- P_ID 6
-(6, 'images/6Front.png'),
 (6, 'images/6Back.png'),
 
 -- P_ID 7
-(7, 'images/7Front.png'),
 (7, 'images/7Back.png'),
 
 -- P_ID 8
-(8, 'images/1Front.jpeg'),
 (8, 'images/1Back.jpeg'),
 
 -- P_ID 9
-(9, 'images/2Front.jpeg'),
 (9, 'images/2Back.jpeg'),
 
 -- P_ID 10
-(10, 'images/3Front.jpeg'),
 (10, 'images/3Back.jpeg'),
 
 -- P_ID 11
-(11, 'images/4Front.jpeg'),
 (11, 'images/4Back.jpeg'),
 
 -- P_ID 12
-(12, 'images/5Front.jpeg'),
 (12, 'images/5Back.jpeg'),
 
 -- P_ID 13
-(13, 'images/6Front.jpeg'),
 (13, 'images/6Back.jpeg'),
 
 -- P_ID 14
-(14, 'images/7Front.jpeg'),
 (14, 'images/7Back.jpeg');
 
 

@@ -182,7 +182,6 @@ $img_stmt->close();
             padding-bottom: 5px;
         }
         
-        /* Image Management Styles */
         .image-management {
             margin-bottom: 30px;
         }
@@ -271,7 +270,6 @@ $img_stmt->close();
             <label>Category:</label>
             <select name="productCategory" required>
                 <?php 
-                // Reset pointer for categories
                 mysqli_data_seek($category_result, 0);
                 while ($cat = mysqli_fetch_assoc($category_result)) { ?>
                     <option value="<?= $cat['C_ID'] ?>" <?= $cat['C_ID'] == $product['C_ID'] ? 'selected' : '' ?>>
@@ -317,7 +315,7 @@ $img_stmt->close();
                                         <i class="fas fa-sync-alt"></i> Replace
                                     </button>
                                 </form>
-                                <form action="delete_primary_image.php" method="POST" onsubmit="return confirmDeleteImage()" style="flex-grow:1;">
+                                <form action="delete_primary_image.php" method="POST" id="deletePrimaryForm" style="flex-grow:1;">
                                     <input type="hidden" name="productId" value="<?= $productId ?>">
                                     <button type="submit" class="btn-danger" style="width:100%;">
                                         <i class="fas fa-trash-alt"></i> Delete
@@ -360,7 +358,7 @@ $img_stmt->close();
                                     <?php endif; ?>
                                 </div>
                                 <div class="image-actions">
-                                    <form action="delete_image.php" method="POST" onsubmit="return confirmDeleteImage()" style="width:100%;">
+                                    <form action="delete_image.php" method="POST" class="deleteImageForm">
                                         <input type="hidden" name="productId" value="<?= $productId ?>">
                                         <input type="hidden" name="imageId" value="<?= $img['PI_ID'] ?>">
                                         <button type="submit" class="btn-danger" style="width:100%;">
@@ -462,22 +460,50 @@ $img_stmt->close();
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function confirmDeleteImage() {
-        return Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-    }
-    
-    // Show success/error messages from URL parameters
     document.addEventListener('DOMContentLoaded', function() {
+        // Handle primary image deletion
+        const deletePrimaryForm = document.getElementById('deletePrimaryForm');
+        if (deletePrimaryForm) {
+            deletePrimaryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Delete Primary Image?',
+                    text: "This will remove the primary product image. Are you sure?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        }
+
+        // Handle additional images deletion
+        const deleteImageForms = document.querySelectorAll('.deleteImageForm');
+        deleteImageForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Delete Image?',
+                    text: "This will permanently remove this product image. Are you sure?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+
+        // Show success/error messages from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('success')) {
             Swal.fire({
