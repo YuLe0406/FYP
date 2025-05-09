@@ -349,3 +349,127 @@ INSERT INTO VOUCHER (V_Code, V_Discount, V_ExpiryDate, V_UsageLimit) VALUES
 ('SUMMER20', 20.00, '2025-09-30', 50),
 ('FREESHIP', 15.00, '2024-10-15', 200),
 ('NEWUSER25', 25.00, '2024-11-30', 75);
+
+
+
+
+
+
+---------yule database product
+
+INSERT INTO PRODUCT (C_ID, P_Name, P_Price, P_Picture) VALUES
+(1, 'White Oversized T', 69.90, 'images/1front.png'),
+(1, 'Black Oversized T', 89.90, 'images/2front.png'),
+(1, 'Red Oversized T', 79.90, 'images/3front.png'),
+(1, 'Clay Oversized T', 79.90, 'images/4front.png'),
+(1, 'Butter Oversized T', 79.90, 'images/5front.png'),
+(1, 'Grey Oversized T', 69.90, 'images/6front.png'),
+(1, 'Orchid Oversized T', 79.90, 'images/7front.png'),
+(2, 'White Hoodie', 169.90, 'images/1Front.jpeg'),
+(2, 'Grey Hoodie', 169.90, 'images/2Front.jpeg'),
+(2, 'Charcoal Hoodie', 169.90, 'images/3Front.jpeg'),
+(2, 'Black Hoodie', 169.90, 'images/4Front.jpeg'),
+(2, 'Red Hoodie', 169.90, 'images/5Front.jpeg'),
+(2, 'Green Hoodie', 169.90, 'images/6Front.jpeg'),
+(2, 'Navy Hoodie', 169.90, 'images/7Front.jpeg');
+
+
+INSERT INTO PRODUCT_IMAGES (P_ID, PRODUCT_IMAGE) VALUES
+
+-- Product 1: White Oversized T
+(1, 'images/1Front.png'),
+(1, 'images/1Back.png'),
+(1, 'images/1PersonFront.png'),
+(1, 'images/1PersonBack.png'),
+(1, 'images/1PersonCloseup.png'),
+
+-- Product 2: Black Oversized T
+(2, 'images/2Front.png'),
+(2, 'images/2Back.png'),
+(2, 'images/2PersonFront.png'),
+(2, 'images/2PersonBack.png'),
+(2, 'images/2PersonCloseup.png'),
+
+-- Product 3: Red Oversized T
+(3, 'images/3Front.png'),
+(3, 'images/3Back.png'),
+(3, 'images/3PersonFront.png'),
+(3, 'images/3PersonBack.png'),
+(3, 'images/3PersonCloseup.png'),
+
+-- Product 4: Clay Oversized T
+(4, 'images/4Front.png'),
+(4, 'images/4Back.png'),
+(4, 'images/4PersonFront.png'),
+(4, 'images/4PersonBack.png'),
+(4, 'images/4PersonCloseup.png'),
+
+-- Product 5: Butter Oversized T
+(5, 'images/5Front.png'),
+(5, 'images/5Back.png'),
+(5, 'images/5PersonFront.png'),
+(5, 'images/5PersonBack.png'),
+(5, 'images/5PersonCloseup.png'),
+
+-- Product 6: Grey Oversized T
+(6, 'images/6Front.png'),
+(6, 'images/6Back.png'),
+(6, 'images/6PersonFront.png'),
+(6, 'images/6PersonBack.png'),
+(6, 'images/6PersonCloseup.png'),
+
+-- Product 7: Orchid Oversized T
+(7, 'images/7Front.png'),
+(7, 'images/7Back.png'),
+(7, 'images/7PersonFront.png'),
+(7, 'images/7PersonBack.png'),
+(7, 'images/7PersonCloseup.png'),
+
+-- Product 8: White Hoodie
+(8, 'images/1Front.jpeg'),
+(8, 'images/1Back.jpeg'),
+(8, 'images/1PersonFront.jpeg'),
+(8, 'images/1PersonBack.jpeg'),
+(8, 'images/1PersonCloseup.jpeg'),
+
+-- Product 9: Grey Hoodie
+(9, 'images/2Front.jpeg'),
+(9, 'images/2Back.jpeg'),
+(9, 'images/2PersonFront.jpeg'),
+(9, 'images/2PersonBack.jpeg'),
+(9, 'images/2PersonCloseup.jpeg'),
+
+-- Product 10: Charcoal Hoodie
+(10, 'images/3Front.jpeg'),
+(10, 'images/3Back.jpeg'),
+(10, 'images/3PersonFront.jpeg'),
+(10, 'images/3PersonBack.jpeg'),
+(10, 'images/3PersonCloseup.jpeg'),
+
+-- Product 11: Black Hoodie
+(11, 'images/4Front.jpeg'),
+(11, 'images/4Back.jpeg'),
+(11, 'images/4PersonFront.jpeg'),
+(11, 'images/4PersonBack.jpeg'),
+(11, 'images/4PersonCloseup.jpeg'),
+
+-- Product 12: Red Hoodie
+(12, 'images/5Front.jpeg'),
+(12, 'images/5Back.jpeg'),
+(12, 'images/5PersonFront.jpeg'),
+(12, 'images/5PersonBack.jpeg'),
+(12, 'images/5PersonCloseup.jpeg'),
+
+-- Product 13: Green Hoodie
+(13, 'images/6Front.jpeg'),
+(13, 'images/6Back.jpeg'),
+(13, 'images/6PersonFront.jpeg'),
+(13, 'images/6PersonBack.jpeg'),
+(13, 'images/6PersonCloseup.jpeg'),
+
+-- Product 14: Navy Hoodie
+(14, 'images/7Front.jpeg'),
+(14, 'images/7Back.jpeg'),
+(14, 'images/7PersonFront.jpeg'),
+(14, 'images/7PersonBack.jpeg'),
+(14, 'images/7PersonCloseup.jpeg');
