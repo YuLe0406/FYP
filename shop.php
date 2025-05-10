@@ -5,8 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once 'db.php';
 
-// 获取所有产品
-$products_query = "SELECT * FROM PRODUCT";
+// 获取所有ACTIVE产品 (P_Status = 0)
+$products_query = "SELECT * FROM PRODUCT WHERE P_Status = 0";
 $products_result = mysqli_query($conn, $products_query);
 $products = mysqli_fetch_all($products_result, MYSQLI_ASSOC);
 
@@ -229,6 +229,35 @@ $baseUrl = 'http://localhost/FYP/';
             color: white;
         }
 
+         .out-of-stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #d32f2f;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .product-card.out-of-stock {
+            opacity: 0.7;
+            position: relative;
+        }
+        
+        .product-card.out-of-stock::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,0.5);
+            z-index: 1;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .shop-controls {
@@ -284,15 +313,23 @@ $baseUrl = 'http://localhost/FYP/';
                     <option value="default">Sort By</option>
                     <option value="low-to-high">Price: Low to High</option>
                     <option value="high-to-low">Price: High to Low</option>
-                    <option value="newest">Newest Arrivals</option>
                 </select>
             </div>
         </div>
     </div>
     
     <div id="product-list" class="product-grid">
-        <?php foreach ($products as $product): ?>
-            <div class="product-card">
+        <?php foreach ($products as $product): 
+            // Check if product has any available variants
+            $variants_query = "SELECT SUM(P_Quantity) as total_qty FROM PRODUCT_VARIANTS WHERE P_ID = " . $product['P_ID'];
+            $variants_result = mysqli_query($conn, $variants_query);
+            $stock = mysqli_fetch_assoc($variants_result)['total_qty'];
+            $is_out_of_stock = ($stock <= 0);
+        ?>
+            <div class="product-card <?= $is_out_of_stock ? 'out-of-stock' : '' ?>">
+                <?php if ($is_out_of_stock): ?>
+                    <div class="out-of-stock-badge">OUT OF STOCK</div>
+                <?php endif; ?>
                 <div class="product-image-container">
                     <img src="<?= $baseUrl . htmlspecialchars($product['P_Picture']) ?>" 
                          alt="<?= htmlspecialchars($product['P_Name']) ?>" 

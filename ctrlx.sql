@@ -54,7 +54,7 @@ CREATE TABLE PRODUCT (
     P_Price DECIMAL(10,2) NOT NULL,
     P_Picture VARCHAR(255) DEFAULT NULL,
     P_DES TEXT NOT NULL,
-    P_Status INT(1) DEFAULT 0,-- 1 = blocked, 0 = active,
+    P_Status INT(1) DEFAULT 0,-- 1 = blocked, 0 = active
     FOREIGN KEY (C_ID) REFERENCES CATEGORIES(C_ID)
 );
 
@@ -112,7 +112,7 @@ CREATE TABLE ORDER_ITEMS (
     FOREIGN KEY (PV_ID) REFERENCES PRODUCT_VARIANTS(PV_ID) ON DELETE SET NULL
 );
 
--- YULE改了以上的sql
+---------------------------------------------------------------------------------------------------------------- YULE改了以上的sql
 
 -- ADMIN Table
 CREATE TABLE ADMIN (

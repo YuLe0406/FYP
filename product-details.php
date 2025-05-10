@@ -383,11 +383,13 @@ $conn->close();
                     
             <!-- Product Description -->
             <div class="product-description">
-                <h3>Product Details</h3>
-                <p><strong>Material:</strong> 80% Polyamide, 20% Spandex</p>
-                <p><strong>Care Instructions:</strong> Machine wash cold, do not bleach, non iron.</p>
-                <p><strong>Product Code:</strong> <?php echo $product['P_ID']; ?></p>
-            </div>
+            <h3>Product Details</h3>
+            <?php 
+            // Display the description from P_DES field
+            echo nl2br(htmlspecialchars($product['P_DES'])); 
+            ?>
+            <p><strong>Product Code:</strong> <?php echo $product['P_ID']; ?></p>
+        </div>
         </div>
     </div>
 </main>
