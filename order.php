@@ -172,11 +172,10 @@ $userId = $_SESSION['user_id'];
 
             <?php
             // Fetch all orders for the current user with status
-            $orderQuery = "SELECT o.O_ID, o.O_Date, o.O_TotalAmount, os.O_Status 
-                          FROM ORDERS o
-                          JOIN ORDER_STATUS os ON o.OS_ID = os.OS_ID
-                          WHERE o.U_ID = ?
-                          ORDER BY o.O_Date DESC";
+            $orderQuery = "SELECT O_ID, O_Date, O_TotalAmount, O_Status 
+                            FROM ORDERS 
+                            WHERE U_ID = ?
+                            ORDER BY O_Date DESC";
             $stmt = $conn->prepare($orderQuery);
             $stmt->bind_param("i", $userId);
             $stmt->execute();
@@ -186,7 +185,7 @@ $userId = $_SESSION['user_id'];
                 echo '<div class="no-orders">
                         <p>You haven\'t placed any orders yet.</p>
                         <a href="shop.php" class="btn">Start Shopping</a>
-                      </div>';
+                    </div>';
             } else {
                 while ($order = $orders->fetch_assoc()) {
                     $orderId = $order['O_ID'];
