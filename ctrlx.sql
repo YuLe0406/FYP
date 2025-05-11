@@ -79,10 +79,9 @@ CREATE TABLE ORDERS (
     O_ID INT AUTO_INCREMENT PRIMARY KEY,
     U_ID INT NOT NULL,
     UA_ID INT NULL,
-    OS_ID INT NOT NULL,
     O_TotalAmount DECIMAL(10,2) NOT NULL,
     O_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    O_Status ENUM('Processing','Shipped','Delivered') NOT NULL DEFAULT 'Processing', --------------- new line (yule need to update)
+    O_Status ENUM('Processing','Shipped','Delivered') NOT NULL DEFAULT 'Processing',
     FOREIGN KEY (U_ID) REFERENCES USER(U_ID) ON DELETE CASCADE,
     FOREIGN KEY (UA_ID) REFERENCES USER_ADDRESS(UA_ID)
 );

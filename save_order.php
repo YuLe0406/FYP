@@ -104,9 +104,8 @@ $conn->begin_transaction();
 
 try {
     // 步骤1: 保存订单
-    $orderStatus = 1; // 待处理
-    $stmt = $conn->prepare("INSERT INTO ORDERS (U_ID, UA_ID, OS_ID, O_TotalAmount) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiid", $userId, $addressId, $orderStatus, $total);
+    $stmt = $conn->prepare("INSERT INTO ORDERS (U_ID, UA_ID, O_TotalAmount) VALUES (?, ?, ?)");
+    $stmt->bind_param("iid", $userId, $addressId, $total);
     if (!$stmt->execute()) {
         throw new Exception('Failed to save order');
     }
