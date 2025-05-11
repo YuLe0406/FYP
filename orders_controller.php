@@ -9,7 +9,7 @@ include 'db.php';
 
 $userId = $_SESSION['user_id'];
 
-// Handle count-only requests first
+// Handle count-only requests
 if (isset($_GET['count_only']) && $_GET['count_only'] === 'true') {
     $status = isset($_GET['status']) ? $_GET['status'] : 'Processing';
     $validStatuses = ['Processing', 'Shipped', 'Delivered'];
@@ -69,13 +69,11 @@ $orders = getOrdersByStatus($conn, $userId, $status);
 if ($orders->num_rows === 0) {
     echo '<div class="no-orders">
             <i class="fas fa-box-open"></i>
-            <p>No '.strtolower($status).' orders found.</p>';
-    
-    if ($status === 'Processing') {
-        echo '<a href="shop.php" class="btn">Continue Shopping</a>';
-    }
-    echo '</div>';
+            <p>No '.strtolower($status).' orders found.</p>
+          </div>';
 } else {
+    echo '<div class="orders-list">';
+    
     while ($order = $orders->fetch_assoc()) {
         $orderId = $order['O_ID'];
         $orderDate = date('F j, Y, g:i a', strtotime($order['O_Date']));
@@ -85,9 +83,11 @@ if ($orders->num_rows === 0) {
         
         echo '<div class="order-card">
                 <div class="order-header">
-                    <div class="order-id">Order #' . $orderId . '</div>
-                    <div class="order-date">Placed on ' . $orderDate . '</div>
-                    <div class="order-status status-' . $statusClass . '">' . $status . '</div>
+                    <div>
+                        <span class="order-id">Order #'.$orderId.'</span>
+                        <div class="order-date">'.$orderDate.'</div>
+                    </div>
+                    <div class="order-status status-'.$statusClass.'">'.$status.'</div>
                 </div>
                 <div class="order-items">';
 
@@ -97,37 +97,36 @@ if ($orders->num_rows === 0) {
             $imagePath = 'http://localhost/FYP/' . $item['P_Picture'];
             
             echo '<div class="order-item">
-                    <img src="' . htmlspecialchars($imagePath) . '" alt="' . htmlspecialchars($item['P_Name']) . '" class="item-image">
+                    <img src="'.htmlspecialchars($imagePath).'" class="item-image">
                     <div class="item-details">
-                        <div class="item-name">' . htmlspecialchars($item['P_Name']) . '</div>
-                        <div class="item-price">RM ' . $itemTotal . '</div>
-                        <div style="clear:both;"></div>
+                        <div class="item-name">'.htmlspecialchars($item['P_Name']).'</div>
                         <div class="item-attributes">';
             
             if (!empty($item['P_Color']) || !empty($item['P_Size'])) {
                 echo '<div>';
-                if (!empty($item['P_Color'])) {
-                    echo 'Color: ' . htmlspecialchars($item['P_Color']);
-                }
-                if (!empty($item['P_Color']) && !empty($item['P_Size'])) {
-                    echo ' | ';
-                }
-                if (!empty($item['P_Size'])) {
-                    echo 'Size: ' . htmlspecialchars($item['P_Size']);
-                }
+                if (!empty($item['P_Color'])) echo 'Color: '.htmlspecialchars($item['P_Color']);
+                if (!empty($item['P_Color']) && !empty($item['P_Size'])) echo ' | ';
+                if (!empty($item['P_Size'])) echo 'Size: '.htmlspecialchars($item['P_Size']);
                 echo '</div>';
             }
-                
-            echo '      <div>Quantity: ' . $item['OI_Quantity'] . '</div>
+            
+            echo '      <div>Quantity: '.$item['OI_Quantity'].'</div>
                     </div>
+                    <div class="item-price">
+                        <div>RM '.number_format($item['OI_Price'], 2).' each</div>
+                        <div>RM '.$itemTotal.'</div>
+                    </div>
+                    <div style="clear:both;"></div>
                 </div>';
         }
-
+        
         echo '</div>
               <div class="order-total">
-                Order Total: RM ' . $orderTotal . '
+                Order Total: RM '.$orderTotal.'
               </div>
             </div>';
     }
+    
+    echo '</div>'; // Close orders-list
 }
 ?>

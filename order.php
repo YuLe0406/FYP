@@ -20,7 +20,6 @@ include 'header.php';
         main {
             padding-top: 70px;
             min-height: calc(100vh - 160px);
-
         }
         
         .order-container {
@@ -33,90 +32,75 @@ include 'header.php';
         }
         
         .order-card {
+            border-radius: 12px;
+            overflow: hidden;
             background-color: white;
-            margin-bottom: 30px;
+            transition: all 0.3s ease;
         }
         
+        
         .order-header {
-            padding: 15px 20px;
+            background-color: #f9fafb;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #e8e8e8;
         }
         
-        .order-id {
-            font-weight: bold;
-            font-size: 18px;
-            color: #333;
-        }
-        
-        .order-date {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        
-        .order-status {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 13px;
-            margin-top: 8px;
-        }
-        
         .order-items {
-            padding: 15px 20px;
+            padding: 30px;
         }
         
         .order-item {
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #f3f3f3;
+            align-items: center;
         }
         
         .order-item:last-child {
             border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         
         .item-image {
-            width: 80px;
-            height: 80px;
+            width: 140px;
+            height: 140px;
             object-fit: contain;
-            margin-right: 15px;
-            float: left;
+            margin-right: 30px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background-color: #fafafa;
+            padding: 8px;
         }
         
-        .item-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-        
-        .item-attributes {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 5px;
-            clear: both;
+        .item-details {
+            flex-grow: 1;
         }
         
         .item-price {
-            color: #333;
-            font-weight: bold;
-            float: right;
+            min-width: 150px;
             text-align: right;
         }
         
         .item-total {
-            display: block;
-            margin-top: 5px;
-        }
-        
-        .order-total {
-            padding: 15px 20px;
-            text-align: right;
             font-weight: bold;
-            border-top: 1px solid #f0f0f0;
-            clear: both;
+            margin-top: 8px;
+            font-size: 16px;
+            color: #333;
         }
         
-        /* Status colors */
+        .order-status {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: capitalize;
+        }
+        
         .status-processing {
             background-color: #e6f0ff;
             color: #2c68d6;
@@ -132,22 +116,91 @@ include 'header.php';
             color: #0d8a0d;
         }
         
+        .order-total {
+            text-align: right;
+            padding: 20px 30px;
+            background-color: #f9fafb;
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #e8e8e8;
+            color: #333;
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 70px 20px;
+            color: #6c757d;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .no-orders i {
+            font-size: 50px;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+        
+        .no-orders p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .item-attributes {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .item-quantity {
+            color: #444;
+            font-size: 15px;
+        }
+        
+        .order-id {
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .order-date {
+            color: #666;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-weight: 600;
+        }
+        
         /* Tab styles */
         .order-tabs {
             display: flex;
             border-bottom: 1px solid #e8e8e8;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding: 0 15px;
         }
         
         .order-tab {
-            padding: 12px 25px;
+            padding: 14px 30px;
             cursor: pointer;
             font-weight: 600;
             color: #666;
             border-bottom: 3px solid transparent;
+            transition: all 0.3s;
             position: relative;
-            margin-right: 5px;
-            font-size: 15px;
+            margin-right: 10px;
+            font-size: 16px;
         }
         
         .order-tab.active {
@@ -155,13 +208,22 @@ include 'header.php';
             border-bottom: 3px solid #2c7be5;
         }
         
+        .order-tab:hover:not(.active) {
+            color: #444;
+            border-bottom: 3px solid #ddd;
+        }
+        
+        .tab-content {
+            min-height: 200px;
+        }
+        
         .tab-count {
             background-color: #e0e0e0;
             color: #555;
             border-radius: 12px;
-            padding: 3px 9px;
-            font-size: 12px;
-            margin-left: 6px;
+            padding: 4px 10px;
+            font-size: 13px;
+            margin-left: 8px;
             font-weight: normal;
         }
         
@@ -170,23 +232,22 @@ include 'header.php';
             color: white;
         }
         
-        .no-orders {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: #2c7be5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
         
-        .no-orders i {
-            font-size: 48px;
-            color: #d1d5db;
-            margin-bottom: 15px;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-weight: 600;
+        .btn:hover {
+            background-color: #1a68d1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .loading-spinner {
@@ -210,19 +271,19 @@ include 'header.php';
 <body>
     <main>
         <div class="order-container">
-            <h1><i class="fas fa-clipboard-list" style="margin-right: 10px;"></i>My Orders</h1>
+            <h1><i class="fas fa-clipboard-list" style="margin-right: 12px;"></i>My Orders</h1>
             
             <div class="order-tabs">
                 <div class="order-tab active" data-status="Processing" onclick="loadOrders('Processing')">
-                    <i class="fas fa-spinner" style="margin-right: 8px;"></i>Processing
+                    <i class="fas fa-spinner" style="margin-right: 10px;"></i>Processing
                     <span class="tab-count" id="count-processing">0</span>
                 </div>
                 <div class="order-tab" data-status="Shipped" onclick="loadOrders('Shipped')">
-                    <i class="fas fa-truck" style="margin-right: 8px;"></i>Shipped
+                    <i class="fas fa-truck" style="margin-right: 10px;"></i>Shipped
                     <span class="tab-count" id="count-shipped">0</span>
                 </div>
                 <div class="order-tab" data-status="Delivered" onclick="loadOrders('Delivered')">
-                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i>Delivered
+                    <i class="fas fa-check-circle" style="margin-right: 10px;"></i>Delivered
                     <span class="tab-count" id="count-delivered">0</span>
                 </div>
             </div>
@@ -292,6 +353,19 @@ include 'header.php';
                         console.error('Error loading count for', status, error);
                     });
             });
+        }
+
+        function toggleItems(orderId) {
+            const hiddenItems = document.getElementById(`hidden-items-${orderId}`);
+            const btn = document.getElementById(`show-more-btn-${orderId}`);
+            
+            if (hiddenItems.style.display === 'none') {
+                hiddenItems.style.display = 'block';
+                btn.textContent = 'Show Less';
+            } else {
+                hiddenItems.style.display = 'none';
+                btn.textContent = 'Show More';
+            }
         }
     </script>
 
