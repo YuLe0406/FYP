@@ -244,7 +244,7 @@ $userId = $_SESSION['user_id'];
                             }
                             echo '</div>';
                         }
-                        
+                            
                         echo '          <div class="item-quantity">Quantity: ' . $item['OI_Quantity'] . '</div>
                                     </div>
                                     <div class="item-price">
