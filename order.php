@@ -20,7 +20,6 @@ include 'header.php';
         main {
             padding-top: 70px;
             min-height: calc(100vh - 160px);
-            background-color: #f5f5f5;
         }
         
         .order-container {
@@ -29,7 +28,7 @@ include 'header.php';
             padding: 30px;
             background-color: white;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         
         .order-card {
@@ -354,6 +353,19 @@ include 'header.php';
                         console.error('Error loading count for', status, error);
                     });
             });
+        }
+
+        function toggleItems(orderId) {
+            const hiddenItems = document.getElementById(`hidden-items-${orderId}`);
+            const btn = document.getElementById(`show-more-btn-${orderId}`);
+            
+            if (hiddenItems.style.display === 'none') {
+                hiddenItems.style.display = 'block';
+                btn.textContent = 'Show Less';
+            } else {
+                hiddenItems.style.display = 'none';
+                btn.textContent = 'Show More';
+            }
         }
     </script>
 
