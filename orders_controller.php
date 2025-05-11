@@ -85,13 +85,9 @@ if ($orders->num_rows === 0) {
         
         echo '<div class="order-card">
                 <div class="order-header">
-                    <div>
-                        <span class="order-id">Order #' . $orderId . '</span>
-                        <div class="order-date">Placed on ' . $orderDate . '</div>
-                    </div>
-                    <div class="order-status status-' . $statusClass . '">
-                        ' . $status . '
-                    </div>
+                    <div class="order-id">Order #' . $orderId . '</div>
+                    <div class="order-date">Placed on ' . $orderDate . '</div>
+                    <div class="order-status status-' . $statusClass . '">' . $status . '</div>
                 </div>
                 <div class="order-items">';
 
@@ -104,6 +100,8 @@ if ($orders->num_rows === 0) {
                     <img src="' . htmlspecialchars($imagePath) . '" alt="' . htmlspecialchars($item['P_Name']) . '" class="item-image">
                     <div class="item-details">
                         <div class="item-name">' . htmlspecialchars($item['P_Name']) . '</div>
+                        <div class="item-price">RM ' . $itemTotal . '</div>
+                        <div style="clear:both;"></div>
                         <div class="item-attributes">';
             
             if (!empty($item['P_Color']) || !empty($item['P_Size'])) {
@@ -120,11 +118,7 @@ if ($orders->num_rows === 0) {
                 echo '</div>';
             }
                 
-            echo '      <div class="item-quantity">Quantity: ' . $item['OI_Quantity'] . '</div>
-                    </div>
-                    <div class="item-price">
-                        <div>RM ' . number_format($item['OI_Price'], 2) . ' each</div>
-                        <div class="item-total">RM ' . $itemTotal . '</div>
+            echo '      <div>Quantity: ' . $item['OI_Quantity'] . '</div>
                     </div>
                 </div>';
         }
