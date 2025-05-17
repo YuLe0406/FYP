@@ -10,6 +10,96 @@ if (!isset($_SESSION['admin_id'])) {
 
 // Define status order for display
 $statusOrder = ['Processing', 'Shipped', 'Delivered'];
+
+// Pagination settings
+$per_page = 10;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $per_page;
+
+// Get filter parameters
+$status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
+$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
+$search_term = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Build base query
+$query = "
+    SELECT O.O_ID, O.O_Date, O.O_TotalAmount, O.O_Status,
+           U.U_FName, U.U_LName
+    FROM ORDERS O
+    JOIN USER U ON O.U_ID = U.U_ID
+";
+
+$count_query = "SELECT COUNT(*) as total FROM ORDERS O";
+
+// Add filters
+$where_clauses = [];
+$params = [];
+$types = '';
+
+if ($status_filter !== 'all') {
+    $where_clauses[] = "O.O_Status = ?";
+    $params[] = $status_filter;
+    $types .= 's';
+}
+
+if (!empty($start_date) && !empty($end_date)) {
+    $where_clauses[] = "O.O_Date BETWEEN ? AND ?";
+    $params[] = $start_date;
+    $params[] = $end_date;
+    $types .= 'ss';
+} elseif (!empty($start_date)) {
+    $where_clauses[] = "O.O_Date >= ?";
+    $params[] = $start_date;
+    $types .= 's';
+} elseif (!empty($end_date)) {
+    $where_clauses[] = "O.O_Date <= ?";
+    $params[] = $end_date;
+    $types .= 's';
+}
+
+if (!empty($search_term)) {
+    $where_clauses[] = "O.O_ID LIKE ?";
+    $params[] = "%$search_term%";
+    $types .= 's';
+}
+
+// Add WHERE clause if needed
+if (!empty($where_clauses)) {
+    $query .= " WHERE " . implode(" AND ", $where_clauses);
+    $count_query .= " WHERE " . implode(" AND ", $where_clauses);
+}
+
+// Add sorting and pagination
+$query .= " ORDER BY FIELD(O.O_Status, 'Processing', 'Shipped', 'Delivered'), O.O_Date DESC LIMIT ? OFFSET ?";
+$types .= 'ii';
+$params[] = $per_page;
+$params[] = $offset;
+
+// Get total count
+$stmt = $conn->prepare($count_query);
+if (!empty($params)) {
+    // Remove the pagination parameters for count query
+    $count_params = array_slice($params, 0, count($params) - 2);
+    $count_types = substr($types, 0, -2);
+    if (!empty($count_types)) {
+        $stmt->bind_param($count_types, ...$count_params);
+    }
+}
+$stmt->execute();
+$total_result = $stmt->get_result();
+$total_row = $total_result->fetch_assoc();
+$total_orders = $total_row['total'];
+$total_pages = ceil($total_orders / $per_page);
+$stmt->close();
+
+// Get paginated orders
+$stmt = $conn->prepare($query);
+if (!empty($types)) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$orderResult = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +125,7 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
         
         .main-content {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             padding: 30px;
             margin: 0 auto;
             box-sizing: border-box;
@@ -207,15 +297,62 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
         /* Search box styles */
         .search-box {
             margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
         .search-box input {
-            width: 100%;
-            max-width: 400px;
             padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .date-filters {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .date-filter label {
+            white-space: nowrap;
+        }
+        
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .pagination a:hover {
+            background: #f8f9fa;
+        }
+        
+        .pagination .current {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
         }
     </style>
 </head>
@@ -225,19 +362,36 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
     <main class="main-content">
         <h1>Order Management</h1>
 
-        <!-- Search Box -->
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search orders...">
-        </div>
+        <!-- Search and Filter Box -->
+        <form method="GET" action="" class="search-box">
+            <input type="text" name="search" placeholder="Search by Order ID..." value="<?= htmlspecialchars($search_term) ?>" class="search-input">
+            
+            <div class="date-filters">
+                <div class="date-filter">
+                    <label for="start_date">From:</label>
+                    <input type="date" id="start_date" name="start_date" value="<?= htmlspecialchars($start_date) ?>">
+                </div>
+                <div class="date-filter">
+                    <label for="end_date">To:</label>
+                    <input type="date" id="end_date" name="end_date" value="<?= htmlspecialchars($end_date) ?>">
+                </div>
+                <button type="submit" class="submit-btn">Apply Filters</button>
+                <?php if (!empty($search_term) || !empty($start_date) || !empty($end_date) || $status_filter !== 'all'): ?>
+                    <a href="?" class="submit-btn" style="background-color: #dc3545;">Reset</a>
+                <?php endif; ?>
+            </div>
+        </form>
 
         <!-- Status Filters -->
         <div class="status-filters">
             <?php foreach ($statusOrder as $status): ?>
-                <div class="status-filter <?= $status ?>" data-status="<?= $status ?>">
+                <div class="status-filter <?= $status ?> <?= $status_filter === $status ? 'active' : '' ?>" 
+                     onclick="filterByStatus('<?= $status ?>')">
                     <?= $status ?>
                 </div>
             <?php endforeach; ?>
-            <div class="status-filter active" data-status="all">All</div>
+            <div class="status-filter <?= $status_filter === 'all' ? 'active' : '' ?>" 
+                 onclick="filterByStatus('all')">All</div>
         </div>
 
         <section class="order-list">
@@ -256,18 +410,8 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
                 </thead>
                 <tbody>
                 <?php
-                $orderQuery = "
-                    SELECT O.O_ID, O.O_Date, O.O_TotalAmount, O.O_Status,
-                           U.U_FName, U.U_LName
-                    FROM ORDERS O
-                    JOIN USER U ON O.U_ID = U.U_ID
-                    ORDER BY FIELD(O.O_Status, 'Processing', 'Shipped', 'Delivered'), 
-                             O.O_Date DESC
-                ";
-                $orderResult = mysqli_query($conn, $orderQuery);
-
-                if ($orderResult && mysqli_num_rows($orderResult) > 0) {
-                    while ($order = mysqli_fetch_assoc($orderResult)) {
+                if ($orderResult && $orderResult->num_rows > 0) {
+                    while ($order = $orderResult->fetch_assoc()) {
                         $orderId = $order['O_ID'];
                         echo "<tr data-status='{$order['O_Status']}'>
                                 <td>{$orderId}</td>
@@ -306,6 +450,27 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
                 ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?= $page - 1 ?>&status=<?= $status_filter ?>&search=<?= urlencode($search_term) ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>">&laquo; Prev</a>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <span class="current"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="?page=<?= $i ?>&status=<?= $status_filter ?>&search=<?= urlencode($search_term) ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?= $page + 1 ?>&status=<?= $status_filter ?>&search=<?= urlencode($search_term) ?>&start_date=<?= $start_date ?>&end_date=<?= $end_date ?>">Next &raquo;</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </section>
 
         <!-- Order Details Modal -->
@@ -368,45 +533,15 @@ $statusOrder = ['Processing', 'Shipped', 'Delivered'];
 <!-- SweetAlert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// Filter by status function
+function filterByStatus(status) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('status', status);
+    url.searchParams.delete('page'); // Reset to first page
+    window.location.href = url.toString();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-        
-        rows.forEach(row => {
-            const rowText = row.textContent.toLowerCase();
-            if (rowText.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-
-    // Status filter functionality
-    const statusFilters = document.querySelectorAll('.status-filter');
-    statusFilters.forEach(filter => {
-        filter.addEventListener('click', function() {
-            const status = this.dataset.status;
-            
-            // Update active filter
-            statusFilters.forEach(f => f.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Filter orders
-            const rows = document.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                if (status === 'all' || row.dataset.status === status) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    });
-
     // View order details
     const viewButtons = document.querySelectorAll('.view-btn');
     viewButtons.forEach(button => {

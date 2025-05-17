@@ -81,7 +81,7 @@ $stmt->close();
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
-       /* Search and Filter */
+        /* Search and Filter */
         .customer-controls {
             display: flex;
             justify-content: space-between;
@@ -92,8 +92,8 @@ $stmt->close();
 
         .search-box {
             flex: 1;
-            min-width: 400px; /* Changed from 250px to 400px */
-            max-width: 600px; /* Added max-width */
+            min-width: 400px;
+            max-width: 600px;
             position: relative;
         }
 
@@ -127,7 +127,7 @@ $stmt->close();
             margin: 0;
         }
         
-        .customer-item {
+        .customer-row {
             display: grid;
             grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr;
             padding: 12px 15px;
@@ -141,24 +141,30 @@ $stmt->close();
             transition: all 0.2s;
         }
         
-        .customer-item:hover {
+        .customer-row:hover {
             background: #f8f9fa;
-            transform: translateY(-2px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         /* Order Details Section */
-        .order-details {
-            display: none;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid #eee;
+        .order-container {
+            grid-column: 1 / -1;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
         }
         
-        .order-details.active {
-            display: block;
+        .order-container.active {
+            padding: 15px;
+            max-height: 1000px;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+        }
+        
+        .order-details {
+            background: #f9f9f9;
+            border-radius: 8px;
         }
         
         .order-item {
@@ -207,18 +213,18 @@ $stmt->close();
                 display: none;
             }
             
-            .customer-item {
+            .customer-row {
                 grid-template-columns: 1fr;
                 gap: 8px;
                 padding: 15px;
             }
             
-            .customer-item > span {
+            .customer-row > span {
                 display: flex;
                 justify-content: space-between;
             }
             
-            .customer-item > span::before {
+            .customer-row > span::before {
                 content: attr(data-label);
                 font-weight: bold;
                 margin-right: 10px;
@@ -228,6 +234,10 @@ $stmt->close();
             .order-item {
                 grid-template-columns: 1fr;
                 gap: 5px;
+            }
+            
+            .order-container.active {
+                padding: 10px;
             }
         }
     </style>
@@ -267,54 +277,62 @@ $stmt->close();
                         $orders = $order_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         $order_stmt->close();
                     ?>
-                        <li class="customer-item" onclick="toggleOrders(this)">
-                            <span data-label="Name"><?= htmlspecialchars($customer['U_FName'] . ' ' . $customer['U_LName']) ?></span>
-                            <span data-label="Email"><?= htmlspecialchars($customer['U_Email']) ?></span>
-                            <span data-label="Phone"><?= htmlspecialchars($customer['U_PNumber']) ?></span>
-                            <span data-label="Gender"><?= htmlspecialchars($customer['U_Gender']) ?></span>
-                            <span data-label="Details"><?= count($orders) ?> order(s)</span>
+                        <li class="customer-item">
+                            <div class="customer-row" onclick="toggleOrders(this)">
+                                <span data-label="Name"><?= htmlspecialchars($customer['U_FName'] . ' ' . $customer['U_LName']) ?></span>
+                                <span data-label="Email"><?= htmlspecialchars($customer['U_Email']) ?></span>
+                                <span data-label="Phone"><?= htmlspecialchars($customer['U_PNumber']) ?></span>
+                                <span data-label="Gender"><?= htmlspecialchars($customer['U_Gender']) ?></span>
+                                <span data-label="Details"><?= count($orders) ?> order(s)</span>
+                            </div>
                             
-                            <div class="order-details">
+                            <div class="order-container">
                                 <?php if (count($orders) > 0): ?>
-                                    <div class="order-item order-header">
-                                        <span>Order ID</span>
-                                        <span>Date</span>
-                                        <span>Amount</span>
-                                        <span>Items</span>
-                                    </div>
-                                    <?php foreach ($orders as $order): 
-                                        // Get order items
-                                        $items_stmt = $conn->prepare("
-                                            SELECT p.P_Name, oi.OI_Quantity, oi.OI_Price 
-                                            FROM ORDER_ITEMS oi
-                                            JOIN PRODUCT p ON oi.P_ID = p.P_ID
-                                            WHERE oi.O_ID = ?
-                                        ");
-                                        $items_stmt->bind_param("i", $order['O_ID']);
-                                        $items_stmt->execute();
-                                        $items = $items_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-                                        $items_stmt->close();
-                                    ?>
-                                        <div class="order-item">
-                                            <span>#<?= $order['O_ID'] ?></span>
-                                            <span><?= date('M d, Y', strtotime($order['O_Date'])) ?></span>
-                                            <span>RM<?= number_format($order['O_TotalAmount'], 2) ?></span>
-                                            <span>
-                                                <?php foreach ($items as $item): ?>
-                                                    <?= $item['OI_Quantity'] ?>x <?= htmlspecialchars($item['P_Name']) ?> (RM<?= number_format($item['OI_Price'], 2) ?>)<br>
-                                                <?php endforeach; ?>
-                                            </span>
+                                    <div class="order-details">
+                                        <div class="order-item order-header">
+                                            <span>Order ID</span>
+                                            <span>Date</span>
+                                            <span>Amount</span>
+                                            <span>Items</span>
                                         </div>
-                                    <?php endforeach; ?>
+                                        <?php foreach ($orders as $order): 
+                                            // Get order items
+                                            $items_stmt = $conn->prepare("
+                                                SELECT p.P_Name, oi.OI_Quantity, oi.OI_Price 
+                                                FROM ORDER_ITEMS oi
+                                                JOIN PRODUCT p ON oi.P_ID = p.P_ID
+                                                WHERE oi.O_ID = ?
+                                            ");
+                                            $items_stmt->bind_param("i", $order['O_ID']);
+                                            $items_stmt->execute();
+                                            $items = $items_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                                            $items_stmt->close();
+                                        ?>
+                                            <div class="order-item">
+                                                <span>#<?= $order['O_ID'] ?></span>
+                                                <span><?= date('M d, Y', strtotime($order['O_Date'])) ?></span>
+                                                <span>RM<?= number_format($order['O_TotalAmount'], 2) ?></span>
+                                                <span>
+                                                    <?php foreach ($items as $item): ?>
+                                                        <?= $item['OI_Quantity'] ?>x <?= htmlspecialchars($item['P_Name']) ?> (RM<?= number_format($item['OI_Price'], 2) ?>)<br>
+                                                    <?php endforeach; ?>
+                                                </span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php else: ?>
-                                    <div class="empty-state">No orders found for this customer</div>
+                                    <div class="order-details">
+                                        <div class="empty-state">No orders found for this customer</div>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </li>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <li class="customer-item">
-                        <span class="empty-state">No customers found<?= !empty($search) ? ' matching "' . htmlspecialchars($search) . '"' : '' ?></span>
+                        <div class="customer-row">
+                            <span class="empty-state">No customers found<?= !empty($search) ? ' matching "' . htmlspecialchars($search) . '"' : '' ?></span>
+                        </div>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -344,8 +362,15 @@ $stmt->close();
 
 <script>
 function toggleOrders(element) {
-    const details = element.querySelector('.order-details');
-    details.classList.toggle('active');
+    const container = element.parentElement.querySelector('.order-container');
+    container.classList.toggle('active');
+    
+    // Close other open order containers
+    document.querySelectorAll('.order-container').forEach(item => {
+        if (item !== container && item.classList.contains('active')) {
+            item.classList.remove('active');
+        }
+    });
 }
 
 // Auto-submit search form when typing stops
