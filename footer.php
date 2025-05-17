@@ -1,4 +1,12 @@
 <?php
+// Start session (if not already started)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in (replace with your actual session variable)
+$isLoggedIn = isset($_SESSION['user_id']); // Change 'user_id' to your actual session variable
+
 echo '
 <div class="page-wrapper">
     <footer class="footer">
@@ -6,7 +14,7 @@ echo '
             <div class="footer-column">
                 <h3>Delivery</h3>
                 <ul>
-                    <li><a href="order.php">My Order</a></li>
+                    <li><a href="order.php" id="myOrderLink">My Order</a></li>
                 </ul>
             </div>
 
@@ -50,7 +58,7 @@ echo '
 </div>
 
 <style>
-    /* 新增的全局样式 */
+    /* Your existing CSS styles */
     html, body {
         height: 100%;
         margin: 0;
@@ -67,12 +75,11 @@ echo '
         flex: 1;
     }
     
-    /* 原有的footer样式修改 */
     .footer {
         background-color: #f5f5f5;
         color: #333;
         padding: 40px 0 20px;
-        margin-top: auto; /* 这行是新增的关键属性 */
+        margin-top: auto;
     }
     
     .footer-container {
@@ -177,5 +184,43 @@ echo '
         margin: 0;
     }
 </style>
+
+<!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const myOrderLink = document.getElementById("myOrderLink");
+        
+        if (myOrderLink) {
+            myOrderLink.addEventListener("click", function(e) {
+                // Check login status from PHP variable
+                const isLoggedIn = ' . ($isLoggedIn ? 'true' : 'false') . ';
+                
+                if (!isLoggedIn) {
+                    e.preventDefault();
+                    
+                    Swal.fire({
+                        title: "Login Required",
+                        text: "You need to login to view your orders",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Go to Login",
+                        cancelButtonText: "Cancel",
+                        customClass: {
+                            confirmButton: "swal-confirm-button",
+                            cancelButton: "swal-cancel-button"
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "login.html";
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
 ';
 ?>
